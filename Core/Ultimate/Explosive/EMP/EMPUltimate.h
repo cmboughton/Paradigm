@@ -15,5 +15,6 @@ class PARADIGM_IQ_API AEMPUltimate : public AExplosive
 	GENERATED_BODY()
 
 protected:
-	virtual void Tick(float DeltaTime) override;
+	
+	virtual void UltimateAbilityStart() override;
 };

@@ -14,12 +14,6 @@ class PARADIGM_IQ_API AExplosive : public AUltimateAbility
 
 protected:
 
-	virtual void UltimateAbilityStart() override;
-
-	// Called every frame
-
-	virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION()
 	void Explosion(const float DeltaTime, const bool bShouldExplode, const bool ShouldGrow, const float GrowthModifier, const float Radius);
 

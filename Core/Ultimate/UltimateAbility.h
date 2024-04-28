@@ -19,14 +19,10 @@ public:
 	// Sets default values for this actor's properties
 	AUltimateAbility();
 
-	UFUNCTION()
-	virtual void UltimateAbilityStart();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void UltimateAbilityStartBP();
 
-	UFUNCTION()
-	virtual void UltimateAbilityFinish();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void UltimateAbilityFinishBP();
@@ -34,6 +30,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	virtual void UltimateAbilityStart();
+
+	UFUNCTION()
+	virtual void UltimateAbilityFinish();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

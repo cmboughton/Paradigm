@@ -34,6 +34,7 @@ void AUltimateAbility::BeginPlay()
 		}
 	}
 
+	UltimateAbilityStart();
 }
 
 void AUltimateAbility::UltimateAbilityStart()

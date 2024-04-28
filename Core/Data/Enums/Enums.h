@@ -10,6 +10,7 @@ enum class ECharacterState : uint8
 {
 	Normal						UMETA(DisplayName = "Normal"),
 	Stunned						UMETA(DisplayName = "Stunned"),
+	Invulnerable				UMETA(DisplayName = "Invulnerable"),
 	Death						UMETA(DisplayName = "Death"),
 };
 

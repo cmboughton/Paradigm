@@ -150,7 +150,7 @@ void APlayerCharacter::Ultimate()
 		{
 			CurrentUltimateTracker = 0.f;
 			AUltimateAbility* UltimateSpawned = GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
-			UltimateSpawned->UltimateAbilityStart();
+			//UltimateSpawned->UltimateAbilityStart();
 			UE_LOGFMT(LogTemp, Warning, "Ultimate Ability Ref Spawned: {0}", UltimateAbilityRef->GetName());
 		}
 		else
@@ -276,16 +276,20 @@ void APlayerCharacter::AddScore(const float AddedScore)
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	CurrentHealth -= DamageAmount;
-	ScoringModifier = 0;
-	if(CurrentHealth <= 0)
+	if(CurrentState != ECharacterState::Invulnerable)
 	{
-		Death();
+		CurrentHealth -= DamageAmount;
+		ScoringModifier = 0;
+		if(CurrentHealth <= 0)
+		{
+			Death();
+		}
 	}
 	return CurrentHealth;
 }
 
 void APlayerCharacter::Death()
 {
+	CurrentState = ECharacterState::Death;
 	UE_LOGFMT(LogTemp, Warning, "You have Died");
 }

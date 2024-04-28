@@ -103,6 +103,9 @@ protected:
 	UPROPERTY()
 	float MaxHealth;
 
+	UPROPERTY()
+	ECharacterState CurrentState = ECharacterState::Normal;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
 	TSoftObjectPtr<UDataTable> ShipDataTable;
 
@@ -166,12 +169,16 @@ protected:
 
 public:
 
-	FORCEINLINE int		GetScore()					const { return Score; }
-	FORCEINLINE int		GetScoringModifier()		const { return ScoringModifier; }
-	FORCEINLINE float	GetHealth()					const { return CurrentHealth; }
-	FORCEINLINE float	GetMaxHealth()				const { return MaxHealth; }
-	FORCEINLINE float	GetCurrentUltimate()		const { return CurrentUltimateTracker; }
-	FORCEINLINE float	GetMaxUltimate()			const { return UltimateTracker; }
+	FORCEINLINE int					GetScore()					const { return Score; }
+	FORCEINLINE int					GetScoringModifier()		const { return ScoringModifier; }
+	FORCEINLINE float				GetHealth()					const { return CurrentHealth; }
+	FORCEINLINE float				GetMaxHealth()				const { return MaxHealth; }
+	FORCEINLINE float				GetCurrentUltimate()		const { return CurrentUltimateTracker; }
+	FORCEINLINE float				GetMaxUltimate()			const { return UltimateTracker; }
+	FORCEINLINE ECharacterState		GetCharacterState()			const { return CurrentState; }
+
+
+	FORCEINLINE void				SetCharacterState			(const ECharacterState CharacterState)			{ CurrentState = CharacterState; }
 
 #pragma endregion
 };

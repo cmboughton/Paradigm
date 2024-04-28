@@ -3,8 +3,9 @@
 
 #include "EMPUltimate.h"
 
-void AEMPUltimate::Tick(float DeltaTime)
+void AEMPUltimate::UltimateAbilityStart()
 {
-	Super::Tick(DeltaTime);
-	Explosion(DeltaTime, true, false, AffectGrowthModifier, AffectRadius);
+	Super::UltimateAbilityStart();
+	Explosion(0.f, true, false, AffectGrowthModifier, AffectRadius);
+	UltimateAbilityFinish();
 }

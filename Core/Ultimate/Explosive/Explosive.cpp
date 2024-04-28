@@ -5,17 +5,6 @@
 #include "Logging/StructuredLog.h"
 
 
-
-void AExplosive::UltimateAbilityStart()
-{
-	Super::UltimateAbilityStart();
-}
-
-void AExplosive::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, const bool ShouldGrow, const float GrowthModifier, const float Radius)
 {
 	if(bShouldExplode)
@@ -65,7 +54,6 @@ void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, con
 					}
 				}
 			}
-			UltimateAbilityFinish();
 		}
 	}
 
