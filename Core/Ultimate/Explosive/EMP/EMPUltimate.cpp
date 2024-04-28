@@ -6,5 +6,5 @@
 void AEMPUltimate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Explosion(DeltaTime, true, false, ExplosiveGrowthModifier, ExplosiveRadius, ECharacterState::Stunned);
+	Explosion(DeltaTime, true, false, AffectGrowthModifier, AffectRadius);
 }

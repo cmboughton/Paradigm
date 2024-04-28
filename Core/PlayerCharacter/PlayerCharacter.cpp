@@ -150,7 +150,7 @@ void APlayerCharacter::Ultimate()
 		{
 			CurrentUltimateTracker = 0.f;
 			AUltimateAbility* UltimateSpawned = GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
-			UltimateSpawned->UltimateAbilityStart(this);
+			UltimateSpawned->UltimateAbilityStart();
 			UE_LOGFMT(LogTemp, Warning, "Ultimate Ability Ref Spawned: {0}", UltimateAbilityRef->GetName());
 		}
 		else

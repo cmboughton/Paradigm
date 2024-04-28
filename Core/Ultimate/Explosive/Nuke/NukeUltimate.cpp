@@ -6,5 +6,5 @@
 void ANukeUltimate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Explosion(DeltaTime, true, true, ExplosiveGrowthModifier, ExplosiveRadius, ECharacterState::Death);
+	Explosion(DeltaTime, true, true, AffectGrowthModifier, AffectRadius);
 }

@@ -22,22 +22,23 @@ void AUltimateAbility::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerCharacter = Cast<AActor>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	if (const UDataTable* UltimatesDataTableHardRef = UltimatesDataTable.LoadSynchronous())
 	{
 		if (const FUltimatesDataTable* UltimatesData = UltimatesDataTableHardRef->FindRow<FUltimatesDataTable>(UltimateName, "Ultimates Data Table Not set up", true))
 		{
 			Damage = UltimatesData->Damage;
+			PlayerState = UltimatesData->PlayerState;
+			EnemyState = UltimatesData->EnemyState;
 			//UE_LOGFMT(LogTemp, Warning, "FireRate: {0}", FireRate);
 		}
 	}
 
 }
 
-void AUltimateAbility::UltimateAbilityStart(APlayerCharacter* PlayerCharacterRef)
+void AUltimateAbility::UltimateAbilityStart()
 {
-	UltimateAbilityStartBP(PlayerCharacterRef);
+	UltimateAbilityStartBP();
 
 }
 
@@ -57,7 +58,7 @@ void AUltimateAbility::Tick(float DeltaTime)
 TArray<FHitResult> AUltimateAbility::SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius)
 {
 	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Init(PlayerCharacter, 1);
+	//ActorsToIgnore.Init(PlayerCharacter, 1);
 	TArray<FHitResult> AllActorsHit;
 	UKismetSystemLibrary::SphereTraceMulti(	GetWorld(),
 											ActorStartLocation,
@@ -78,7 +79,7 @@ TArray<FHitResult> AUltimateAbility::SphereTrace(const FVector ActorStartLocatio
 TArray<FHitResult> AUltimateAbility::LineTrace(const FVector ActorStartLocation, const FVector ActorEndLocation)
 {
 	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Init(PlayerCharacter, 1);
+	/*ActorsToIgnore.Init(PlayerCharacter, 1);*/
 	TArray<FHitResult> AllActorsHit;
 	UKismetSystemLibrary::LineTraceMulti(	GetWorld(),
 											ActorStartLocation,

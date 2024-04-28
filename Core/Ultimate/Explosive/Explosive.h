@@ -14,21 +14,21 @@ class PARADIGM_IQ_API AExplosive : public AUltimateAbility
 
 protected:
 
-	virtual void UltimateAbilityStart(APlayerCharacter* PlayerCharacter) override;
+	virtual void UltimateAbilityStart() override;
 
 	// Called every frame
 
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void Explosion(const float DeltaTime, const bool bShouldExplode, const bool ShouldGrow, const float GrowthModifier, const float Radius, const ECharacterState ActorHitState);
+	void Explosion(const float DeltaTime, const bool bShouldExplode, const bool ShouldGrow, const float GrowthModifier, const float Radius);
 
 	UPROPERTY()
 	float CurrentRadius = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaiables|Stats", meta = (ToolTip = "The explosion expanding modifier."), meta = (ClampMin = 500.f))
-	float ExplosiveGrowthModifier = 3000.f;
+	float AffectGrowthModifier = 3000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaiables|Stats", meta = (ToolTip = "The max radius the explosion can reach."))
-	float ExplosiveRadius = 10000.f;
+	float AffectRadius = 10000.f;
 };

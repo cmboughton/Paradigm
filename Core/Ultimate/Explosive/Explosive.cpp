@@ -6,9 +6,9 @@
 
 
 
-void AExplosive::UltimateAbilityStart(APlayerCharacter* PlayerCharacterRef)
+void AExplosive::UltimateAbilityStart()
 {
-	Super::UltimateAbilityStart(PlayerCharacterRef);
+	Super::UltimateAbilityStart();
 }
 
 void AExplosive::Tick(float DeltaTime)
@@ -16,7 +16,7 @@ void AExplosive::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, const bool ShouldGrow, const float GrowthModifier, const float Radius, const ECharacterState ActorHitState)
+void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, const bool ShouldGrow, const float GrowthModifier, const float Radius)
 {
 	if(bShouldExplode)
 	{
@@ -36,7 +36,7 @@ void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, con
 					{
 						if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
 						{
-							IEnemyInterface::Execute_ChangeCharacterState(ActorHit.GetActor(), ActorHitState);
+							IEnemyInterface::Execute_ChangeCharacterState(ActorHit.GetActor(), EnemyState);
 							//UE_LOGFMT(LogTemp, Warning, "HasInterface: {0}", ActorHit.GetActor()->GetName());
 						}
 					}
@@ -60,7 +60,7 @@ void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, con
 				{
 					if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
 					{
-						IEnemyInterface::Execute_ChangeCharacterState(ActorHit.GetActor(), ActorHitState);
+						IEnemyInterface::Execute_ChangeCharacterState(ActorHit.GetActor(), EnemyState);
 						//UE_LOGFMT(LogTemp, Warning, "HasInterface: {0}", ActorHit.GetActor()->GetName());
 					}
 				}

@@ -20,16 +20,16 @@ public:
 	AUltimateAbility();
 
 	UFUNCTION()
-	virtual void UltimateAbilityStart(APlayerCharacter* PlayerCharacterRef);
+	virtual void UltimateAbilityStart();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void UltimateAbilityStartBP(const APlayerCharacter* PlayerCharacterRef);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void UltimateAbilityFinishBP();
+	void UltimateAbilityStartBP();
 
 	UFUNCTION()
 	virtual void UltimateAbilityFinish();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UltimateAbilityFinishBP();
 
 protected:
 	// Called when the game starts or when spawned
@@ -57,7 +57,10 @@ protected:
 	float Damage = 0.f;
 
 	UPROPERTY()
-	AActor* PlayerCharacter = nullptr;
+	ECharacterState PlayerState = ECharacterState::Normal;
+
+	UPROPERTY()
+	ECharacterState EnemyState = ECharacterState::Normal;
 
 public:	
 
