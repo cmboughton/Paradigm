@@ -8,6 +8,7 @@
 #include "Logging/StructuredLog.h"
 #include "Engine/DamageEvents.h"
 #include "Paradigm_IQ/Core/Weapons/Projectile.h"
+#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "Weapons.generated.h"
 
 class AWeaponUpgradeManager;

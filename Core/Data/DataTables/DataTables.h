@@ -60,6 +60,9 @@ struct FUltimatesDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The amount of Damage this ability will do to enemies hit."))
 	float Damage = 100.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The time this Ultimate should last for."))
+	float Duration = 0.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The state the Enemy will be put in."))
 	ECharacterState EnemyState = ECharacterState::Normal;
 

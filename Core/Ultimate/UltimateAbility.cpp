@@ -22,14 +22,16 @@ void AUltimateAbility::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	if (const UDataTable* UltimatesDataTableHardRef = UltimatesDataTable.LoadSynchronous())
 	{
 		if (const FUltimatesDataTable* UltimatesData = UltimatesDataTableHardRef->FindRow<FUltimatesDataTable>(UltimateName, "Ultimates Data Table Not set up", true))
 		{
 			Damage = UltimatesData->Damage;
-			PlayerState = UltimatesData->PlayerState;
+			CharacterState = UltimatesData->PlayerState;
 			EnemyState = UltimatesData->EnemyState;
+			Duration = UltimatesData->Duration;
 			//UE_LOGFMT(LogTemp, Warning, "FireRate: {0}", FireRate);
 		}
 	}
@@ -39,12 +41,19 @@ void AUltimateAbility::BeginPlay()
 
 void AUltimateAbility::UltimateAbilityStart()
 {
+	if(CharacterState != ECharacterState::Normal)
+	{
+		PlayerCharacter->SetCharacterState(CharacterState);
+	}
 	UltimateAbilityStartBP();
-
 }
 
 void AUltimateAbility::UltimateAbilityFinish()
 {
+	if(CharacterState != ECharacterState::Normal)
+	{
+		PlayerCharacter->SetCharacterState(ECharacterState::Normal);
+	}
 	UltimateAbilityFinishBP();
 	this->Destroy();
 }
@@ -54,6 +63,14 @@ void AUltimateAbility::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(Duration > 0)
+	{
+		Duration -= DeltaTime;
+	}
+	else if (Duration < 0)
+	{
+		UltimateAbilityFinish();
+	}
 }
 
 TArray<FHitResult> AUltimateAbility::SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius)

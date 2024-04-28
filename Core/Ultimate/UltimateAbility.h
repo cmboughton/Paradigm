@@ -7,6 +7,7 @@
 #include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
+#include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
 #include "UltimateAbility.generated.h"
 
 
@@ -59,10 +60,16 @@ protected:
 	float Damage = 0.f;
 
 	UPROPERTY()
-	ECharacterState PlayerState = ECharacterState::Normal;
+	float Duration = 0.f;
+
+	UPROPERTY()
+	ECharacterState CharacterState = ECharacterState::Normal;
 
 	UPROPERTY()
 	ECharacterState EnemyState = ECharacterState::Normal;
+
+	UPROPERTY()
+	APlayerCharacter* PlayerCharacter = nullptr;
 
 public:	
 

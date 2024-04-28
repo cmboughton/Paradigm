@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Paradigm_IQ/Core/Ultimate/UltimateAbility.h"
+#include "../Data/Structs/Structs.h"
 #include "PlayerCharacter.generated.h"
+
+
+class AUltimateAbility;
 
 UCLASS()
 class PARADIGM_IQ_API APlayerCharacter : public ACharacter
@@ -54,6 +57,9 @@ public:
 
 	UFUNCTION()
 	void AddScore(const float AddedScore);
+
+	UFUNCTION()
+	void UpdateMovementSpeed(const float Speed);
 
 #pragma endregion
 

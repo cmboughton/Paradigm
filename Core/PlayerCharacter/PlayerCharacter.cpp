@@ -13,7 +13,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 
-#include "Paradigm_IQ/Core/Weapons/BasicProjectile/Projectile/BaseProjectile.h"
+#include "Paradigm_IQ/Core/Ultimate/UltimateAbility.h"
 #include "../EnemyCharacter/EnemyCharacter.h"
 
 #include "GameFramework/Controller.h"
@@ -22,8 +22,9 @@
 
 #include "../Data/DataTables/DataTables.h"
 #include "../Data/Interfaces/CollectableInterface.h"
-#include "../Data/Structs/Structs.h"
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
+
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -272,6 +273,11 @@ void APlayerCharacter::AddScore(const float AddedScore)
 {
 	Score += (AddedScore * ScoringModifier);
 	UE_LOGFMT(LogTemp, Warning, "Score: {0}", Score);
+}
+
+void APlayerCharacter::UpdateMovementSpeed(const float Speed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
