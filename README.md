@@ -1,0 +1,1 @@
+# Paradigm_IQ
