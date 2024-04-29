@@ -18,11 +18,11 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The force the Black Hole applies onto the actor hit."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The force the Black Hole applies onto the actor hit."), meta = (ClampMin = 150.f))
 	float GravitationalForce = 0.f;
 
 	UPROPERTY()
-	float PullDurationTracker = 0.f;
+	float PullDurationTracker = Duration / 30;
 
 	UPROPERTY()
 	float PullDurationDelay = 0.5f;

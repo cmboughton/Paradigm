@@ -42,7 +42,7 @@ void ABlackHoleUltimate::Tick(float DeltaSeconds)
 			{
 				if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
 				{
-					FVector PullDirection = this->GetActorLocation() - ActorHit.GetActor()->GetActorLocation();
+					FVector PullDirection = (this->GetActorLocation() - ActorHit.GetActor()->GetActorLocation() * 1 + ((Duration / 30) - PullDurationTracker));
 
 					if(AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(ActorHit.GetActor()))
 					{
