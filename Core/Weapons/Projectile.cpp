@@ -39,8 +39,8 @@ void AProjectile::BeginPlay()
 	if(bIsArcImpulse)
 	{
 		BulletMesh->SetSimulatePhysics(true);
-		FVector Impulse = FVector(FMath::RandRange(-100, 100), FMath::RandRange(-100, 100), FMath::RandRange(100, 200));
-		BulletMesh->AddImpulse(Impulse);
+		FVector ArcImpulse = FVector(FMath::RandRange(-Impulse, Impulse), FMath::RandRange(-Impulse, Impulse), FMath::RandRange(Impulse, Impulse * 2));
+		BulletMesh->AddImpulse(ArcImpulse);
 	}
 
 	if(bAutoSizeMesh)
@@ -82,12 +82,12 @@ TArray<FHitResult> AProjectile::SphereTrace(const FVector ActorStartLocation, co
 											ETraceTypeQuery::TraceTypeQuery1,
 											false,
 											ActorsToIgnore,
-											EDrawDebugTrace::ForOneFrame,
+											EDrawDebugTrace::ForDuration,
 											AllActorsHit,
 											true,
 											FLinearColor::Red,
 											FLinearColor::Green,
-											2.f);
+											.2f);
 	return TArray<FHitResult>(AllActorsHit);
 }
 

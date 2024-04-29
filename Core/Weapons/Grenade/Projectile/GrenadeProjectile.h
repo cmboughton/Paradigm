@@ -15,4 +15,10 @@ protected:
 	virtual void DestroyProjectile() override;
 
 	virtual void TraceCheck(const float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Reference to the Grenade BP to spawn for the Bouncing Betty upgrade."))
+	TSubclassOf<AGrenadeProjectile> GrenadeProjectile;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The amount of grenades to spawn with Bouncing Betty upgrade."))
+	int BouncingBettySpawn;
 };

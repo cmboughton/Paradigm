@@ -56,6 +56,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Apply an arced impulse on the projectile, giving it a lobbing feel."))
 	bool bIsArcImpulse = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The imupulse to apply is bIsArcImpulse is true."))
+	float Impulse = 100.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "This will auto size the mesh based on AffectRadius."))
 	bool bAutoSizeMesh = true;
 
@@ -111,6 +114,8 @@ public:
 	FORCEINLINE void	SetSpecialUpgrade1		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade1 = SpecialUpgrade1Value; }
 	FORCEINLINE void	SetSpecialUpgrade2		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade2 = SpecialUpgrade1Value; }
 	FORCEINLINE void	SetSpecialUpgrade3		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade3 = SpecialUpgrade1Value; }
+	FORCEINLINE void	SetIsArcImpulse			(const bool IsArcImpulseValue)				{ bIsArcImpulse = IsArcImpulseValue; }
+	FORCEINLINE void	SetImpulse				(const float ImpulseValue)					{ Impulse = ImpulseValue; }
 
 #pragma endregion
 };
