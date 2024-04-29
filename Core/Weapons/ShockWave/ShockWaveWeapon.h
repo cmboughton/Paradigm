@@ -28,7 +28,7 @@ protected:
 	float ShockWaveZoneDelay = 1.f;
 
 	UPROPERTY()
-	float ShockWaveRadiusTracker = 50.f;
+	float ShockWaveRadiusTracker = 200.f;
 
 	UPROPERTY()
 	float ShockWaveDelayTracker = 0.f;

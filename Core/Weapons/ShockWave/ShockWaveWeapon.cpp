@@ -7,7 +7,7 @@ void AShockWaveWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
 
-	ShockWaveZone = AffectRadius * .3;
+	ShockWaveZone = AffectRadius * .35;
 
 	if(ShockWaveRadiusTracker <= AffectRadius)
 	{
@@ -84,7 +84,7 @@ void AShockWaveWeapon::WeaponTriggered(const float DeltaTime)
 	else
 	{
 		FireRateTracker = FireRate;
-		ShockWaveRadiusTracker = 50.f;
+		ShockWaveRadiusTracker = 200.f;
 	}
 	//UE_LOGFMT(LogTemp, Warning, "ShockWaveTracker: {0}", ShockWaveRadiusTracker);
 }
