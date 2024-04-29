@@ -10,7 +10,7 @@ void AGrenadeWeapon::WeaponTriggered(const float DeltaTime)
 
 	if (GrenadeCountTracker < TriggerAmount)
 	{
-		FTransform GrenadeSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
+		const FTransform GrenadeSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
 		SpawnProjectile(GrenadeSpawnTransform);
 
 		GrenadeCountTracker++;

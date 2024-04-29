@@ -31,6 +31,6 @@ protected:
 	FVector EndLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Reference to the Flame Trail BP to spawn."))
-	TSubclassOf<AFlameTrailUpgrade> FlameTrailUpgrade;
+	const TSubclassOf<AFlameTrailUpgrade> FlameTrailUpgrade;
 
 };
