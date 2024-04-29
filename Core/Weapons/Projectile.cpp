@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 
 
 // Sets default values
@@ -90,12 +91,21 @@ TArray<FHitResult> AProjectile::SphereTrace(const FVector ActorStartLocation, co
 	return TArray<FHitResult>(AllActorsHit);
 }
 
-void AProjectile::ApplyDamage(const FHitResult ActorHit)
+void AProjectile::ApplyDamage(const TArray<FHitResult> AllActorsHit)
 {
-	AActor* EnemyHit = ActorHit.GetActor();
-	const FVector ActorLocation = ActorHit.GetActor()->GetActorLocation();
-	const FPointDamageEvent DamageEvent(Damage, ActorHit, ActorLocation, nullptr);
-	EnemyHit->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+	for (FHitResult ActorHit : AllActorsHit)
+	{
+		if (ActorHit.GetActor())
+		{
+			if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
+			{
+				AActor* EnemyHit = ActorHit.GetActor();
+				const FVector ActorLocation = ActorHit.GetActor()->GetActorLocation();
+				const FPointDamageEvent DamageEvent(Damage, ActorHit, ActorLocation, nullptr);
+				EnemyHit->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+			}
+		}
+	}
 }
 
 void AProjectile::TraceCheck(const float DeltaTime)

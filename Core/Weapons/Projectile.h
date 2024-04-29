@@ -71,6 +71,15 @@ protected:
 	UPROPERTY()
 	APlayerCharacter* PlayerCharacter = nullptr;
 
+	UPROPERTY()
+	bool bSpecialUpgrade1 = false;
+
+	UPROPERTY()
+	bool bSpecialUpgrade2 = false;
+
+	UPROPERTY()
+	bool bSpecialUpgrade3 = false;
+
 #pragma endregion
 
 #pragma region Protected Functions
@@ -85,20 +94,23 @@ protected:
 	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
 
 	UFUNCTION()
-	void ApplyDamage(const FHitResult ActorHit);
+	void ApplyDamage(const TArray<FHitResult> AllActorsHit);
 
 	UFUNCTION()
 	virtual void TraceCheck(const float DeltaTime);
 
-#pragma endregion
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+#pragma endregion
+
+public:	
 
 #pragma region Public Setters
 
 	FORCEINLINE void	SetDamage				(const float DamageValue)					{ Damage = DamageValue; }
-	FORCEINLINE void	SetAffectRadius		(const float ExplosionRadiusValue)			{ AffectRadius = ExplosionRadiusValue; }
+	FORCEINLINE void	SetAffectRadius			(const float ExplosionRadiusValue)			{ AffectRadius = ExplosionRadiusValue; }
+	FORCEINLINE void	SetSpecialUpgrade1		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade1 = SpecialUpgrade1Value; }
+	FORCEINLINE void	SetSpecialUpgrade2		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade2 = SpecialUpgrade1Value; }
+	FORCEINLINE void	SetSpecialUpgrade3		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade3 = SpecialUpgrade1Value; }
 
 #pragma endregion
 };

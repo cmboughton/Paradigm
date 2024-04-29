@@ -65,6 +65,14 @@ protected:
 	UPROPERTY()
 	FWeaponUpgrades WeaponUpgrade;
 
+	UPROPERTY()
+	bool bSpecialUpgrade1Proj = false;
+
+	UPROPERTY()
+	bool bSpecialUpgrade2Proj = false;
+
+	UPROPERTY()
+	bool bSpecialUpgrade3Proj = false;
 
 	UFUNCTION()
 	virtual void WeaponTriggered(const float DeltaTime);

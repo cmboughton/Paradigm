@@ -7,16 +7,7 @@
 void AGrenadeProjectile::DestroyProjectile()
 {
 	TArray<FHitResult> AllActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), AffectRadius * 10);
-	for (FHitResult ActorHit : AllActorsHit)
-	{
-		if (ActorHit.GetActor())
-		{
-			if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
-			{
-				ApplyDamage(ActorHit);
-			}
-		}
-	}
+	ApplyDamage(AllActorsHit);
 	Super::DestroyProjectile();
 }
 

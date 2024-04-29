@@ -226,6 +226,9 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(FTransform Transform)
 		AProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<AProjectile>(Projectile, Transform);
 		ProjectileSpawn->SetDamage(Damage);
 		ProjectileSpawn->SetAffectRadius(AffectRadius);
+		ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1Proj);
+		ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2Proj);
+		ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3Proj);
 		ProjectileSpawn->FinishSpawning(Transform);
 	}
 	return Projectile;
@@ -233,12 +236,15 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(FTransform Transform)
 
 void AWeapons::SpecialUpgrade1()
 {
+	bSpecialUpgrade1Proj = true;
 }
 
 void AWeapons::SpecialUpgrade2()
 {
+	bSpecialUpgrade2Proj = true;
 }
 
 void AWeapons::SpecialUpgrade3()
 {
+	bSpecialUpgrade3Proj = true;
 }
