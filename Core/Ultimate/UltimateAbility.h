@@ -8,6 +8,7 @@
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
+#include "Logging/StructuredLog.h"
 #include "UltimateAbility.generated.h"
 
 
@@ -55,6 +56,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The name to the row in the data table of this Ultimate."))
 	FName UltimateName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The max radius the explosion can reach."))
+	float AffectRadius = 10000.f;
 
 	UPROPERTY()
 	float Damage = 0.f;

@@ -4,7 +4,6 @@
 #include "UltimateAbility.h"
 
 #include "Kismet/KismetSystemLibrary.h"
-#include "Logging/StructuredLog.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
 

@@ -15,6 +15,8 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BaseModel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Model"));
+	BaseModel->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

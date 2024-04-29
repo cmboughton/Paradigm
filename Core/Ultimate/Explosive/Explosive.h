@@ -23,6 +23,4 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaiables|Stats", meta = (ToolTip = "The explosion expanding modifier."), meta = (ClampMin = 500.f))
 	float AffectGrowthModifier = 3000.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaiables|Stats", meta = (ToolTip = "The max radius the explosion can reach."))
-	float AffectRadius = 10000.f;
 };
