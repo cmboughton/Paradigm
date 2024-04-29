@@ -22,7 +22,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void DestroyProjectile();
+	virtual void DestroyProjectile() override;
 
 	UPROPERTY()
 	FVector StartLocation;
