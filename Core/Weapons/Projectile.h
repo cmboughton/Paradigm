@@ -8,6 +8,7 @@
 #include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "Logging/StructuredLog.h"
 #include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
+#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "Projectile.generated.h"
 
 

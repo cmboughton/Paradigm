@@ -5,7 +5,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 
 
 // Sets default values
