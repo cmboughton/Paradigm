@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Weapons.h"
-#include "Paradigm_IQ/Core/Data/Structs/Structs.h"
+#include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "WeaponUpgradeManager.generated.h"
 
 
@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|References", meta = (ToolTip = "Reference to the Weapon Upgrade widget to create."))
 	TSubclassOf<UUserWidget> WeaponUpgradeWidget = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
+	TSoftObjectPtr<UDataTable> WeaponsDataTable;
+
 	UPROPERTY()
 	TArray<FUpgradeManager> UpgradesAvailable;
 
@@ -48,6 +51,9 @@ protected:
 
 	UPROPERTY()
 	bool bUpgradeActive = false;
+
+	UPROPERTY()
+	APlayerCharacter* PlayerCharacter = nullptr;
 
 public:
 

@@ -86,6 +86,9 @@ struct FUpgradeManager
 
 	UPROPERTY()
 	EWeaponType WeaponType = EWeaponType::Mechanical;
+
+	UPROPERTY()
+	bool bIsWeaponUnlock = false;
 };
 
 USTRUCT(BlueprintType)
@@ -101,4 +104,7 @@ struct FUpgradeCommunication
 
 	UPROPERTY()
 	EWeaponType WeaponType = EWeaponType::Mechanical;
+
+	UPROPERTY()
+	bool bIsWeaponUnlock = false;
 };

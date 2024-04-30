@@ -36,7 +36,7 @@ void AWeapons::BeginPlay()
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)
 			{
-				FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, 0, WeaponsData->WeaponType);
+				FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, 0, WeaponsData->WeaponType, false);
 				UpgradeManagerRef->AddUpgrades(WeaponUpgrades);
 			}
 		}

@@ -187,36 +187,7 @@ void APlayerCharacter::SetUpShip()
 				}
 			}
 
-			if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
-			{
-				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->BaseWeapon, "Weapon Data Table Not set up PlayerCharacter.cpp", true))
-				{
-					if(UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
-					{
-						AWeapons* WeaponRef = GetWorld()->SpawnActor<AWeapons>(WeaponSpawn, this->GetActorTransform());
-						FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
-						WeaponRef->AttachToActor(this,AttachmentRules);
-					}
-				}
-				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->Weapon1, "Weapon Data Table Not set up PlayerCharacter.cpp", true))
-				{
-					if (UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
-					{
-						AWeapons* WeaponRef = GetWorld()->SpawnActor<AWeapons>(WeaponSpawn, this->GetActorTransform());
-						FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
-						WeaponRef->AttachToActor(this, AttachmentRules);
-					}
-				}
-				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->Weapon2, "Weapon Data Table Not set up PlayerCharacter.cpp", true))
-				{
-					if (UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
-					{
-						AWeapons* WeaponRef = GetWorld()->SpawnActor<AWeapons>(WeaponSpawn, this->GetActorTransform());
-						FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
-						WeaponRef->AttachToActor(this, AttachmentRules);
-					}
-				}
-			}
+			AddWeapon(ShipData->BaseWeapon);
 		}
 	}
 }
@@ -240,11 +211,11 @@ void APlayerCharacter::CollectablePickUp()
 void APlayerCharacter::AddCollectable(struct FExperienceOrb Experience)
 {
 	ExperienceTracker += Experience.Experience;
-	UE_LOGFMT(LogTemp, Warning, "Experience: {0}", ExperienceTracker);
+	//UE_LOGFMT(LogTemp, Warning, "Experience: {0}", ExperienceTracker);
 	if(CurrentUltimateTracker < UltimateTracker)
 	{
 		CurrentUltimateTracker += Experience.UltimateExperience;
-		UE_LOGFMT(LogTemp, Warning, "UltimateExperience: {0}", CurrentUltimateTracker);
+		//UE_LOGFMT(LogTemp, Warning, "UltimateExperience: {0}", CurrentUltimateTracker);
 	}
 }
 
@@ -278,6 +249,23 @@ void APlayerCharacter::AddScore(const float AddedScore)
 void APlayerCharacter::UpdateMovementSpeed(const float Speed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
+}
+
+void APlayerCharacter::AddWeapon(const FName WeaponName)
+{
+	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
+	{
+		if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponName, "Weapon Data Table Not set up PlayerCharacter.cpp", true))
+		{
+			if (UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
+			{
+				WeaponsEquipped.Add(WeaponName);
+				AWeapons* WeaponRef = GetWorld()->SpawnActor<AWeapons>(WeaponSpawn, this->GetActorTransform());
+				FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+				WeaponRef->AttachToActor(this, AttachmentRules);
+			}
+		}
+	}
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

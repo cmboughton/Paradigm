@@ -61,6 +61,9 @@ public:
 	UFUNCTION()
 	void UpdateMovementSpeed(const float Speed);
 
+	UFUNCTION()
+	void AddWeapon(const FName WeaponName);
+
 #pragma endregion
 
 #pragma region Protected Functions
@@ -97,6 +100,7 @@ protected:
 	void Death();
 
 
+
 #pragma endregion
 
 #pragma  region Stats
@@ -108,6 +112,12 @@ protected:
 
 	UPROPERTY()
 	float MaxHealth;
+
+	UPROPERTY()
+	TArray<FName> WeaponsEquipped;
+
+	UPROPERTY()
+	int MaxWeaponsEquipped = 6;
 
 	UPROPERTY()
 	ECharacterState CurrentState = ECharacterState::Normal;
@@ -182,7 +192,8 @@ public:
 	FORCEINLINE float				GetCurrentUltimate()		const { return CurrentUltimateTracker; }
 	FORCEINLINE float				GetMaxUltimate()			const { return UltimateTracker; }
 	FORCEINLINE ECharacterState		GetCharacterState()			const { return CurrentState; }
-
+	FORCEINLINE TArray<FName>		GetWeaponsEquipped()		const { return WeaponsEquipped; }
+	FORCEINLINE int					GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
 
 	FORCEINLINE void				SetCharacterState			(const ECharacterState CharacterState)			{ CurrentState = CharacterState; }
 

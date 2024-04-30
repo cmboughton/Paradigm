@@ -35,12 +35,6 @@ struct FShipsDataTable : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The name of the Row from the Weapons Data Table."))
 	FName BaseWeapon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The name of the Row from the Weapons Data Table."))
-	FName Weapon1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The name of the Row from the Weapons Data Table."))
-	FName Weapon2;
 };
 
 USTRUCT(BlueprintType)
@@ -96,6 +90,9 @@ struct FWeaponsDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The name of the weapon."))
 	FName Name;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The description of the weapon."), meta = (MultiLine = true))
+	FString Description;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The weapon actor that is to be spawned."))
 	TSoftClassPtr<AWeapons> Weapon;
 
@@ -107,6 +104,12 @@ struct FWeaponsDataTable : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The damage the weapon does."))
 	float Damage = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "Is this weapon a Base Weapon of a ship and shouldnt be included in the obtainable Weapons from the Upgrade pool."))
+	bool bIsBaseWeapon = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The weight of this weapon chance to roll when called. The weight is caluculated by adding all upgrades to a pool and rolling."))
+	float RollWeight = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The upgrades that this weapon can have."))
 	TArray<FWeaponUpgrades> WeaponUpgrades;
