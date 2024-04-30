@@ -189,7 +189,7 @@ void APlayerCharacter::SetUpShip()
 
 			if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 			{
-				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->BaseWeapon, "Ultimate Ability Data Table Not set up", true))
+				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->BaseWeapon, "Weapon Data Table Not set up PlayerCharacter.cpp", true))
 				{
 					if(UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
 					{
@@ -198,7 +198,7 @@ void APlayerCharacter::SetUpShip()
 						WeaponRef->AttachToActor(this,AttachmentRules);
 					}
 				}
-				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->Weapon1, "Ultimate Ability Data Table Not set up", true))
+				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->Weapon1, "Weapon Data Table Not set up PlayerCharacter.cpp", true))
 				{
 					if (UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
 					{
@@ -207,7 +207,7 @@ void APlayerCharacter::SetUpShip()
 						WeaponRef->AttachToActor(this, AttachmentRules);
 					}
 				}
-				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->Weapon2, "Ultimate Ability Data Table Not set up", true))
+				if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData->Weapon2, "Weapon Data Table Not set up PlayerCharacter.cpp", true))
 				{
 					if (UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
 					{

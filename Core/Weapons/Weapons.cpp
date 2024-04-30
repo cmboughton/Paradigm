@@ -26,7 +26,7 @@ void AWeapons::BeginPlay()
 
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
-		if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponName, "Weapons Data Table Not set up", true))
+		if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponName, "Weapons Data Table Not set up. Weapons.cpp", true))
 		{
 			FireRate = WeaponsData->FireRate;
 			Damage = WeaponsData->Damage;
@@ -36,7 +36,7 @@ void AWeapons::BeginPlay()
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)
 			{
-				FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, WeaponsData->WeaponType);
+				FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, 0, WeaponsData->WeaponType);
 				UpgradeManagerRef->AddUpgrades(WeaponUpgrades);
 			}
 		}
