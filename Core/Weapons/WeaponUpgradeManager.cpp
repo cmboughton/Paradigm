@@ -158,7 +158,6 @@ void AWeaponUpgradeManager::UpgradeSelected(FUpgradeCommunication Upgrade)
 					if(CurrentWeapons.WeaponReference)
 					{
 						CurrentWeapons.WeaponReference->UpgradeWeapon(Upgrade.WeaponUpgrades);
-						break;
 					}
 				}
 				//UE_LOGFMT(LogTemp, Warning, "Weapon: {0}", CurrentWeapons.WeaponReference->GetName());
