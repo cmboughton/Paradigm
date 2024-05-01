@@ -70,6 +70,9 @@ protected:
 	float AffectRadius = 0.f;
 
 	UPROPERTY()
+	int TriggerAmount = 0;
+
+	UPROPERTY()
 	TArray<FHitResult> ActorsHit;
 
 	UPROPERTY()
@@ -117,6 +120,8 @@ public:
 	FORCEINLINE void	SetSpecialUpgrade3		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade3 = SpecialUpgrade1Value; }
 	FORCEINLINE void	SetIsArcImpulse			(const bool IsArcImpulseValue)				{ bIsArcImpulse = IsArcImpulseValue; }
 	FORCEINLINE void	SetImpulse				(const float ImpulseValue)					{ Impulse = ImpulseValue; }
+	FORCEINLINE void	SetTriggerAmount		(const int TriggerValue)					{ TriggerAmount = TriggerValue; }
+	FORCEINLINE void	SetDestroyDuration		(const float DestroyDurationValue)			{ DestroyDuration = DestroyDurationValue; }
 
 #pragma endregion
 };

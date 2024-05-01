@@ -229,6 +229,7 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(FTransform Transform)
 		ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1Proj);
 		ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2Proj);
 		ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3Proj);
+		ProjectileSpawn->SetTriggerAmount(TriggerAmount);
 		ProjectileSpawn->FinishSpawning(Transform);
 	}
 	return Projectile;
