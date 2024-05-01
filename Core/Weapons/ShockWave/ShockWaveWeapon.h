@@ -18,7 +18,7 @@ protected:
 
 	virtual void WeaponTriggered(const float DeltaTime) override;
 
-	UPROPERTY()
+	/*UPROPERTY()
 	float ShockWaveZone = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The delay until the next shock wave forms."))
@@ -31,8 +31,8 @@ protected:
 	float ShockWaveRadiusTracker = 200.f;
 
 	UPROPERTY()
-	float ShockWaveDelayTracker = 0.f;
+	float ShockWaveDelayTracker = 0.f;*/
 
-	UPROPERTY()
-	TArray<FHitResult> ActorsHit;
+	//UPROPERTY()
+	//TArray<FHitResult> ActorsHit;
 };

@@ -90,7 +90,7 @@ protected:
 	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
 
 	UFUNCTION()
-	void ApplyDamage(const FHitResult ActorHit);
+	void ApplyDamage(const TArray<FHitResult> AllActorsHit);
 
 	UFUNCTION()
 	TSubclassOf<AProjectile> SpawnProjectile(FTransform Transform);

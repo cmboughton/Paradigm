@@ -103,18 +103,5 @@ void APlasmaCannon::WeaponTriggered(const float DeltaTime)
 void APlasmaCannon::SphereTraceDamage(FVector EndLoc)
 {
 	TArray<FHitResult> AllActorsHit = SphereTrace(StartLocation, EndLoc, AffectRadius);
-	if (!AllActorsHit.IsEmpty())
-	{
-		for (FHitResult ActorHit : AllActorsHit)
-		{
-			if (ActorHit.GetActor())
-			{
-				if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
-				{
-					//UE_LOGFMT(LogTemp, Warning, "Enemy Targeted: {0}", ActorHit.GetActor()->GetName());
-					ApplyDamage(ActorHit);
-				}
-			}
-		}
-	}
+	ApplyDamage(AllActorsHit);
 }

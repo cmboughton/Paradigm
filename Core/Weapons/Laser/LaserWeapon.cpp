@@ -6,20 +6,9 @@
 void ALaserWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
-	if(!ActorsHit.IsEmpty())
-	{
-		for (FHitResult ActorHit : ActorsHit)
-		{
-			if(ActorHit.GetActor())
-			{
-				if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
-				{
-					UE_LOGFMT(LogTemp, Warning, "Actor Hit: {0} Damage: {1}", ActorHit.GetActor()->GetName(), Damage);
-					ApplyDamage(ActorHit);
-				}
-			}
-		}
-	}
+
+	ApplyDamage(ActorsHit);
+
 	ActorsHit.Empty();
 	FRotator LaserRot = FRotator(0.f, 360 / TriggerAmount, 0.f);
 	for(int i = 0; i < TriggerAmount; i++)

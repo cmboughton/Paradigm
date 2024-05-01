@@ -92,16 +92,19 @@ TArray<FHitResult> AProjectile::SphereTrace(const FVector ActorStartLocation, co
 
 void AProjectile::ApplyDamage(const TArray<FHitResult> AllActorsHit)
 {
-	for (FHitResult ActorHit : AllActorsHit)
+	if(!AllActorsHit.IsEmpty())
 	{
-		if (ActorHit.GetActor())
+		for (FHitResult ActorHit : AllActorsHit)
 		{
-			if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
+			if (ActorHit.GetActor())
 			{
-				AActor* EnemyHit = ActorHit.GetActor();
-				const FVector ActorLocation = ActorHit.GetActor()->GetActorLocation();
-				const FPointDamageEvent DamageEvent(Damage, ActorHit, ActorLocation, nullptr);
-				EnemyHit->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+				if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
+				{
+					AActor* EnemyHit = ActorHit.GetActor();
+					const FVector ActorLocation = ActorHit.GetActor()->GetActorLocation();
+					const FPointDamageEvent DamageEvent(Damage, ActorHit, ActorLocation, nullptr);
+					EnemyHit->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+				}
 			}
 		}
 	}
