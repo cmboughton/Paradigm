@@ -25,6 +25,7 @@ void AWeaponUpgradeManager::BeginPlay()
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
 		TArray<FName> WeaponRows = WeaponsDataTableHardRef->GetRowNames();
+		UE_LOGFMT(LogTemp, Warning, "Weapons: {0}", WeaponRows);
 		for (FName WeaponRow: WeaponRows)
 		{
 			if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponRow, "Couldn't Add Weapon to Upgrade Pool", true))

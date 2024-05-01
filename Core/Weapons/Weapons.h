@@ -30,7 +30,7 @@ protected:
 	TSoftObjectPtr<UDataTable> WeaponsDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The name to the row in the data table of this Weapon."))
-	FName WeaponName;
+	FName RowName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "Enable to create a small delay between each bullet shot."))
 	bool bShouldUseBulletDelay = false;

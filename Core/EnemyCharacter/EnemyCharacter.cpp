@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Collectable/Experience/Experience.h"
 #include "Paradigm_IQ/Core/Collectable/WeaponUpgrade/WeaponUpgradeCollectable.h"
+#include "Paradigm_IQ/Core/Collectable/AttractOrb/AttractOrb.h"
 
 
 // Sets default values
@@ -94,6 +95,14 @@ void AEnemyCharacter::Death()
 		{
 			FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
 			GetWorld()->SpawnActor<AWeaponUpgradeCollectable>(WeaponUpgradeCollectable, XPSpawnTransform);
+		}
+	}
+	if (AttractOrbDropChance >= FMath::RandRange(0.f, 1.f))
+	{
+		if (AttractOrbCollectable)
+		{
+			FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
+			GetWorld()->SpawnActor<AAttractOrb>(AttractOrbCollectable, XPSpawnTransform);
 		}
 	}
 	this->Destroy();

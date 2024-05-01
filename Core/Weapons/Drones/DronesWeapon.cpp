@@ -52,7 +52,7 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 			{
 				SweepTracker.Yaw += DeltaTime * RotationSpeed;
 				DroneDurationTracker += DeltaTime;
-				UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", SweepTracker.Yaw);
+				//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", SweepTracker.Yaw);
 			}
 			else if (DroneDelayTracker >= .2f)
 			{

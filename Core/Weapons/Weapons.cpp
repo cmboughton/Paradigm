@@ -26,7 +26,7 @@ void AWeapons::BeginPlay()
 
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
-		if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponName, "Weapons Data Table Not set up. Weapons.cpp", true))
+		if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(RowName, "Weapons Data Table Not set up. Weapons.cpp", true))
 		{
 			FireRate = WeaponsData->FireRate;
 			Damage = WeaponsData->Damage;

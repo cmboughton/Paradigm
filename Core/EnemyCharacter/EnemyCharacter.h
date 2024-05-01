@@ -62,6 +62,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The current state the character is in."));
 	ECharacterState CurrentCharacterState = ECharacterState::Normal;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|References", meta = (ToolTip = "Blueprint ref to attract orb blueprint."))
+	TSubclassOf<class AAttractOrb> AttractOrbCollectable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance to drop a Attract Orb collectable. Rolls between 0 and 1."))
+	float AttractOrbDropChance = 0.f;
+
 public:	
 	// Called every frame
 	virtual void Tick(const float DeltaTime) override;
