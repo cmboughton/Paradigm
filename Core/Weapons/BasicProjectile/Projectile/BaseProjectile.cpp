@@ -7,10 +7,8 @@
 void ABaseProjectile::TraceCheck(const float DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
-	if (!ActorsHit.IsEmpty())
-	{
-		ApplyDamage(ActorsHit);
-	}
+	ApplyDamage(ActorsHit);
+
 }
 
 void ABaseProjectile::Tick(float DeltaTime)

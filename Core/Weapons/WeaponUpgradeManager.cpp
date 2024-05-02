@@ -3,9 +3,6 @@
 
 #include "WeaponUpgradeManager.h"
 
-#include "Kismet/GameplayStatics.h"
-#include "Paradigm_IQ/UI/Menus/MenuComponets/WeaponUpgrade/WeaponUpgradeWidget.h"
-#include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
 
 // Sets default values
 AWeaponUpgradeManager::AWeaponUpgradeManager()

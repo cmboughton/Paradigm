@@ -33,8 +33,7 @@ void ASideCannonsProjectile::BeginPlay()
 void ASideCannonsProjectile::TraceCheck(const float DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
-	if (!ActorsHit.IsEmpty())
-	{
-		ApplyDamage(ActorsHit);
-	}
+
+	ApplyDamage(ActorsHit);
+
 }

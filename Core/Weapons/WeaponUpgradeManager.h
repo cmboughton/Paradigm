@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Weapons.h"
+#include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
+#include "Paradigm_IQ/UI/Menus/MenuComponets/WeaponUpgrade/WeaponUpgradeWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
 #include "WeaponUpgradeManager.generated.h"
 
 
@@ -32,7 +35,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|References", meta = (ToolTip = "Reference to the Weapon Upgrade widget to create."))
-	TSubclassOf<UUserWidget> WeaponUpgradeWidget = nullptr;
+	TSubclassOf<UUserWidget> WeaponUpgradeWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
 	TSoftObjectPtr<UDataTable> WeaponsDataTable;

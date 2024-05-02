@@ -19,7 +19,7 @@ class PARADIGM_IQ_API UWeaponUpgradeWidget : public UUserWidget
 protected:
 
 	UPROPERTY(meta = (BindWidget))
-	class UHorizontalBox* WeaponCardsHB;
+	class UHorizontalBox* WeaponCardsHb;
 
 	UPROPERTY()
 	TArray<FUpgradeCommunication> WeaponUpgrades;
@@ -33,10 +33,10 @@ protected:
 public:
 
 	UFUNCTION()
-	void PauseGame(const bool PauseStatus);
+	void PauseGame(const bool PauseStatus) const;
 
 	UFUNCTION()
 	void AddWidget(const bool WidgetStatus);
 
-	FORCEINLINE void	SetUpgradesToAdd(const TArray<FUpgradeCommunication> UpgradesAdded) { WeaponUpgrades = UpgradesAdded; }
+	FORCEINLINE void	SetUpgradesToAdd(const TArray<FUpgradeCommunication>& UpgradesAdded) { WeaponUpgrades = UpgradesAdded; }
 };

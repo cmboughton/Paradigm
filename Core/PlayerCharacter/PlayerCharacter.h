@@ -185,17 +185,18 @@ protected:
 
 public:
 
-	FORCEINLINE int					GetScore()					const { return Score; }
-	FORCEINLINE int					GetScoringModifier()		const { return ScoringModifier; }
-	FORCEINLINE float				GetHealth()					const { return CurrentHealth; }
-	FORCEINLINE float				GetMaxHealth()				const { return MaxHealth; }
-	FORCEINLINE float				GetCurrentUltimate()		const { return CurrentUltimateTracker; }
-	FORCEINLINE float				GetMaxUltimate()			const { return UltimateTracker; }
-	FORCEINLINE ECharacterState		GetCharacterState()			const { return CurrentState; }
-	FORCEINLINE TArray<FName>		GetWeaponsEquipped()		const { return WeaponsEquipped; }
-	FORCEINLINE int					GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
+	FORCEINLINE int						GetScore()					const { return Score; }
+	FORCEINLINE int						GetScoringModifier()		const { return ScoringModifier; }
+	FORCEINLINE float					GetHealth()					const { return CurrentHealth; }
+	FORCEINLINE float					GetMaxHealth()				const { return MaxHealth; }
+	FORCEINLINE float					GetCurrentUltimate()		const { return CurrentUltimateTracker; }
+	FORCEINLINE float					GetMaxUltimate()			const { return UltimateTracker; }
+	FORCEINLINE ECharacterState			GetCharacterState()			const { return CurrentState; }
+	FORCEINLINE TArray<FName>			GetWeaponsEquipped()		const { return WeaponsEquipped; }
+	FORCEINLINE int						GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
+	FORCEINLINE UStaticMeshComponent*	GetBaseModel()				const { return BaseModel; }
 
-	FORCEINLINE void				SetCharacterState			(const ECharacterState CharacterState)			{ CurrentState = CharacterState; }
+	FORCEINLINE void					SetCharacterState			(const ECharacterState CharacterState)			{ CurrentState = CharacterState; }
 
 #pragma endregion
 };

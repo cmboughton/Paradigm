@@ -16,7 +16,7 @@ void UWeaponUpgradeWidget::NativeConstruct()
 	AddWidget(true);
 }
 
-void UWeaponUpgradeWidget::PauseGame(const bool PauseStatus)
+void UWeaponUpgradeWidget::PauseGame(const bool PauseStatus) const
 {
 	UGameplayStatics::SetGamePaused(GetWorld(), PauseStatus);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(PauseStatus);
@@ -26,7 +26,7 @@ void UWeaponUpgradeWidget::AddWidget(const bool WidgetStatus)
 {
 	if(WidgetStatus)
 	{
-		for (FUpgradeCommunication WeaponUpgrade : WeaponUpgrades)
+		for (const FUpgradeCommunication WeaponUpgrade : WeaponUpgrades)
 		{
 			if (WeaponUpgradeCardWidget)
 			{
@@ -35,7 +35,7 @@ void UWeaponUpgradeWidget::AddWidget(const bool WidgetStatus)
 					WidgetInstance->SetUpgradeStats(WeaponUpgrade);
 					WidgetInstance->SetWidgetRef(this);
 					WidgetInstance->SetPadding(FMargin(10.f, 0.f, 10.f, 0.f));
-					WeaponCardsHB->AddChild(WidgetInstance);
+					WeaponCardsHb->AddChild(WidgetInstance);
 				}
 			}
 			//UE_LOGFMT(LogTemp, Warning, "Card Added");

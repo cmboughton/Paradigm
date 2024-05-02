@@ -137,6 +137,17 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
+		 // Calculate the movement direction as a 2D vector
+        FVector MovementDirection = MovementVector.Y * ForwardDirection + MovementVector.X * RightDirection;
+        MovementDirection.Z = 0.f; // Zero out Z component to ensure movement is on the XY plane
+
+        // Calculate the rotation angle based on the movement direction
+        FRotator DesiredRotation = MovementDirection.Rotation();
+
+		//UE_LOGFMT(LogTemp, Warning, "Rotation: {0} {1} {2}", DesiredRotation.Pitch, DesiredRotation.Yaw, DesiredRotation.Roll);
+        // Set the character's rotation to the desired rotation
+        BaseModel->SetRelativeRotation(DesiredRotation);
+		
 		// add movement 
 		AddMovementInput(ForwardDirection,	MovementVector.Y);
 		AddMovementInput(RightDirection,	MovementVector.X);

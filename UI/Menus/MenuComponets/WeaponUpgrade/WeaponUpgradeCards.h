@@ -40,6 +40,6 @@ protected:
 
 public:
 
-	FORCEINLINE void	SetUpgradeStats	(const FUpgradeCommunication StatsAdded)					{ WeaponUpgradeStats = StatsAdded; }
+	FORCEINLINE void	SetUpgradeStats	(const FUpgradeCommunication& StatsAdded)					{ WeaponUpgradeStats = StatsAdded; }
 	FORCEINLINE void	SetWidgetRef	(UWeaponUpgradeWidget* WidgetAdded)							{ WeaponUpgradeWidget = WidgetAdded; }
 };
