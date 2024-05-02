@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "../Data/Structs/Structs.h"
 #include "../Data/Enums/Enums.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "EnemyCharacter.generated.h"
 
 UCLASS()
-class PARADIGM_IQ_API AEnemyCharacter : public APawn, public IEnemyInterface
+class PARADIGM_IQ_API AEnemyCharacter : public ACharacter, public IEnemyInterface
 {
 	GENERATED_BODY()
 
