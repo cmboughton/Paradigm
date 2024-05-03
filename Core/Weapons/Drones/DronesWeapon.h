@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
+#include "NiagaraComponent.h"
 #include "DronesWeapon.generated.h"
 
 /**
@@ -13,6 +14,11 @@ UCLASS()
 class PARADIGM_IQ_API ADronesWeapon : public AWeapons
 {
 	GENERATED_BODY()
+
+public:
+
+	//UFUNCTION(BlueprintImplementableEvent)
+	//void SpawnNiagraSystem(FName ShipComponents);
 
 protected:
 
@@ -26,6 +32,12 @@ protected:
 
 	UPROPERTY()
 	TArray<FHitResult> ActorsHit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The static mesh that the drones will be."))
+	UStaticMesh* DroneMeshRef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Niagara System to spawn for the jets."))
+	UNiagaraSystem* JetNiagara;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the Drones should sweep or not."))
 	bool bShouldSweep = true;
@@ -50,4 +62,13 @@ protected:
 
 	UPROPERTY()
 	float DroneDelayTracker = 0.f;
+
+	UPROPERTY()
+	bool bSetUpDrones = true;
+
+	UPROPERTY()
+	TArray<UStaticMeshComponent*> SpawnedDrones;
+
+	UPROPERTY()
+	TArray<UNiagaraComponent*> SpawnedJets;
 };

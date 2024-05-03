@@ -124,7 +124,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
         MovementDirection.Z = 0.f; // Zero out Z component to ensure movement is on the XY plane
 
         // Calculate the rotation angle based on the movement direction
-        FRotator DesiredRotation = MovementDirection.Rotation();
+        FRotator DesiredRotation = MovementDirection.Rotation() + FRotator(0.f, -90.f, 0.f);
 
 		// Calculate the new position of the pickup using linear interpolation
 		const FRotator NewRotation = FMath::Lerp(BaseModel->GetRelativeRotation(),DesiredRotation, .1f);

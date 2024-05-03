@@ -3,9 +3,63 @@
 
 #include "DronesWeapon.h"
 
+#include "Kismet/KismetMathLibrary.h"
+
+
 void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
+
+	if(bSetUpDrones)
+	{
+		SpawnedDrones.Empty();
+		for(int i = 0; i < TriggerAmount; i++)
+		{
+			FName DroneName = FName(*FString("DroneMesh").Append(FString::SanitizeFloat(i)));
+			if (UStaticMeshComponent* DroneMesh = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass(), DroneName))
+			{
+				DroneMesh->RegisterComponent();
+				DroneMesh->CreationMethod = EComponentCreationMethod::Instance;
+				if (DroneMeshRef)
+				{
+					DroneMesh->SetStaticMesh(DroneMeshRef);
+					DroneMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				}
+				SpawnedDrones.Add(DroneMesh);
+			}
+		}
+		SpawnedJets.Empty();
+		int JetNameTracker = 0;
+		for (UStaticMeshComponent* SpawnedDrone : SpawnedDrones)
+		{
+			int counter = 0;
+			TArray<FName>DroneSocketNames = SpawnedDrone->GetAllSocketNames();
+			for (const FName DroneSocketName : DroneSocketNames)
+			{
+				counter++;
+				FName SocketName = FName(*FString("JetSocket").Append(FString::FromInt(counter)));
+				//UE_LOGFMT(LogTemp, Warning, "Socket: {0}", SocketName);
+				if (SpawnedDrone->DoesSocketExist(SocketName))
+				{
+					if (UNiagaraComponent* NiagaraComponent = NewObject<UNiagaraComponent>(this, UNiagaraComponent::StaticClass(), FName(*FString("Jet").Append(FString::FromInt(JetNameTracker)))))
+					{
+						NiagaraComponent->RegisterComponent();
+						NiagaraComponent->CreationMethod = EComponentCreationMethod::Instance;
+						//UE_LOGFMT(LogTemp, Warning, "NiagraSpawned: {0}", FName(*FString("Jet") + SocketName.ToString()));
+						if(NiagaraComponent)
+						{
+							NiagaraComponent->SetAsset(JetNiagara);
+							NiagaraComponent->AttachToComponent(SpawnedDrone, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+							NiagaraComponent->Activate();
+							SpawnedJets.Add(NiagaraComponent);
+						}
+					}
+				}
+				JetNameTracker++;
+			}
+		}
+		bSetUpDrones = false;
+	}
 
 	ApplyDamage(ActorsHit);
 	
@@ -22,40 +76,100 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 				RadialDistance += DeltaTime * 100;
 				FVector EndLocation = StartLocation + NewLaserRot.Vector() * RadialDistance;
 				TArray<FHitResult> ActiveActorsHit = SphereTrace(EndLocation, EndLocation , AffectRadius);
+				if(SpawnedDrones.IsValidIndex(i))
+				{
+					SpawnedDrones[i]->SetWorldLocation(EndLocation);
+				}
 				ActorsHit.Append(ActiveActorsHit);
+				for (UStaticMeshComponent* SpawnedDrone : SpawnedDrones)
+				{
+					FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(SpawnedDrone->GetComponentLocation(), this->GetActorLocation());
+					LookAtRotation.Yaw += 180.f;
+					LookAtRotation.Normalize();
+
+					constexpr float LerpSpeed = 1.0f;
+					const FRotator LerpedRotation = FMath::Lerp(SpawnedDrone->GetRelativeRotation(), LookAtRotation, DeltaTime * LerpSpeed);
+					SpawnedDrone->SetRelativeRotation(LerpedRotation);
+				}
 			}
 			else
 			{
 				FVector EndLocation = StartLocation + NewLaserRot.Vector() * RadialDistance;
 				TArray<FHitResult> ActiveActorsHit = SphereTrace(EndLocation, EndLocation, AffectRadius);
+				if (SpawnedDrones.IsValidIndex(i))
+				{
+					SpawnedDrones[i]->SetWorldLocation(EndLocation);
+				}
 				ActorsHit.Append(ActiveActorsHit);
+				for (UStaticMeshComponent* SpawnedDrone : SpawnedDrones)
+				{
+					FVector DroneLocation = SpawnedDrone->GetComponentLocation();
+					FVector VectorToDrone = DroneLocation - this->GetActorLocation();
+					FVector TangentVector(-VectorToDrone.Y, VectorToDrone.X, 0.0f);
+					TangentVector.Normalize();
+					FRotator Rotation = TangentVector.Rotation();
+	
+					constexpr float LerpSpeed = 1.0f;
+					const FRotator LerpedRotation = FMath::Lerp(SpawnedDrone->GetRelativeRotation(), Rotation, DeltaTime * LerpSpeed);
+					SpawnedDrone->SetRelativeRotation(LerpedRotation);
+				}
 			}
 			//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", FireRate);
 		}
+		
 	}
 	else
 	{
-		for (int i = 0; i < TriggerAmount; i++)
+		if (RadialDistance > 0)
 		{
-			FRotator NewLaserRot = FRotator(0.f, (DroneRot.Yaw * (i + 1)), 0.f) + SweepTracker;
-			FVector StartLocation = this->GetActorLocation();
-			if (RadialDistance > 0)
+			for (int i = 0; i < TriggerAmount; i++)
 			{
+				FRotator NewLaserRot = FRotator(0.f, (DroneRot.Yaw * (i + 1)), 0.f) + SweepTracker;
+				FVector StartLocation = this->GetActorLocation();
 				RadialDistance -= DeltaTime * 100;
 				FVector EndLocation = StartLocation + NewLaserRot.Vector() * RadialDistance;
 				TArray<FHitResult> ActiveActorsHit = SphereTrace(EndLocation, EndLocation, AffectRadius);
+				if (SpawnedDrones.IsValidIndex(i))
+				{
+					SpawnedDrones[i]->SetWorldLocation(EndLocation);
+				}
 				ActorsHit.Append(ActiveActorsHit);
+				for (UStaticMeshComponent* SpawnedDrone : SpawnedDrones)
+				{
+					FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(SpawnedDrone->GetComponentLocation(), this->GetActorLocation());
+					LookAtRotation.Normalize();
+
+					constexpr float LerpSpeed = 1.0f;
+					const FRotator LerpedRotation = FMath::Lerp(SpawnedDrone->GetRelativeRotation(), LookAtRotation, DeltaTime * LerpSpeed);
+					SpawnedDrone->SetRelativeRotation(LerpedRotation);
+				}
 			}
-			else
-			{
-				bIsExpanding = true;
-				DroneDurationTracker = 0.f;
-				FireRateTracker = FireRate;
-				SweepTracker.Yaw = 0.f;
-				RadialDistance = 0.f;
-			}
-			//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", FireRate);
 		}
+		else
+		{
+			bSetUpDrones = true;
+			bIsExpanding = true;
+			DroneDurationTracker = 0.f;
+			FireRateTracker = FireRate;
+			SweepTracker.Yaw = 0.f;
+			RadialDistance = 0.f;
+			for (UStaticMeshComponent* SpawnedDrone : SpawnedDrones)
+			{
+				if(SpawnedDrone)
+				{
+					SpawnedDrone->DestroyComponent();
+				}
+			}
+			for (UNiagaraComponent* SpawnedJet : SpawnedJets)
+			{
+				if(SpawnedJet)
+				{
+					SpawnedJet->Deactivate();
+				}
+			}
+		}
+		//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", FireRate);
+		
 	}
 
 
@@ -70,7 +184,6 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 				DroneDurationTracker += DeltaTime;
 				//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", SweepTracker.Yaw);
 			}
-		
 			else
 			{
 				bIsExpanding = false;
