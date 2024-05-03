@@ -22,7 +22,7 @@ void APlasmaCannon::WeaponTriggered(const float DeltaTime)
 		{
 			if(bIsPlasmaDelay)
 			{
-				SelectedEnemy = FindClosestEnemy();
+				SelectedEnemy = FindClosestEnemy(this->GetActorLocation());
 
 				if (SelectedEnemy)
 				{
@@ -50,7 +50,7 @@ void APlasmaCannon::WeaponTriggered(const float DeltaTime)
 		{
 			if (bIsPlasmaDelay)
 			{
-				SelectedEnemies = FindClosestEnemies(1000);
+				SelectedEnemies = FindClosestEnemies(1000, this->GetActorLocation());
 
 				if (!SelectedEnemies.IsEmpty())
 				{

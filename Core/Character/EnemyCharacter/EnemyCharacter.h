@@ -3,46 +3,30 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "../Data/Structs/Structs.h"
-#include "../Data/Enums/Enums.h"
+#include "Paradigm_IQ/Core/Data/Structs/Structs.h"
+#include "Paradigm_IQ/Core/Data/Enums/Enums.h"
+#include "Paradigm_IQ/Core/Character/BaseCharacter.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "EnemyCharacter.generated.h"
 
 UCLASS()
-class PARADIGM_IQ_API AEnemyCharacter : public ACharacter, public IEnemyInterface
+class PARADIGM_IQ_API AEnemyCharacter : public ABaseCharacter, public IEnemyInterface
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this pawn's properties
+protected:
+
 	AEnemyCharacter();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Model, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* BaseModel;
-
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)override;
-
-	UFUNCTION()
-	float DealDamage(const float InHealth, const float DamageValue);
-
-	UFUNCTION()
-	void Death();
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void ChangeCharacterState_Implementation(const ECharacterState CharacterState) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Health of this actor."))
-	float Health = 75.f;
+	virtual void Death() override;
 
-	UPROPERTY()
-	float CurrentHealth = 0.f;
-
-	UPROPERTY()
-	float DamageImmunity = 0.1f;
+protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Score of this actor."))
 	float Score = 75.f;
@@ -59,20 +43,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance to drop a upgrade collectable. Rolls between 0 and 1."))
 	float UpgradeDropChance = 0.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The current state the character is in."));
-	ECharacterState CurrentCharacterState = ECharacterState::Normal;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|References", meta = (ToolTip = "Blueprint ref to attract orb blueprint."))
 	TSubclassOf<class AAttractOrb> AttractOrbCollectable = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance to drop a Attract Orb collectable. Rolls between 0 and 1."))
 	float AttractOrbDropChance = 0.f;
-
-public:	
-	// Called every frame
-	virtual void Tick(const float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

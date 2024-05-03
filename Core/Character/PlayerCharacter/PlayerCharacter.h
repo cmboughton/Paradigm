@@ -3,15 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "../Data/Structs/Structs.h"
+#include "Paradigm_IQ/Core/Character/BaseCharacter.h"
 #include "PlayerCharacter.generated.h"
 
 
 class AUltimateAbility;
 
 UCLASS()
-class PARADIGM_IQ_API APlayerCharacter : public ACharacter
+class PARADIGM_IQ_API APlayerCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -24,8 +23,6 @@ class PARADIGM_IQ_API APlayerCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Model, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* BaseModel;
 
 #pragma endregion
 
@@ -58,8 +55,6 @@ public:
 	UFUNCTION()
 	void AddScore(const float AddedScore);
 
-	UFUNCTION()
-	void UpdateMovementSpeed(const float Speed);
 
 	UFUNCTION()
 	void AddWeapon(const FName WeaponName);
@@ -91,15 +86,6 @@ protected:
 	UFUNCTION()
 	void CollectablePickUp();
 
-	UFUNCTION()
-	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
-
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)override;
-
-	UFUNCTION()
-	void Death();
-
-
 
 #pragma endregion
 
@@ -108,19 +94,11 @@ protected:
 protected:
 
 	UPROPERTY()
-	float CurrentHealth;
-
-	UPROPERTY()
-	float MaxHealth;
-
-	UPROPERTY()
 	TArray<FName> WeaponsEquipped;
 
 	UPROPERTY()
 	int MaxWeaponsEquipped = 6;
 
-	UPROPERTY()
-	ECharacterState CurrentState = ECharacterState::Normal;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
 	TSoftObjectPtr<UDataTable> ShipDataTable;
@@ -133,9 +111,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	int Score = 0;
-
-	UPROPERTY(BlueprintReadOnly)
-	int ScoringModifier = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The highest Score Modifer the player can achieve."))
 	int MaxScoringModifier = 10;
@@ -187,16 +162,13 @@ public:
 
 	FORCEINLINE int						GetScore()					const { return Score; }
 	FORCEINLINE int						GetScoringModifier()		const { return ScoringModifier; }
-	FORCEINLINE float					GetHealth()					const { return CurrentHealth; }
-	FORCEINLINE float					GetMaxHealth()				const { return MaxHealth; }
 	FORCEINLINE float					GetCurrentUltimate()		const { return CurrentUltimateTracker; }
 	FORCEINLINE float					GetMaxUltimate()			const { return UltimateTracker; }
-	FORCEINLINE ECharacterState			GetCharacterState()			const { return CurrentState; }
 	FORCEINLINE TArray<FName>			GetWeaponsEquipped()		const { return WeaponsEquipped; }
 	FORCEINLINE int						GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
-	FORCEINLINE UStaticMeshComponent*	GetBaseModel()				const { return BaseModel; }
 
-	FORCEINLINE void					SetCharacterState			(const ECharacterState CharacterState)			{ CurrentState = CharacterState; }
+
+	
 
 #pragma endregion
 };

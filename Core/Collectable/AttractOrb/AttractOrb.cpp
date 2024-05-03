@@ -3,6 +3,7 @@
 
 #include "AttractOrb.h"
 
+#include "PropertyEditorModule.h"
 #include "Kismet/GameplayStatics.h"
 #include "Logging/StructuredLog.h"
 
@@ -23,8 +24,9 @@ void AAttractOrb::Tick(float DeltaTime)
 			// Set the new position of the pickup
 			SetActorLocation(NewPosition);
 
-			if (FMath::Sqrt(FVector::DistSquared(PlayerCharacter->GetActorLocation(), this->GetActorLocation())) <= 100)
+			if (FMath::Sqrt(FVector::DistSquared(PlayerCharacter->GetActorLocation(), this->GetActorLocation())) <= 50)
 			{
+				BaseModel->SetVisibility(false);
 				const TSubclassOf<ACollectable> CollectableActors = ACollectable::StaticClass();
 				UGameplayStatics::GetAllActorsOfClass(GetWorld(), CollectableActors, ActorsFound);
 
@@ -53,7 +55,7 @@ void AAttractOrb::Tick(float DeltaTime)
 		}
 		else
 		{
-			PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		}
 		/*for (AActor* Actor : ActorsFound)
 		{

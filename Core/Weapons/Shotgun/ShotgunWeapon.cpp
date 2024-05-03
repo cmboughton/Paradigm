@@ -9,7 +9,7 @@ void AShotgunWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
 
-	const AActor* SelectedActor = FindClosestEnemy();
+	const AActor* SelectedActor = FindClosestEnemy(this->GetActorLocation());
 
 	const FRotator RandomDirection = FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f);
 

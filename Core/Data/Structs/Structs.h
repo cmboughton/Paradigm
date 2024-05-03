@@ -76,7 +76,7 @@ struct FUpgradeManager
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	AWeapons* WeaponReference;
+	TSoftObjectPtr<AWeapons> WeaponReference;
 
 	UPROPERTY()
 	TArray<FWeaponUpgrades> WeaponUpgrades;
@@ -97,7 +97,7 @@ struct FUpgradeCommunication
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	AWeapons* WeaponReference;
+	TSoftObjectPtr<AWeapons> WeaponReference;
 
 	UPROPERTY()
 	FWeaponUpgrades WeaponUpgrades;

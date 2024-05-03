@@ -7,7 +7,7 @@
 #include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
-#include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "Logging/StructuredLog.h"
 #include "UltimateAbility.generated.h"
 

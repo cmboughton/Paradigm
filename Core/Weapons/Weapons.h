@@ -17,14 +17,49 @@ UCLASS()
 class PARADIGM_IQ_API AWeapons : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AWeapons();
 
 protected:
-	// Called when the game starts or when spawned
+#pragma region Protected Functions
+
+	AWeapons();
+
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	virtual void WeaponTriggered(const float DeltaTime);
+
+	UFUNCTION()
+	TArray<AActor*> FindClosestEnemies(const float DistanceCheck, const FVector& Origin) const;
+
+	UFUNCTION()
+	virtual AActor* FindClosestEnemy(const FVector& Origin) const;
+
+	UFUNCTION()
+	virtual TArray<FHitResult> LineTrace(const FVector ActorStartLocation, const FVector ActorEndLocation);
+
+	UFUNCTION()
+	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
+
+	UFUNCTION()
+	void ApplyDamage(const TArray<FHitResult>& AllActorsHit);
+
+	UFUNCTION()
+	TSubclassOf<AProjectile> SpawnProjectile(const FTransform& Transform) const;
+
+	UFUNCTION()
+	virtual void SpecialUpgrade1();
+
+	UFUNCTION()
+	virtual void SpecialUpgrade2();
+
+	UFUNCTION()
+	virtual void SpecialUpgrade3();
+
+#pragma endregion
+
+#pragma region Protected Variables
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
 	TSoftObjectPtr<UDataTable> WeaponsDataTable;
@@ -74,43 +109,20 @@ protected:
 	UPROPERTY()
 	bool bSpecialUpgrade3Proj = false;
 
-	UFUNCTION()
-	virtual void WeaponTriggered(const float DeltaTime);
-
-	UFUNCTION()
-	TArray<AActor*> FindClosestEnemies(const float DistanceCheck);
-
-	UFUNCTION()
-	AActor* FindClosestEnemy();
-
-	UFUNCTION()
-	virtual TArray<FHitResult> LineTrace(const FVector ActorStartLocation, const FVector ActorEndLocation);
-
-	UFUNCTION()
-	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
-
-	UFUNCTION()
-	void ApplyDamage(const TArray<FHitResult> AllActorsHit);
-
-	UFUNCTION()
-	TSubclassOf<AProjectile> SpawnProjectile(FTransform Transform);
-
-	UFUNCTION()
-	virtual void SpecialUpgrade1();
-
-	UFUNCTION()
-	virtual void SpecialUpgrade2();
-
-	UFUNCTION()
-	virtual void SpecialUpgrade3();
+#pragma endregion
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+#pragma region Public Functions
 
 	UFUNCTION()
-	void UpgradeWeapon(FWeaponUpgrades WeaponUpgrades);
+	void UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades);
+
+#pragma endregion
+
+#pragma region Public Variables
 
 	FORCEINLINE AActor*						GetPlayerCharacter()			const { return PlayerCharacter; }
 	FORCEINLINE TSoftObjectPtr<UDataTable>	GetWeaponsDataTable()			const { return WeaponsDataTable; }
+
+#pragma endregion
 };

@@ -114,3 +114,21 @@ struct FWeaponsDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The upgrades that this weapon can have."))
 	TArray<FWeaponUpgrades> WeaponUpgrades;
 };
+
+USTRUCT(BlueprintType)
+struct FPassivesDataTable : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The name of the Passive."))
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The description of the Passive."), meta = (MultiLine = true))
+	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The weight of this Passive to roll when called. The weight is caluculated by adding all upgrades to a pool and rolling."))
+	float RollWeight = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The upgrades that this Passive."))
+	TArray<FWeaponUpgrades> WeaponUpgrades;
+};

@@ -2,7 +2,6 @@
 
 
 #include "EnemyCharacter.h"
-#include "Logging/StructuredLog.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Collectable/Experience/Experience.h"
@@ -15,9 +14,6 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	BaseModel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Model"));
-	BaseModel->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -25,50 +21,49 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentHealth = Health;
+	CurrentHealth = MaxHealth;
 
 }
 
 float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if(DamageImmunity <= 0)
+	if (DamageImmunity <= 0)
 	{
-		CurrentHealth = DealDamage(CurrentHealth, DamageAmount);
-		//UE_LOGFMT(LogTemp, Warning, "Remaing Health: {0}", CurrentHealth);
-		if (DamageCauser)
+		if (CurrentState != ECharacterState::Invulnerable)
 		{
-			float DamageDoneBack = 0.f;
-			if(CurrentHealth > 0)
+			CurrentHealth -= DamageAmount;
+
+			if (DamageCauser)
 			{
-				DamageDoneBack = DamageAmount;
+				float DamageDoneBack = 0.f;
+				if(CurrentHealth > 0)
+				{
+					DamageDoneBack = DamageAmount;
+				}
+				else
+				{
+					DamageDoneBack = DamageAmount + CurrentHealth;
+				}
+				const FHitResult Hit;
+				const FVector ActorLocation = this->GetActorLocation();
+				const FPointDamageEvent DamageBackEvent(DamageDoneBack, Hit, ActorLocation, nullptr);
+				DamageCauser->TakeDamage(DamageDoneBack, DamageBackEvent, GetInstigatorController(), this);
+				//UE_LOGFMT(LogTemp, Warning, "Damage Done Back: {0}", DamageDoneBack);
 			}
-			else
+			if (CurrentHealth <= 0)
 			{
-				DamageDoneBack = DamageAmount + CurrentHealth;
+				Death();
 			}
-			const FHitResult Hit;
-			const FVector ActorLocation = this->GetActorLocation();
-			const FPointDamageEvent DamageBackEvent(DamageDoneBack, Hit, ActorLocation, nullptr);
-			DamageCauser->TakeDamage(DamageDoneBack, DamageBackEvent, GetInstigatorController(), this);
-			//UE_LOGFMT(LogTemp, Warning, "Damage Done Back: {0}", DamageDoneBack);
-		}
-		if (CurrentHealth <= 0)
-		{
-			Death();
 		}
 		DamageImmunity = 0.1f;
 	}
-
 	return CurrentHealth;
-}
-
-float AEnemyCharacter::DealDamage(const float InHealth, const float DamageValue)
-{
-	return InHealth - DamageValue;
 }
 
 void AEnemyCharacter::Death()
 {
+	Super::Death();
+
 	if(APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
 		PlayerCharacter->AddScore(Score);
@@ -110,25 +105,7 @@ void AEnemyCharacter::Death()
 
 void AEnemyCharacter::ChangeCharacterState_Implementation(const ECharacterState CharacterState)
 {
-	CurrentCharacterState = CharacterState;
+	CurrentState = CharacterState;
 	UE_LOGFMT(LogTemp, Warning, "Character State");
 	Death();
 }
-
-// Called every frame
-void AEnemyCharacter::Tick(const float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if(DamageImmunity > 0)
-	{
-		DamageImmunity -= DeltaTime;
-	}
-}
-
-// Called to bind functionality to input
-void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-

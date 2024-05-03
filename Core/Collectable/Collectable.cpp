@@ -26,7 +26,7 @@ void ACollectable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	BaseModel->OnComponentHit.AddDynamic(this, &ACollectable::HitMesh);
 
@@ -38,13 +38,13 @@ void ACollectable::BeginPlay()
 
 void ACollectable::PickUp_Implementation(APlayerCharacter* PlayerCharacterRef)
 {
-	Collected(PlayerCharacterRef);
+	isCollected = true;
+	BaseModel->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	
 }
 
 void ACollectable::Collected(APlayerCharacter* PlayerCharacterRef)
 {
-	isCollected = true;
-	BaseModel->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 }
 
 void ACollectable::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -73,12 +73,13 @@ void ACollectable::Tick(float DeltaTime)
 
 			if (FMath::Sqrt(FVector::DistSquared(PlayerCharacter->GetActorLocation(), this->GetActorLocation())) <= 100)
 			{
+				Collected(PlayerCharacter);
 				this->Destroy();
 			}
 		}
 		else
 		{
-			PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		}
 	}
 }

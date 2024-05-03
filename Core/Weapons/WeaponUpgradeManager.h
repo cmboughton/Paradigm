@@ -8,7 +8,7 @@
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/UI/Menus/MenuComponets/WeaponUpgrade/WeaponUpgradeWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "WeaponUpgradeManager.generated.h"
 
 

@@ -14,7 +14,7 @@ void AProjectileWeapon::WeaponTriggered(const float DeltaTime)
 	{
 		BulletTracker++;
 		BulletDelayTracker = (FireRate / TriggerAmount) * 0.5;
-		const TArray<AActor*> SelectedEnemy = FindClosestEnemies(EnemyDistanceCheck);
+		const TArray<AActor*> SelectedEnemy = FindClosestEnemies(EnemyDistanceCheck, this->GetActorLocation());
 		if (!SelectedEnemy.IsEmpty())
 		{
 			const int randRoll = FMath::RandRange(0, SelectedEnemy.Num() - 1);

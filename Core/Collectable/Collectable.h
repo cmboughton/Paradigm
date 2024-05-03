@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
-#include "Paradigm_IQ/Core/PlayerCharacter/PlayerCharacter.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "Collectable.generated.h"
 
 UCLASS()
@@ -39,7 +39,7 @@ protected:
 	bool isCollected = false;
 
 	UPROPERTY()
-	ACharacter* PlayerCharacter;
+	APlayerCharacter* PlayerCharacter;
 
 public:	
 	// Called every frame

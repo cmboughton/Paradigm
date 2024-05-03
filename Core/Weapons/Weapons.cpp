@@ -5,7 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
-#include "Paradigm_IQ/Core/EnemyCharacter/EnemyCharacter.h"
+#include "Paradigm_IQ/Core/Character/EnemyCharacter/EnemyCharacter.h"
 
 struct FWeaponsDataTable;
 
@@ -86,7 +86,7 @@ void AWeapons::Tick(float DeltaTime)
 	}
 }
 
-void AWeapons::UpgradeWeapon(FWeaponUpgrades WeaponUpgrades)
+void AWeapons::UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades)
 {
 	switch (WeaponUpgrades.WeaponUpgrade)
 	{
@@ -127,7 +127,7 @@ void AWeapons::UpgradeWeapon(FWeaponUpgrades WeaponUpgrades)
 	}
 }
 
-TArray<AActor*> AWeapons::FindClosestEnemies(const float DistanceCheck)
+TArray<AActor*> AWeapons::FindClosestEnemies(const float DistanceCheck, const FVector& Origin) const
 {
 	TArray<AActor*> EnemiesFound;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), EnemiesFound);
@@ -136,7 +136,7 @@ TArray<AActor*> AWeapons::FindClosestEnemies(const float DistanceCheck)
 	{
 		for (AActor* EnemiesDetected : EnemiesFound)
 		{
-			if (FMath::Sqrt(FVector::DistSquared(EnemiesDetected->GetActorLocation(), this->GetActorLocation())) <= DistanceCheck)
+			if (FMath::Sqrt(FVector::DistSquared(EnemiesDetected->GetActorLocation(),Origin)) <= DistanceCheck)
 			{
 				ClosestEnemy.Add(EnemiesDetected);
 			}
@@ -145,7 +145,7 @@ TArray<AActor*> AWeapons::FindClosestEnemies(const float DistanceCheck)
 	return ClosestEnemy;
 }
 
-AActor* AWeapons::FindClosestEnemy()
+AActor* AWeapons::FindClosestEnemy(const FVector& Origin) const
 {
 	TArray<AActor*> EnemiesFound;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), EnemiesFound);
@@ -156,7 +156,7 @@ AActor* AWeapons::FindClosestEnemy()
 		{
 			if(ClosestEnemy)
 			{
-				if (FMath::Sqrt(FVector::DistSquared(EnemiesDetected->GetActorLocation(), this->GetActorLocation())) < FMath::Sqrt(FVector::DistSquared(ClosestEnemy->GetActorLocation(), this->GetActorLocation())))
+				if (FMath::Sqrt(FVector::DistSquared(EnemiesDetected->GetActorLocation(), Origin)) < FMath::Sqrt(FVector::DistSquared(ClosestEnemy->GetActorLocation(), Origin)))
 				{
 					ClosestEnemy = EnemiesDetected;
 				}
@@ -211,7 +211,7 @@ TArray<FHitResult> AWeapons::SphereTrace(const FVector ActorStartLocation, const
 	return TArray<FHitResult>(AllActorsHit);
 }
 
-void AWeapons::ApplyDamage(const TArray<FHitResult> AllActorsHit)
+void AWeapons::ApplyDamage(const TArray<FHitResult>& AllActorsHit)
 {
 	if(!AllActorsHit.IsEmpty())
 	{
@@ -231,7 +231,7 @@ void AWeapons::ApplyDamage(const TArray<FHitResult> AllActorsHit)
 	}
 }
 
-TSubclassOf<AProjectile> AWeapons::SpawnProjectile(FTransform Transform)
+TSubclassOf<AProjectile> AWeapons::SpawnProjectile(const FTransform& Transform) const
 {
 	if (Projectile)
 	{

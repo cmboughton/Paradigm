@@ -46,5 +46,8 @@ protected:
 	FRotator SweepTracker;
 
 	UPROPERTY()
+	bool bIsExpanding = true;
+
+	UPROPERTY()
 	float DroneDelayTracker = 0.f;
 };

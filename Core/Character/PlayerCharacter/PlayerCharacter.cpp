@@ -9,38 +9,25 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/StaticMeshComponent.h"
 
 #include "Paradigm_IQ/Core/Ultimate/UltimateAbility.h"
 #include "../EnemyCharacter/EnemyCharacter.h"
 
 #include "GameFramework/Controller.h"
-#include "Kismet/GameplayStatics.h"
-#include "Logging/StructuredLog.h"
 
-#include "../Data/DataTables/DataTables.h"
-#include "../Data/Interfaces/CollectableInterface.h"
+#include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
+#include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 
 
-
-// Sets default values
 APlayerCharacter::APlayerCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
-	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	// Create a camera boom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bInheritPitch = false;
@@ -53,16 +40,13 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->CameraLagSpeed = 1.f;
 	CameraBoom->bDoCollisionTest = false;
 
-	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->bUsePawnControlRotation = false;
 
-	BaseModel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Model"));
-	BaseModel->SetupAttachment(RootComponent);
+
 }
 
-// Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -79,7 +63,6 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
-// Called every frame
 void APlayerCharacter::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -103,7 +86,6 @@ void APlayerCharacter::Tick(const float DeltaTime)
 	}
 }
 
-// Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -144,9 +126,10 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
         // Calculate the rotation angle based on the movement direction
         FRotator DesiredRotation = MovementDirection.Rotation();
 
-		//UE_LOGFMT(LogTemp, Warning, "Rotation: {0} {1} {2}", DesiredRotation.Pitch, DesiredRotation.Yaw, DesiredRotation.Roll);
-        // Set the character's rotation to the desired rotation
-        BaseModel->SetRelativeRotation(DesiredRotation);
+		// Calculate the new position of the pickup using linear interpolation
+		const FRotator NewRotation = FMath::Lerp(BaseModel->GetRelativeRotation(),DesiredRotation, .1f);
+
+        BaseModel->SetRelativeRotation(NewRotation);
 		
 		// add movement 
 		AddMovementInput(ForwardDirection,	MovementVector.Y);
@@ -162,7 +145,6 @@ void APlayerCharacter::Ultimate()
 		{
 			CurrentUltimateTracker = 0.f;
 			AUltimateAbility* UltimateSpawned = GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
-			//UltimateSpawned->UltimateAbilityStart();
 			UE_LOGFMT(LogTemp, Warning, "Ultimate Ability Ref Spawned: {0}", UltimateAbilityRef->GetName());
 		}
 		else
@@ -230,36 +212,10 @@ void APlayerCharacter::AddCollectable(struct FExperienceOrb Experience)
 	}
 }
 
-TArray<FHitResult> APlayerCharacter::SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius)
-{
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Init(this, 1);
-	TArray<FHitResult> AllActorsHit;
-	UKismetSystemLibrary::SphereTraceMulti(GetWorld(),
-		ActorStartLocation,
-		ActorEndLocation,
-		TraceRadius,
-		ETraceTypeQuery::TraceTypeQuery1,
-		false,
-		ActorsToIgnore,
-		EDrawDebugTrace::None,
-		AllActorsHit,
-		true,
-		FLinearColor::Red,
-		FLinearColor::Green,
-		5.f);
-	return TArray<FHitResult>(AllActorsHit);
-}
-
 void APlayerCharacter::AddScore(const float AddedScore)
 {
 	Score += (AddedScore * ScoringModifier);
 	UE_LOGFMT(LogTemp, Warning, "Score: {0}", Score);
-}
-
-void APlayerCharacter::UpdateMovementSpeed(const float Speed)
-{
-	GetCharacterMovement()->MaxWalkSpeed = Speed;
 }
 
 void APlayerCharacter::AddWeapon(const FName WeaponName)
@@ -277,24 +233,4 @@ void APlayerCharacter::AddWeapon(const FName WeaponName)
 			}
 		}
 	}
-}
-
-float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	if(CurrentState != ECharacterState::Invulnerable)
-	{
-		CurrentHealth -= DamageAmount;
-		ScoringModifier = 0;
-		if(CurrentHealth <= 0)
-		{
-			Death();
-		}
-	}
-	return CurrentHealth;
-}
-
-void APlayerCharacter::Death()
-{
-	CurrentState = ECharacterState::Death;
-	UE_LOGFMT(LogTemp, Warning, "You have Died");
 }
