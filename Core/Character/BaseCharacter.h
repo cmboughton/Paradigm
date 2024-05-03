@@ -14,14 +14,14 @@ class PARADIGM_IQ_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
-	// Sets default values for this character's properties
-	ABaseCharacter();
+public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Model, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* BaseModel;
 
 protected:
+
+	ABaseCharacter();
 
 	virtual void BeginPlay() override;
 
@@ -43,7 +43,7 @@ public:
 protected:
 
 	UPROPERTY()
-	float DamageImmunity = 0.1f;
+	float DamageImmunity = 0.f;
 
 	UPROPERTY()
 	ECharacterState CurrentState = ECharacterState::Normal;

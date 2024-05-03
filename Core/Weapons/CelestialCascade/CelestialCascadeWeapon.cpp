@@ -42,7 +42,8 @@ void ACelestialCascadeWeapon::WeaponTriggered(const float DeltaTime)
 			}
 			
 			FVector EndLoc = EnemyHit->GetActorLocation();
-			SphereTrace(StartLoc, EndLoc, 20);
+			SpawnLightingBP(StartLoc, EndLoc);
+			//SphereTrace(StartLoc, EndLoc, 20);
 			StartLoc = EnemyHit->GetActorLocation();
 		}
 	}

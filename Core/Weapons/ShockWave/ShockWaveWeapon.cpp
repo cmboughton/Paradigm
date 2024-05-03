@@ -7,8 +7,23 @@ void AShockWaveWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
 
-	TArray<FHitResult> ActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), AffectRadius);
-	ApplyDamage(ActorsHit);
+	if(bSpawnEmitter)
+	{
+		WeaponTriggeredBP();
+		bSpawnEmitter = false;
+	}
+	if(DamageDuration > 0)
+	{
+		TArray<FHitResult> ActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), AffectRadius);
+		ApplyDamage(ActorsHit);
+		DamageDuration -= DeltaTime;
+	}
+	else
+	{
+		FireRateTracker = FireRate;
+		DamageDuration = 10.f;
+		bSpawnEmitter = true;
+	}
 
 	//ShockWaveZone = AffectRadius * .35;
 

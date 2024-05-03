@@ -117,6 +117,10 @@ public:
 	UFUNCTION()
 	void UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades);
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void WeaponTriggeredBP();
+
 #pragma endregion
 
 #pragma region Public Variables

@@ -47,7 +47,6 @@ void AWeapons::BeginPlay()
 
 void AWeapons::WeaponTriggered(const float DeltaTime)
 {
-
 }
 
 // Called every frame

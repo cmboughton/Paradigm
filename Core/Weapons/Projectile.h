@@ -66,7 +66,7 @@ protected:
 	UPROPERTY()
 	float Damage = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float AffectRadius = 0.f;
 
 	UPROPERTY()

@@ -22,4 +22,9 @@ protected:
 
 	UPROPERTY()
 	TArray<AActor*> EnemiesToDamage;
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnLightingBP(const FVector StartLocation, const FVector EndLocation);
 };

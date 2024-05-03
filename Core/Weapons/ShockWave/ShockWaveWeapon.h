@@ -18,6 +18,12 @@ protected:
 
 	virtual void WeaponTriggered(const float DeltaTime) override;
 
+	UPROPERTY()
+	bool bSpawnEmitter = true;
+
+	UPROPERTY()
+	float DamageDuration = 10.f;
+
 	/*UPROPERTY()
 	float ShockWaveZone = 0.f;
 
