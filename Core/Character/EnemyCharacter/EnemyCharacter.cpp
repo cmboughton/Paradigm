@@ -84,23 +84,42 @@ void AEnemyCharacter::Death()
 			//UE_LOGFMT(LogTemp, Warning, "Actor Spawned: {0}", ExperienceOrbSpawn->GetName());
 		}
 	}
-	if(UpgradeDropChance  >= FMath::RandRange(0.f, 1.f))
+	if(CollectableLootTable.DropChance >= FMath::RandRange(0.f, 1.f))
 	{
-		if(WeaponUpgradeCollectable)
+		float RollRange = 0;
+		float CurrentRollTracker = 0.f;
+		for (const FCollectableRoll Collectable : CollectableLootTable.Collectables)
 		{
-			FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
-			GetWorld()->SpawnActor<AWeaponUpgradeCollectable>(WeaponUpgradeCollectable, XPSpawnTransform);
+			RollRange += Collectable.RollWeight;
 		}
-	}
-	if (AttractOrbDropChance >= FMath::RandRange(0.f, 1.f))
-	{
-		if (AttractOrbCollectable)
+
+		const float Roll = FMath::RandRange(0.f, RollRange);
+
+		for (const FCollectableRoll Collectable : CollectableLootTable.Collectables)
 		{
-			FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
-			GetWorld()->SpawnActor<AAttractOrb>(AttractOrbCollectable, XPSpawnTransform);
+			CurrentRollTracker += Collectable.RollWeight;
+			if (Roll <= CurrentRollTracker && Roll > CurrentRollTracker - Collectable.RollWeight)
+			{
+				if (TSubclassOf<ACollectable> CollectableRef = Collectable.Collectable.LoadSynchronous())
+				{
+					FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
+					GetWorld()->SpawnActor<ACollectable>(CollectableRef, XPSpawnTransform);
+				}
+			}
 		}
 	}
 	this->Destroy();
+}
+
+void AEnemyCharacter::UpdateStats(const float& GrowthModifier)
+{
+	CurrentHealth *= (1 + GrowthModifier);
+	MaxHealth *= (1 + GrowthModifier);
+	Score *= (1 + GrowthModifier);
+	UpdateMovementSpeed(GetCharacterMovement()->MaxWalkSpeed * (1 + GrowthModifier));
+	Damage *= (1 + GrowthModifier);
+	ExperienceStruct.Experience *= (1 + GrowthModifier);
+	ExperienceStruct.UltimateExperience *= (1 + GrowthModifier);
 }
 
 void AEnemyCharacter::ChangeCharacterState_Implementation(const ECharacterState CharacterState)

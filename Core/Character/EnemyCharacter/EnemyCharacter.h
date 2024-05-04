@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Score of this actor."))
 	float Score = 75.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Damage of this actor."))
+	float Damage = 75.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Experience and Ultimate experience that is dropped on death."))
 	struct FExperienceOrb ExperienceStruct;
 
@@ -49,4 +52,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance to drop a Attract Orb collectable. Rolls between 0 and 1."))
 	float AttractOrbDropChance = 0.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Collectables that can drop"))
+	FCollectableStruct CollectableLootTable;
+
+public:
+
+	UFUNCTION()
+	void UpdateStats(const float& GrowthModifier);
 };
