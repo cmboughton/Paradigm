@@ -109,9 +109,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
 	TSoftObjectPtr<UDataTable> WeaponsDataTable;
 
-	UPROPERTY(BlueprintReadOnly)
-	int Score = 0;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The highest Score Modifer the player can achieve."))
 	int MaxScoringModifier = 10;
 
@@ -160,15 +157,12 @@ protected:
 
 public:
 
-	FORCEINLINE int						GetScore()					const { return Score; }
 	FORCEINLINE int						GetScoringModifier()		const { return ScoringModifier; }
 	FORCEINLINE float					GetCurrentUltimate()		const { return CurrentUltimateTracker; }
 	FORCEINLINE float					GetMaxUltimate()			const { return UltimateTracker; }
 	FORCEINLINE TArray<FName>			GetWeaponsEquipped()		const { return WeaponsEquipped; }
 	FORCEINLINE int						GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
 
-
-	
 
 #pragma endregion
 };

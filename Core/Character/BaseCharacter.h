@@ -35,6 +35,9 @@ protected:
 	UFUNCTION()
 	virtual void Death();
 
+	UFUNCTION()
+	void SpawnActor(const TSubclassOf<AActor> ClassToSpawn, const FTransform& SpawnTransform) const;
+
 public:
 
 	UFUNCTION()
@@ -57,8 +60,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	int ScoringModifier = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Score of this actor."))
+	float Score = 0.f;
+
 public:	
 
+	FORCEINLINE int						GetScore()					const { return Score; }
 	FORCEINLINE float					GetHealth()					const { return CurrentHealth; }
 	FORCEINLINE float					GetMaxHealth()				const { return MaxHealth; }
 	FORCEINLINE ECharacterState			GetCharacterState()			const { return CurrentState; }

@@ -65,24 +65,6 @@ struct FUltimatesDataTable : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FEnemyStageSpawner : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Conditions", meta = (ToolTip = "The time(in seconds) until this group of enemies will spawn."))
-	float TimeCondition = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Conditions", meta = (ToolTip = "If the total points gained is higher than Points Condition then these enemies will spawn."))
-	float PointsCondition = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enemies", meta = (ToolTip = "The the spawn category these enemies fit into."))
-	EEnemyClass EnemyClassType = EEnemyClass::Normal;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enemies", meta = (ToolTip = "An array of the enemies that will be added to the spawning point if conditions are meet."))
-	TArray<FEnemyType> EnemyTypes;
-};
-
-USTRUCT(BlueprintType)
 struct FWeaponsDataTable : public FTableRowBase
 {
 	GENERATED_BODY()

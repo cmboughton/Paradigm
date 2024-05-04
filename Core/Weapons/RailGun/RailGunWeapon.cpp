@@ -13,7 +13,7 @@ void ARailGunWeapon::WeaponTriggered(const float DeltaTime)
 	{
 		BulletTracker++;
 		BulletDelayTracker = (FireRate / TriggerAmount) * 0.5;
-		FRotator PlayerRot = PlayerCharacterRef->GetBaseModel()->GetRelativeRotation();
+		FRotator PlayerRot = PlayerCharacterRef->GetBaseModel()->GetRelativeRotation() + FRotator(0.f, 90.f, 0.f);
 		FVector SpawnLocation = GetActorLocation() + PlayerRot.Vector();
 		const FTransform BulletSpawnLocation = FTransform(PlayerRot, SpawnLocation, FVector(1.f, 1.f, 1.f));
 		SpawnProjectile(BulletSpawnLocation);

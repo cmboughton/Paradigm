@@ -78,6 +78,11 @@ void ABaseCharacter::Death()
 	UE_LOGFMT(LogTemp, Warning, "{0} has Died.", this->GetName());
 }
 
+void ABaseCharacter::SpawnActor(const TSubclassOf<AActor> ClassToSpawn, const FTransform& SpawnTransform) const
+{
+	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
+}
+
 void ABaseCharacter::UpdateMovementSpeed(const float Speed) const
 {
 	GetCharacterMovement()->MaxWalkSpeed = Speed;

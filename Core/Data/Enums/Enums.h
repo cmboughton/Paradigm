@@ -23,13 +23,6 @@ enum class EEnemyClass : uint8
 };
 
 UENUM(BlueprintType)
-enum class ESpawnType : uint8
-{
-	RandomSpawn					UMETA(DisplayName = "Random Spawn"),
-	FixedSpawn					UMETA(DisplayName = "Fixed Spawn"),
-};
-
-UENUM(BlueprintType)
 enum class EDamageComType : uint8
 {
 	SphereOverlap				UMETA(DisplayName = "Sphere Overlap"),
@@ -62,4 +55,20 @@ enum class EUpgradeRarity : uint8
 	Basic						UMETA(DisplayName = "Basic"),
 	Prime						UMETA(DisplayName = "Prime"),
 	Cosmic						UMETA(DisplayName = "Cosmic"),
+};
+
+UENUM(BlueprintType)
+enum class EGrowthModifierType : uint8
+{
+	Linear						UMETA(DisplayName = "Linear"),
+	Exponential					UMETA(DisplayName = "Exponential"),
+};
+
+UENUM(BlueprintType)
+enum class ESpawnerType : uint8
+{
+	Corner						UMETA(DisplayName = "Corner"),
+	Edge						UMETA(DisplayName = "Edge"),
+	Scatter						UMETA(DisplayName = "Scatter"),
+	SpecificLocation			UMETA(DisplayName = "Specific Location"),
 };

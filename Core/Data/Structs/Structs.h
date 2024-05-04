@@ -96,13 +96,13 @@ struct FEnemySpawnerStartTriggers
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn based on the Overall Score."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn based on the Overall Score."))
 	int ScoreTrigger = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn based on the Score Modifier."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn based on the Score Modifier."))
 	int ScoreModifierTrigger = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. (In Seconds)"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. (In Seconds)"))
 	float GameTimeDuration = 0.f;
 };
 
@@ -111,13 +111,13 @@ struct FEnemySpawnerEndTriggers
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. It will track how many of these type of enemies spawned and will be used to compare to this variable."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. It will track how many of these type of enemies spawned and will be used to compare to this variable."))
 	int EnemiesSpawned = 0;
 
 	UPROPERTY()
 	int EnemiesSpawnedTracker = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. (In Seconds)"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. (In Seconds)"))
 	float GameTimeDuration = 0.f;
 };
 
@@ -134,6 +134,9 @@ struct FEnemySpawnerModifier
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Duration in seconds until these enemies spawn again."))
 	float SpawnRate = 5.f;
+
+	UPROPERTY()
+	float SpawnRateTracker = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "These Triggers are checked and if they are modified then they will need to be met to START the spawning of this enemy."))
 	FEnemySpawnerStartTriggers TriggersToStartSpawning;

@@ -26,10 +26,10 @@ protected:
 
 	virtual void Death() override;
 
-protected:
+	UFUNCTION()
+	void ApplyBackDamage(float DamageAmount, AActor* DamageCauser);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Score of this actor."))
-	float Score = 75.f;
+protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Damage of this actor."))
 	float Damage = 75.f;
