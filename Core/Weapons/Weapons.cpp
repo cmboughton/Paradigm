@@ -230,6 +230,18 @@ void AWeapons::ApplyDamage(const TArray<FHitResult>& AllActorsHit)
 	}
 }
 
+#pragma region Spawn Projectile
+/**
+ * @brief Spawns a projectile in the game world.
+ *
+ * This method creates a projectile of the type specified by the `Projectile` class member.
+ * The projectile is spawned at the location and orientation specified by the `Transform` parameter.
+ * The properties of the projectile (damage, effect radius, special upgrades, trigger amount) are set according to the corresponding properties of the weapon.
+ * The projectile is then added to the game world and begins its lifecycle.
+ *
+ * @param Transform The location and orientation at which to spawn the projectile.
+ * @return The class of the spawned projectile.
+ */
 TSubclassOf<AProjectile> AWeapons::SpawnProjectile(const FTransform& Transform) const
 {
 	if (Projectile)
@@ -245,6 +257,7 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(const FTransform& Transform) 
 	}
 	return Projectile;
 }
+#pragma endregion
 
 void AWeapons::SpecialUpgrade1()
 {
@@ -260,3 +273,37 @@ void AWeapons::SpecialUpgrade3()
 {
 	bSpecialUpgrade3Proj = true;
 }
+
+#pragma region Get Random Point Near Origin
+/**
+ * @brief Generates a random point near a given origin within a specified distance range.
+ *
+ * This function generates a random point in the vicinity of a given origin point.
+ * The distance of the generated point from the origin is within a specified minimum and maximum range.
+ *
+ * @param Origin The origin point from which the random point is to be generated.
+ * @param MinDistance The minimum distance from the origin that the generated point can be.
+ * @param MaxDistance The maximum distance from the origin that the generated point can be.
+ * @return Returns the generated random point as an FVector.
+ */
+FVector AWeapons::GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance)
+{
+	// Create a random stream for generating random values
+	const FRandomStream RandStream(FMath::Rand());
+
+	// Generate a random direction vector with a random magnitude
+	FVector RandomDirection = RandStream.VRand().GetSafeNormal() * RandStream.FRandRange(MinDistance, MaxDistance);
+
+	FVector RandomPoint = FVector(Origin.X + RandomDirection.X, Origin.Y + RandomDirection.Y, Origin.Z);
+
+	while (FVector::DistSquared(Origin, RandomPoint) < MinDistance * MinDistance)
+	{
+		RandomDirection = RandStream.VRand().GetSafeNormal() * RandStream.FRandRange(MinDistance, MaxDistance);
+		RandomPoint = FVector(Origin.X + RandomDirection.X, Origin.Y + RandomDirection.Y, Origin.Z);
+	}
+
+	//UE_LOGFMT(LogTemp, Warning, "Random EnemySpawned at {0}", RandomPoint.Z);
+	return RandomPoint;
+
+}
+#pragma endregion

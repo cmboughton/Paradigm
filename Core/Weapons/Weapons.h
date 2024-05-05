@@ -57,6 +57,9 @@ protected:
 	UFUNCTION()
 	virtual void SpecialUpgrade3();
 
+	UFUNCTION()
+	static FVector GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance);
+
 #pragma endregion
 
 #pragma region Protected Variables
