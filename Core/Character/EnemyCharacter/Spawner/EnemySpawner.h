@@ -21,6 +21,12 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	static FVector GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance);
+
+	UFUNCTION()
+	void SpawnEnemies(const int AmountToSpawn, const TSubclassOf<AEnemyCharacter> ActorToSpawn, const FTransform& SpawnTransform) const;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "Struct of the Enemy Spawner."))
 	FEnemySpawnerStruct EnemySpawner;
 
@@ -35,4 +41,7 @@ protected:
 
 	UPROPERTY()
 	APlayerCharacter* PlayerCharacter = nullptr;
+
+	UPROPERTY()
+	TArray<FSpawnPointsInfo> SpawnPoints;
 };

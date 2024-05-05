@@ -157,9 +157,13 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int						GetScoringModifier()		const { return ScoringModifier; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float					GetCurrentUltimate()		const { return CurrentUltimateTracker; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float					GetMaxUltimate()			const { return UltimateTracker; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE TArray<FName>			GetWeaponsEquipped()		const { return WeaponsEquipped; }
 	FORCEINLINE int						GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
 

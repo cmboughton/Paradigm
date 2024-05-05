@@ -65,8 +65,11 @@ protected:
 
 public:	
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int						GetScore()					const { return Score; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float					GetHealth()					const { return CurrentHealth; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float					GetMaxHealth()				const { return MaxHealth; }
 	FORCEINLINE ECharacterState			GetCharacterState()			const { return CurrentState; }
 	FORCEINLINE UStaticMeshComponent*	GetBaseModel()				const { return BaseModel; }

@@ -75,6 +75,9 @@ struct FWeaponsDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The description of the weapon."), meta = (MultiLine = true))
 	FString Description;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The Icon of the weapon."))
+	UTexture2D* WeaponIcon;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The weapon actor that is to be spawned."))
 	TSoftClassPtr<AWeapons> Weapon;
 

@@ -129,8 +129,14 @@ struct FEnemySpawnerModifier
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Reference to the blueprint of the enemy that will Spawn."))
 	TSoftClassPtr<AEnemyCharacter> EnemyReference = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClamMin = 1), meta = (ToolTip = "The amount of enemies that will spawn."))
+	int SpawnAmount = 1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "How the enemies should spawn."))
 	ESpawnerType SpawnType = ESpawnerType::Scatter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "If Spawn Type is Specific Location then this World Location will be used to determine the spawn location of this enemy."))
+	TArray<FVector> EnemySpawnLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Duration in seconds until these enemies spawn again."))
 	float SpawnRate = 5.f;
@@ -194,4 +200,19 @@ struct FCollectableStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The Collectbale loot table that can drop."))
 	TArray<FCollectableRoll> Collectables;
+};
+
+USTRUCT(BlueprintType)
+struct FSpawnPointsInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	FVector SpawnPointLocation;
+
+	UPROPERTY()
+	FVector BoxExtent;
+
+	UPROPERTY()
+	FVector BoxOrigin;
 };

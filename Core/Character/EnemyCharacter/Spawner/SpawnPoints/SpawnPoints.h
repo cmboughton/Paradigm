@@ -10,5 +10,10 @@ UCLASS()
 class PARADIGM_IQ_API ASpawnPoints : public ATargetPoint
 {
 	GENERATED_BODY()
-	
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* EdgeSpawnerZone;
+
 };
