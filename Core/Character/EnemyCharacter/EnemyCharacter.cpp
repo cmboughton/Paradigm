@@ -150,6 +150,8 @@ void AEnemyCharacter::UpdateStats(const float& GrowthModifier)
 	ExperienceStruct.Experience *= (1 + GrowthModifier);
 	ExperienceStruct.UltimateExperience *= (1 + GrowthModifier);
 	CollectableLootTable.DropChance *= (1 + GrowthModifier);
+
+	UE_LOGFMT(LogTemp, Warning, "Health: {0}", MaxHealth);
 }
 
 void AEnemyCharacter::ChangeCharacterState_Implementation(const ECharacterState CharacterState)

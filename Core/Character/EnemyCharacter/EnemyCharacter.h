@@ -40,18 +40,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|References", meta = (ToolTip = "Blueprint ref to experience blueprint."))
 	TSubclassOf<class AExperience> ExperienceOrb = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|References", meta = (ToolTip = "Blueprint ref to weapon upgrade blueprint."))
-	TSubclassOf<class AWeaponUpgradeCollectable> WeaponUpgradeCollectable = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance to drop a upgrade collectable. Rolls between 0 and 1."))
-	float UpgradeDropChance = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|References", meta = (ToolTip = "Blueprint ref to attract orb blueprint."))
-	TSubclassOf<class AAttractOrb> AttractOrbCollectable = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance to drop a Attract Orb collectable. Rolls between 0 and 1."))
-	float AttractOrbDropChance = 0.f;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Collectables that can drop"))
 	FCollectableStruct CollectableLootTable;
 

@@ -16,4 +16,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* EdgeSpawnerZone;
 
+protected:
+
+	ASpawnPoints();
 };

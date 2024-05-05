@@ -40,8 +40,8 @@ void AEnemySpawner::BeginPlay()
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	RealTimeTracker += DeltaTime;
 
+	RealTimeTracker += DeltaTime;
 
 	switch(EnemySpawner.GrowthType)
 	{
@@ -55,45 +55,26 @@ void AEnemySpawner::Tick(float DeltaTime)
 		break;
 	}
 
-	// This needs to be reworked. When enemies are spawned they need their stats to be set rather than updating them periodically.
-	// This will have to be part of the spawning section rather than its own.
-	if(StatUpdateTimeTracker <= 0)
-	{
-		StatUpdateTimeTracker = 30.f;
-		TArray<AActor*> AllEnemies;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), AllEnemies);
-		for (AActor* Enemy : AllEnemies)
-		{
-			if (AEnemyCharacter* EnemyChar = Cast<AEnemyCharacter>(Enemy))
-			{
-				EnemyChar->UpdateStats(GrowthTracker);
-			}
-		}
-		AllEnemies.Empty();
-	}
-
 	for (FEnemySpawnerGrowthModifier& EnemySpawnerMod : EnemySpawner.EnemyModifiers)
 	{
 		if(GrowthTracker >= EnemySpawnerMod.GrowthModifierTrigger)
 		{
-			UE_LOGFMT(LogTemp, Warning, "Growth Modifier Condition met");
+			//UE_LOGFMT(LogTemp, Warning, "Growth Modifier Condition met");
 			for (FEnemySpawnerModifier& SpawnerModifier: EnemySpawnerMod.EnemyConditions)
 			{
-				if ((SpawnerModifier.TriggersToEndSpawning.EnemiesSpawnedTracker >= SpawnerModifier.TriggersToEndSpawning.EnemiesSpawned && SpawnerModifier.TriggersToEndSpawning.EnemiesSpawnedTracker > 0) ||
+				if ((SpawnerModifier.TriggersToEndSpawning.EnemiesSpawnedTracker >= SpawnerModifier.TriggersToEndSpawning.EnemiesSpawned && SpawnerModifier.TriggersToEndSpawning.EnemiesSpawned > 0) ||
 					(SpawnerModifier.TriggersToEndSpawning.GameTimeDuration <= RealTimeTracker && SpawnerModifier.TriggersToEndSpawning.GameTimeDuration > 0))
 				{
-					UE_LOGFMT(LogTemp, Warning, "Spawning Stopped Due to End Conditions");
+					//UE_LOGFMT(LogTemp, Warning, "Spawning Stopped Due to End Conditions");
 					continue;
 				}
 				if(SpawnerModifier.SpawnRateTracker <= 0)
 				{
-					UE_LOGFMT(LogTemp, Warning, "Spawn Rate Tracker is: {0}", SpawnerModifier.SpawnRateTracker);
-
 					if(	SpawnerModifier.TriggersToStartSpawning.ScoreTrigger <= PlayerCharacter->GetScore() && 
 						SpawnerModifier.TriggersToStartSpawning.ScoreModifierTrigger <= PlayerCharacter->GetScoringModifier() && 
 						SpawnerModifier.TriggersToStartSpawning.GameTimeDuration <= RealTimeTracker)
 					{
-						UE_LOGFMT(LogTemp, Warning, "Spawning Started Due to start Conditions being met");
+						//UE_LOGFMT(LogTemp, Warning, "Spawning Started Due to start Conditions being met");
 						FTransform SpawnTransform;
 						FVector RandomSpawnLocation;
 						FSpawnPointsInfo EdgeSpawnZone;
@@ -117,22 +98,29 @@ void AEnemySpawner::Tick(float DeltaTime)
 						{
 						case ESpawnerType::Corner:
 
-							SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(RandomSpawnLocation.X + FMath::RandRange(-20, 20), RandomSpawnLocation.Y + FMath::RandRange(-20, 20), RandomSpawnLocation.Z), FVector(1.f, 1.f, 1.f));
 							if (const TSubclassOf<AEnemyCharacter> EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
 							{
-								SpawnEnemies(SpawnerModifier.SpawnAmount, EnemyToSpawn, SpawnTransform);
-								UE_LOGFMT(LogTemp, Warning, "Corner Spawn");
+								for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
+								{
+									SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(RandomSpawnLocation.X + FMath::RandRange(-CornerScatterDist, CornerScatterDist), RandomSpawnLocation.Y + FMath::RandRange(-CornerScatterDist, CornerScatterDist), RandomSpawnLocation.Z), FVector(1.f, 1.f, 1.f));
+									SpawnEnemies(1, EnemyToSpawn, SpawnTransform);
+									//UE_LOGFMT(LogTemp, Warning, "Corner Spawn");
+								} 
 							}
 							break;
 
 						case ESpawnerType::Edge:
-
-							SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).X, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).X), FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).Y, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).Y), SpawnTransform.GetTranslation().Z), FVector(1.f, 1.f, 1.f));
+							
 							if (const TSubclassOf<AEnemyCharacter> EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
 							{
-								SpawnEnemies(SpawnerModifier.SpawnAmount, EnemyToSpawn, SpawnTransform);
-								UE_LOGFMT(LogTemp, Warning, "Edge Spawn");
+								for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
+								{
+									SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).X, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).X), FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).Y, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).Y), SpawnTransform.GetTranslation().Z), FVector(1.f, 1.f, 1.f));
+									SpawnEnemies(1, EnemyToSpawn, SpawnTransform);
+									//UE_LOGFMT(LogTemp, Warning, "Edge Spawn");
+								}
 							}
+							
 							break;
 
 						case ESpawnerType::Scatter:
@@ -143,9 +131,9 @@ void AEnemySpawner::Tick(float DeltaTime)
 								{
 									for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
 									{
-										SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), 800, 3000), FVector(1.f, 1.f, 1.f));
+										SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), ScatterMinDist, ScatterMaxDist), FVector(1.f, 1.f, 1.f));
 										SpawnEnemies(1, EnemyToSpawn, SpawnTransform);
-										UE_LOGFMT(LogTemp, Warning, "Scatter Spawn");
+										//UE_LOGFMT(LogTemp, Warning, "Scatter Spawn");
 									}
 								}
 							}
@@ -157,18 +145,18 @@ void AEnemySpawner::Tick(float DeltaTime)
 							if (const TSubclassOf<AEnemyCharacter> EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
 							{
 								SpawnEnemies(SpawnerModifier.SpawnAmount, EnemyToSpawn, SpawnTransform);
-								UE_LOGFMT(LogTemp, Warning, "Specific Spawn");
+								//UE_LOGFMT(LogTemp, Warning, "Specific Spawn");
 							}
 							break;
 
 						default:
 							if (PlayerCharacter)
 							{
-								SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), 800, 3000), FVector(1.f, 1.f, 1.f));
+								SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), ScatterMinDist, ScatterMaxDist), FVector(1.f, 1.f, 1.f));
 								if (const TSubclassOf<AEnemyCharacter> EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
 								{
 									SpawnEnemies(SpawnerModifier.SpawnAmount, EnemyToSpawn, SpawnTransform);
-									UE_LOGFMT(LogTemp, Warning, "Default Spawn");
+									//UE_LOGFMT(LogTemp, Warning, "Default Spawn");
 								}
 							}
 							break;
@@ -238,7 +226,7 @@ void AEnemySpawner::SpawnEnemies(const int AmountToSpawn, const TSubclassOf<AEne
 	{
 		if(AEnemyCharacter* EnemySpawned = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(ActorToSpawn, SpawnTransform))
 		{
-			EnemySpawned->UpdateStats(GrowthTracker);
+			EnemySpawned->UpdateStats(GrowthTracker / 400);
 			EnemySpawned->FinishSpawning(SpawnTransform);
 		}
 	}

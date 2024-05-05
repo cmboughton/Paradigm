@@ -2,4 +2,10 @@
 
 
 #include "SpawnPoints.h"
+#include "Components/BoxComponent.h"
 
+ASpawnPoints::ASpawnPoints()
+{
+	EdgeSpawnerZone = CreateDefaultSubobject<UBoxComponent>(TEXT("Spawner Zone"));
+	EdgeSpawnerZone->SetupAttachment(RootComponent);
+}
