@@ -111,17 +111,17 @@ void AWeapons::UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades)
 
 	case EWeaponUpgradeType::SpecialUpgrade1:
 
-		SpecialUpgrade1();
+		bSpecialUpgrade1 = true;
 		break;
 
 	case EWeaponUpgradeType::SpecialUpgrade2:
 
-		SpecialUpgrade2();
+		bSpecialUpgrade2 = true;
 		break;
 
 	case EWeaponUpgradeType::SpecialUpgrade3:
 
-		SpecialUpgrade3();
+		bSpecialUpgrade3 = true;
 		break;
 	}
 }
@@ -301,52 +301,14 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(const FTransform& Transform) 
 		AProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<AProjectile>(Projectile, Transform);
 		ProjectileSpawn->SetDamage(Damage);
 		ProjectileSpawn->SetAffectRadius(AffectRadius);
-		ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1Proj);
-		ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2Proj);
-		ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3Proj);
+		ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
+		ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
+		ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
 		ProjectileSpawn->SetTriggerAmount(TriggerAmount);
 		ProjectileSpawn->FinishSpawning(Transform);
+		return Projectile;
 	}
-	return Projectile;
-}
-
-/**
- * @brief This method is used to activate the first special upgrade for a weapon.
- * 
- * When this method is called, it sets the `bSpecialUpgrade1Proj` member variable to true.
- * This indicates that the first special upgrade has been activated for the weapon.
- * 
- * @note This method does not take any parameters and does not return any value.
- */
-void AWeapons::SpecialUpgrade1()
-{
-	bSpecialUpgrade1Proj = true;
-}
-
-/**
- * @brief This method is used to activate the second special upgrade for a weapon.
- *
- * When this method is called, it sets the `bSpecialUpgrade2Proj` member variable to true.
- * This indicates that the second special upgrade has been activated for the weapon.
- *
- * @note This method does not take any parameters and does not return any value.
- */
-void AWeapons::SpecialUpgrade2()
-{
-	bSpecialUpgrade2Proj = true;
-}
-
-/**
- * @brief This method is used to activate the third special upgrade for a weapon.
- *
- * When this method is called, it sets the `bSpecialUpgrade3Proj` member variable to true.
- * This indicates that the third special upgrade has been activated for the weapon.
- *
- * @note This method does not take any parameters and does not return any value.
- */
-void AWeapons::SpecialUpgrade3()
-{
-	bSpecialUpgrade3Proj = true;
+	return nullptr;
 }
 
 /**

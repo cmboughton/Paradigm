@@ -49,15 +49,6 @@ protected:
 	TSubclassOf<AProjectile> SpawnProjectile(const FTransform& Transform) const;
 
 	UFUNCTION()
-	virtual void SpecialUpgrade1();
-
-	UFUNCTION()
-	virtual void SpecialUpgrade2();
-
-	UFUNCTION()
-	virtual void SpecialUpgrade3();
-
-	UFUNCTION()
 	static FVector GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance);
 
 #pragma endregion
@@ -104,13 +95,13 @@ protected:
 	FWeaponUpgrades WeaponUpgrade;
 
 	UPROPERTY()
-	bool bSpecialUpgrade1Proj = false;
+	bool bSpecialUpgrade1 = false;
 
 	UPROPERTY()
-	bool bSpecialUpgrade2Proj = false;
+	bool bSpecialUpgrade2 = false;
 
 	UPROPERTY()
-	bool bSpecialUpgrade3Proj = false;
+	bool bSpecialUpgrade3 = false;
 
 #pragma endregion
 

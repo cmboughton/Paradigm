@@ -17,9 +17,9 @@ void ASideCannons::WeaponTriggered(const float DeltaTime)
 			ASideCannonsProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<ASideCannonsProjectile>(SCProjectile, BulletSpawnLocation);
 			ProjectileSpawn->SetDamage(Damage);
 			ProjectileSpawn->SetAffectRadius(AffectRadius);
-			ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1Proj);
-			ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2Proj);
-			ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3Proj);
+			ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
+			ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
+			ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
 			ProjectileSpawn->SetTriggerAmount(TriggerAmount);
 			ProjectileSpawn->FinishSpawning(BulletSpawnLocation);
 		}
