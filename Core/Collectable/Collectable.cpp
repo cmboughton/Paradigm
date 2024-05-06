@@ -82,4 +82,13 @@ void ACollectable::Tick(float DeltaTime)
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		}
 	}
+
+	if(DestroyDuration <= 0)
+	{
+		this->Destroy();
+	}
+	else
+	{
+		DestroyDuration -= DeltaTime;
+	}
 }

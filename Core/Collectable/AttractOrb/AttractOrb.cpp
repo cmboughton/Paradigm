@@ -65,4 +65,12 @@ void AAttractOrb::Tick(float DeltaTime)
 		}*/
 	}
 
+	if (DestroyDuration <= 0)
+	{
+		this->Destroy();
+	}
+	else
+	{
+		DestroyDuration -= DeltaTime;
+	}
 }

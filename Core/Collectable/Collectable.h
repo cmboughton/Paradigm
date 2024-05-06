@@ -41,6 +41,9 @@ protected:
 	UPROPERTY()
 	APlayerCharacter* PlayerCharacter;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The time until this Collectable gets destroyed."))
+	float DestroyDuration = 15.f;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
