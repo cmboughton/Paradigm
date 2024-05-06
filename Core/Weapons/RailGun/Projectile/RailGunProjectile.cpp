@@ -3,7 +3,7 @@
 
 #include "RailGunProjectile.h"
 
-void ARailGunProjectile::TraceCheck(const float DeltaTime)
+void ARailGunProjectile::TraceCheck(const float& DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
 

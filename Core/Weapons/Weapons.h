@@ -25,22 +25,22 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(const float DeltaTime) override;
 
 	UFUNCTION()
 	virtual void WeaponTriggered(const float DeltaTime);
 
 	UFUNCTION()
-	TArray<AActor*> FindClosestEnemies(const float DistanceCheck, const FVector& Origin) const;
+	TArray<AActor*> FindClosestEnemies(const float& DistanceCheck, const FVector& Origin) const;
 
 	UFUNCTION()
 	virtual AActor* FindClosestEnemy(const FVector& Origin) const;
 
 	UFUNCTION()
-	virtual TArray<FHitResult> LineTrace(const FVector ActorStartLocation, const FVector ActorEndLocation);
+	virtual TArray<FHitResult> LineTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation);
 
 	UFUNCTION()
-	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
+	virtual TArray<FHitResult> SphereTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation, const float& TraceRadius);
 
 	UFUNCTION()
 	void ApplyDamage(const TArray<FHitResult>& AllActorsHit);
@@ -126,7 +126,7 @@ public:
 
 #pragma endregion
 
-#pragma region Public Variables
+#pragma region Getters and Setters
 
 	FORCEINLINE AActor*						GetPlayerCharacter()			const { return PlayerCharacter; }
 	FORCEINLINE TSoftObjectPtr<UDataTable>	GetWeaponsDataTable()			const { return WeaponsDataTable; }

@@ -14,11 +14,15 @@ class PARADIGM_IQ_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+#pragma region Public Functions
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Model, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* BaseModel;
+	UFUNCTION()
+	void UpdateMovementSpeed(const float Speed) const;
 
+#pragma endregion
+
+#pragma region Protected Functions
 protected:
 
 	ABaseCharacter();
@@ -38,12 +42,13 @@ protected:
 	UFUNCTION()
 	void SpawnActor(const TSubclassOf<AActor> ClassToSpawn, const FTransform& SpawnTransform) const;
 
-public:
+#pragma endregion
 
-	UFUNCTION()
-	void UpdateMovementSpeed(const float Speed) const;
-
+#pragma region Protected Variables
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Model, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* BaseModel;
 
 	UPROPERTY()
 	float DamageImmunity = 0.f;
@@ -63,6 +68,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Score of this actor."))
 	float Score = 0.f;
 
+#pragma endregion
+
+#pragma region Getters and Setters
 public:	
 
 	UFUNCTION(BlueprintCallable)
@@ -75,4 +83,6 @@ public:
 	FORCEINLINE UStaticMeshComponent*	GetBaseModel()				const { return BaseModel; }
 
 	FORCEINLINE void					SetCharacterState			(const ECharacterState CharacterState)				{ CurrentState = CharacterState; }
+
+#pragma endregion
 };

@@ -27,7 +27,7 @@ void ABlackHoleUltimate::Tick(float DeltaSeconds)
 			{
 				if (EnemyPulled)
 				{
-					EnemyPulled->BaseModel->SetSimulatePhysics(false);
+					EnemyPulled->GetBaseModel()->SetSimulatePhysics(false);
 					//UE_LOGFMT(LogTemp, Warning, "Actor Reset: {0}", EnemyPulled->GetName());
 				}
 			}
@@ -46,8 +46,8 @@ void ABlackHoleUltimate::Tick(float DeltaSeconds)
 
 					if(AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(ActorHit.GetActor()))
 					{
-						Enemy->BaseModel->SetSimulatePhysics(true);
-						Enemy->BaseModel->AddForce(PullDirection * GravitationalForce);
+						Enemy->GetBaseModel()->SetSimulatePhysics(true);
+						Enemy->GetBaseModel()->AddForce(PullDirection * GravitationalForce);
 						EnemiesPulled.AddUnique(Enemy);
 					}
 				}

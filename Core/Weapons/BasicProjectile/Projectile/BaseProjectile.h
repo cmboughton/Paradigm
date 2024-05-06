@@ -14,15 +14,21 @@ class PARADIGM_IQ_API ABaseProjectile : public AProjectile
 {
 	GENERATED_BODY()
 
+#pragma region Protected Functions
 protected:
 
-	virtual void TraceCheck(const float DeltaTime) override;
+	virtual void TraceCheck(const float& DeltaTime) override;
 
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void BeginPlay() override;
 
 	virtual void DestroyProjectile() override;
+
+#pragma endregion
+
+#pragma region Protected Variables
+protected:
 
 	UPROPERTY()
 	FVector StartLocation;
@@ -33,4 +39,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Reference to the Flame Trail BP to spawn."))
 	const TSubclassOf<AFlameTrailUpgrade> FlameTrailUpgrade;
 
+#pragma endregion
 };

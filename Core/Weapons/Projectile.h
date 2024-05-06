@@ -17,16 +17,9 @@ UCLASS()
 class PARADIGM_IQ_API AProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AProjectile();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 #pragma region Componnents
+protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UProjectileMovementComponent* MovementComponent;
@@ -34,10 +27,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* BulletMesh;
 
-
 #pragma endregion
 
 #pragma region Protected Stats
+protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The duration before this Actor gets destroyed."))
 	float DestroyDuration = 4.f;
@@ -90,28 +83,33 @@ protected:
 #pragma endregion
 
 #pragma region Protected Functions
+protected:
+
+	AProjectile();
+
+	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)override;
+	virtual float TakeDamage(const float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION()
 	virtual void DestroyProjectile();
 
 	UFUNCTION()
-	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
+	virtual TArray<FHitResult> SphereTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation, const float& TraceRadius);
 
 	UFUNCTION()
-	void ApplyDamage(const TArray<FHitResult> AllActorsHit);
+	void ApplyDamage(const TArray<FHitResult>& AllActorsHit);
 
 	UFUNCTION()
-	virtual void TraceCheck(const float DeltaTime);
+	virtual void TraceCheck(const float& DeltaTime);
 
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(const float DeltaTime) override;
+
 #pragma endregion
 
+#pragma region Setters and Getters
 public:	
-
-#pragma region Public Setters
 
 	FORCEINLINE void	SetDamage				(const float DamageValue)					{ Damage = DamageValue; }
 	FORCEINLINE void	SetAffectRadius			(const float ExplosionRadiusValue)			{ AffectRadius = ExplosionRadiusValue; }

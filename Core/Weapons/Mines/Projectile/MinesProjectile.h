@@ -14,13 +14,21 @@ class PARADIGM_IQ_API AMinesProjectile : public AProjectile
 {
 	GENERATED_BODY()
 
+#pragma region Protected Functions
 protected:
 
-	virtual void TraceCheck(const float DeltaTime) override;
+	virtual void TraceCheck(const float& DeltaTime) override;
+
+#pragma endregion
+
+#pragma region Protected Variables
+protected:
 
 	UPROPERTY()
 	bool bCheckForCollision = true;
 
 	UPROPERTY()
 	bool bReadyToDestroy = false;
+
+#pragma endregion
 };

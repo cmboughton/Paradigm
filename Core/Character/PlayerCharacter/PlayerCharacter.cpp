@@ -14,10 +14,12 @@
 #include "../EnemyCharacter/EnemyCharacter.h"
 
 #include "GameFramework/Controller.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
+#include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -43,8 +45,6 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
-
 }
 
 void APlayerCharacter::BeginPlay()
@@ -52,6 +52,10 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	SetUpShip();
+
+	AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
+
+	UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 
 	//Add Input Mapping Context
 	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
@@ -61,6 +65,8 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	NextLevelReq = CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate);
 }
 
 void APlayerCharacter::Tick(const float DeltaTime)
@@ -76,16 +82,22 @@ void APlayerCharacter::Tick(const float DeltaTime)
 		{
 			ScoringModifier++;
 			ScoreModifierTracker = 0.f;
-			//UE_LOGFMT(LogTemp, Warning, "Scoring Multiplier: {0}", ScoringModifier);
 		}
 		else
 		{
 			ScoreModifierTracker += DeltaTime;
-			//UE_LOGFMT(LogTemp, Warning, "Scoring Tracker: {0}", ScoreModifierTracker);
 		}
 	}
 }
 
+/**
+ * @brief Sets up the player input component.
+ * 
+ * This function is responsible for binding the player's input to the character's actions. 
+ * It binds the player's movement and ultimate actions to the corresponding functions in the class.
+ * 
+ * @param PlayerInputComponent The input component of the player.
+ */
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -102,6 +114,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+/**
+ * @brief Handles the movement of the player character.
+ * 
+ * This function is bound to the MoveAction input action. It is triggered when the player provides input for movement.
+ * The function calculates the movement direction based on the input and the current rotation of the controller.
+ * It then applies this movement direction to the character, causing the character to move.
+ * 
+ * @param Value The input action value, which is a 2D vector representing the direction and magnitude of the player's input for movement.
+ */
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -137,6 +158,14 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+/**
+ * @brief This function is triggered when the Ultimate action is initiated.
+ * 
+ * If the current Ultimate tracker is greater than or equal to the Ultimate tracker, 
+ * it checks if the Ultimate Ability Reference is valid. If it is, it resets the 
+ * Current Ultimate Tracker to 0 and spawns an Ultimate Ability at the actor's current 
+ * transform. If the Ultimate Ability Reference is not valid, it logs a warning message.
+ */
 void APlayerCharacter::Ultimate()
 {
 	if(CurrentUltimateTracker >= UltimateTracker)
@@ -145,7 +174,6 @@ void APlayerCharacter::Ultimate()
 		{
 			CurrentUltimateTracker = 0.f;
 			AUltimateAbility* UltimateSpawned = GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
-			UE_LOGFMT(LogTemp, Warning, "Ultimate Ability Ref Spawned: {0}", UltimateAbilityRef->GetName());
 		}
 		else
 		{
@@ -154,6 +182,16 @@ void APlayerCharacter::Ultimate()
 	}
 }
 
+/**
+ * @brief Sets up the ship for the player character.
+ *
+ * This method loads the ship data from a data table and applies the loaded data to the player character.
+ * It sets the character's movement speed, health, and ship mesh based on the loaded data.
+ * It also loads and sets the ultimate ability for the ship from another data table.
+ * Finally, it adds the base weapon to the ship.
+ *
+ * @note This method assumes that the data tables for ships and ultimate abilities are properly set up.
+ */
 void APlayerCharacter::SetUpShip()
 {
 	if (const UDataTable* ShipDataTableHardRef = ShipDataTable.LoadSynchronous())
@@ -167,7 +205,6 @@ void APlayerCharacter::SetUpShip()
 			if (UStaticMesh* ShipMeshData = ShipData->ShipMesh.LoadSynchronous())
 			{
 				BaseModel->SetStaticMesh(ShipMeshData);
-				//UE_LOGFMT(LogTemp, Warning, "Static Mesh Set: {0}", ShipData->GetName());
 			}
 
 			if(const UDataTable* UltimateDataTableHardRef = UltimatesDataTable.LoadSynchronous())
@@ -175,7 +212,6 @@ void APlayerCharacter::SetUpShip()
 				if (const FUltimatesDataTable* UltimatesData = UltimateDataTableHardRef->FindRow<FUltimatesDataTable>(ShipData->UltimateAbility, "Ultimate Ability Data Table Not set up", true))
 				{
 					UltimateTracker = UltimatesData->UltimateExperience;
-					//UE_LOGFMT(LogTemp, Warning, "Ultimate Tracker: {0}", UltimateTracker);
 					UltimateAbilityRef = UltimatesData->UltimateAbility.LoadSynchronous();
 				}
 			}
@@ -185,6 +221,12 @@ void APlayerCharacter::SetUpShip()
 	}
 }
 
+/**
+ * @brief Performs a sphere trace to check for collectables in the vicinity of the player character.
+ * 
+ * This function performs a sphere trace from the player character's location and checks for any actors that implement the UCollectableInterface. 
+ * If such an actor is found, the PickUp function of the UCollectableInterface is executed on that actor.
+ */
 void APlayerCharacter::CollectablePickUp()
 {
 	TArray<FHitResult> SweepResult = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), 200.f);
@@ -195,29 +237,84 @@ void APlayerCharacter::CollectablePickUp()
 			if (ActorsToCheck.GetActor()->GetClass()->ImplementsInterface(UCollectableInterface::StaticClass()))
 			{
 				ICollectableInterface::Execute_PickUp(ActorsToCheck.GetActor(), this);
-				//UE_LOGFMT(LogTemp, Warning, "HasInterface: {0}", ActorsToCheck.GetActor()->GetName());
 			}
 		}
 	}
 }
 
-void APlayerCharacter::AddCollectable(struct FExperienceOrb Experience)
+/**
+ * @brief Adds the experience from a collected orb to the player's experience tracker.
+ * 
+ * This function takes an FExperienceOrb object as an argument, which contains the amount of experience gained.
+ * The function adds this experience to the player's ExperienceTracker. If the updated ExperienceTracker 
+ * exceeds the experience required for the next level, the player's level is incremented, and the experience 
+ * required for the next level is recalculated. If an UpgradeManagerRef is available, it adds 3 to the UpgradeQueManager.
+ * The function also updates the player's CurrentUltimateTracker with the UltimateExperience from the FExperienceOrb.
+ * 
+ * @param Experience The FExperienceOrb object containing the experience gained from the collected orb.
+ */
+void APlayerCharacter::AddCollectable(const FExperienceOrb Experience)
 {
-	ExperienceTracker += Experience.Experience;
-	//UE_LOGFMT(LogTemp, Warning, "Experience: {0}", ExperienceTracker);
+	ExperienceTracker = FMath::RoundToInt(ExperienceTracker + Experience.Experience);
+	if(ExperienceTracker >= CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate))
+	{
+		CurrentLevel++;
+		NextLevelReq = CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate);
+		if(UpgradeManagerRef)
+		{
+			UpgradeManagerRef->SetUpgradeQueManager(3);
+		}
+	}
+
 	if(CurrentUltimateTracker < UltimateTracker)
 	{
 		CurrentUltimateTracker += Experience.UltimateExperience;
-		//UE_LOGFMT(LogTemp, Warning, "UltimateExperience: {0}", CurrentUltimateTracker);
 	}
 }
 
+/**
+ * @brief Calculates the experience required for a given level.
+ * 
+ * This function calculates the experience required to reach a certain level based on a base experience and a growth rate.
+ * The formula used is: BaseExperience * (GrowthRate ^ Level)
+ * 
+ * @param Level The level for which the experience is being calculated.
+ * @param BaseExperience The base experience that is used in the calculation.
+ * @param GrowthRate The growth rate that is used in the calculation.
+ * @return The experience required to reach the given level.
+ */
+int APlayerCharacter::CalculateExperienceForLevel(const int Level, const int BaseExperience, const float GrowthRate)
+{
+	if(Level <= 0)
+	{
+		return 0;
+	}
+	return FMath::RoundToInt(BaseExperience * FMath::Pow(GrowthRate, Level));
+}
+
+/**
+ * @brief Adds a specified score to the player's current score.
+ * 
+ * This function increases the player's score by the product of the added score and the scoring modifier.
+ * The new score is then logged.
+ * 
+ * @param AddedScore The score to be added to the player's current score.
+ */
 void APlayerCharacter::AddScore(const float AddedScore)
 {
 	Score += (AddedScore * ScoringModifier);
 	UE_LOGFMT(LogTemp, Warning, "Score: {0}", Score);
 }
 
+/**
+ * @brief Adds a weapon to the player character.
+ * 
+ * This function takes a weapon name as input and adds the corresponding weapon to the player character's equipped weapons.
+ * The weapon data is retrieved from a data table using the weapon name. If the weapon data is found and the weapon class can be loaded,
+ * a new weapon is spawned and attached to the player character.
+ * 
+ * @param WeaponName The name of the weapon to be added.
+ */
 void APlayerCharacter::AddWeapon(const FName WeaponName)
 {
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())

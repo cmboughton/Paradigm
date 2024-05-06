@@ -14,11 +14,17 @@ class PARADIGM_IQ_API ASideCannonsProjectile : public AProjectile
 {
 	GENERATED_BODY()
 
+#pragma region Protected Functions
 protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void TraceCheck(const float DeltaTime) override;
+	virtual void TraceCheck(const float& DeltaTime) override;
+
+#pragma endregion
+
+#pragma region Protected Variables
+protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Reference to the Base Projectile Spawn."))
 	TSubclassOf<ASideCannonsProjectile> BaseProjectile = nullptr;
@@ -26,7 +32,12 @@ protected:
 	UPROPERTY()
 	bool bIsSpawner = true;
 
+#pragma endregion
+
+#pragma region Getters and Setters
 public:
 
 	FORCEINLINE void	SetIsSpawner	(const bool IsSpawnerValue) { bIsSpawner = IsSpawnerValue; }
+
+#pragma endregion
 };

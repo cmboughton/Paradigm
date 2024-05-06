@@ -3,7 +3,14 @@
 
 #include "MinesProjectile.h"
 
-void AMinesProjectile::TraceCheck(const float DeltaTime)
+/**
+ * @brief Performs a trace check for the projectile.
+ *
+ * This method is responsible for checking if the projectile has hit any actors. If the projectile is set to check for collision and has hit any actors, it stops simulating physics, doubles its affect radius, and stops checking for collision. If the projectile is not set to check for collision and has hit any actors, it checks if the hit actors implement the UEnemyInterface. If they do, it performs a sphere trace around the projectile's location with a radius four times the affect radius, applies damage to the actors hit by the sphere trace, and sets the projectile to be ready for destruction. If the projectile is ready for destruction, it destroys the projectile.
+ *
+ * @param DeltaTime The time elapsed since the last frame.
+ */
+void AMinesProjectile::TraceCheck(const float& DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
 

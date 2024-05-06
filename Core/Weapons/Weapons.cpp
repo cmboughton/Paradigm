@@ -9,15 +9,11 @@
 
 struct FWeaponsDataTable;
 
-// Sets default values
 AWeapons::AWeapons()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
 void AWeapons::BeginPlay()
 {
 	Super::BeginPlay();
@@ -30,7 +26,6 @@ void AWeapons::BeginPlay()
 		{
 			FireRate = WeaponsData->FireRate;
 			Damage = WeaponsData->Damage;
-			//UE_LOGFMT(LogTemp, Warning, "FireRate: {0}", FireRate);
 
 			AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
@@ -41,7 +36,6 @@ void AWeapons::BeginPlay()
 			}
 		}
 	}
-
 }
 
 
@@ -49,8 +43,8 @@ void AWeapons::WeaponTriggered(const float DeltaTime)
 {
 }
 
-// Called every frame
-void AWeapons::Tick(float DeltaTime)
+
+void AWeapons::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if(bShouldUseBulletDelay)
@@ -76,7 +70,6 @@ void AWeapons::Tick(float DeltaTime)
 		if (FireRateTracker <= 0)
 		{
 			WeaponTriggered(DeltaTime);
-			///FireRateTracker = FireRate;
 		}
 		else
 		{
@@ -85,6 +78,13 @@ void AWeapons::Tick(float DeltaTime)
 	}
 }
 
+/**
+ * @brief Upgrades the weapon based on the provided upgrade parameters.
+ *
+ * This function applies the upgrade specified in the `WeaponUpgrades` parameter to the weapon. The upgrade can be of various types.
+ *
+ * @param WeaponUpgrades A structure containing the details of the weapon upgrade to be applied.
+ */
 void AWeapons::UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades)
 {
 	switch (WeaponUpgrades.WeaponUpgrade)
@@ -126,7 +126,20 @@ void AWeapons::UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades)
 	}
 }
 
-TArray<AActor*> AWeapons::FindClosestEnemies(const float DistanceCheck, const FVector& Origin) const
+/**
+ * @brief Finds the closest enemies within a specified distance from a given origin.
+ *
+ * @param DistanceCheck The maximum distance within which to find enemies.
+ * @param Origin The origin point from which to measure the distance.
+ *
+ * @return Returns an array of actors representing the enemies found within the specified distance.
+ *
+ * This function first retrieves all actors of the AEnemyCharacter class. It then iterates over these actors,
+ * calculating the distance from the origin to each actor's location. If this distance is less than or equal to
+ * the specified DistanceCheck, the actor is added to the array of closest enemies. The function finally returns
+ * this array.
+ */
+TArray<AActor*> AWeapons::FindClosestEnemies(const float& DistanceCheck, const FVector& Origin) const
 {
 	TArray<AActor*> EnemiesFound;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), EnemiesFound);
@@ -144,6 +157,15 @@ TArray<AActor*> AWeapons::FindClosestEnemies(const float DistanceCheck, const FV
 	return ClosestEnemy;
 }
 
+/**
+ * @brief Finds the closest enemy to a given origin point.
+ *
+ * This method searches for all actors of the AEnemyCharacter class in the world and determines the closest one to the provided origin point.
+ * The distance is calculated using the Euclidean distance formula (square root of the sum of squared differences).
+ *
+ * @param Origin The origin point from which to find the closest enemy.
+ * @return A pointer to the closest enemy actor. If no enemies are found, returns nullptr.
+ */
 AActor* AWeapons::FindClosestEnemy(const FVector& Origin) const
 {
 	TArray<AActor*> EnemiesFound;
@@ -169,7 +191,18 @@ AActor* AWeapons::FindClosestEnemy(const FVector& Origin) const
 	return ClosestEnemy;
 }
 
-TArray<FHitResult> AWeapons::LineTrace(const FVector ActorStartLocation, const FVector ActorEndLocation)
+/**
+ * @brief Performs a line trace from the start location to the end location and returns all actors hit.
+ * 
+ * This function performs a line trace in the world and returns an array of all actors hit. 
+ * The line trace starts from the ActorStartLocation and ends at the ActorEndLocation. 
+ * The trace ignores the PlayerCharacter.
+ * 
+ * @param ActorStartLocation The start location of the line trace.
+ * @param ActorEndLocation The end location of the line trace.
+ * @return TArray<FHitResult> An array of all actors hit by the line trace.
+ */
+TArray<FHitResult> AWeapons::LineTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation)
 {
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Init(PlayerCharacter, 1);
@@ -189,7 +222,19 @@ TArray<FHitResult> AWeapons::LineTrace(const FVector ActorStartLocation, const F
 	return AllActorsHit;
 }
 
-TArray<FHitResult> AWeapons::SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius)
+/**
+ * @brief Performs a sphere trace from a start location to an end location with a specified radius.
+ *
+ * This method performs a sphere trace in the world, starting from the ActorStartLocation and ending at the ActorEndLocation.
+ * The trace has a radius specified by TraceRadius. The trace ignores the PlayerCharacter.
+ * The method returns an array of FHitResult, containing all actors hit by the trace.
+ *
+ * @param ActorStartLocation The start location of the trace.
+ * @param ActorEndLocation The end location of the trace.
+ * @param TraceRadius The radius of the trace.
+ * @return TArray<FHitResult> An array of FHitResult, containing all actors hit by the trace.
+ */
+TArray<FHitResult> AWeapons::SphereTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation, const float& TraceRadius)
 {
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Init(PlayerCharacter, 1);
@@ -210,6 +255,14 @@ TArray<FHitResult> AWeapons::SphereTrace(const FVector ActorStartLocation, const
 	return TArray<FHitResult>(AllActorsHit);
 }
 
+/**
+ * @brief Applies damage to all actors hit.
+ *
+ * This method iterates over all actors hit and applies damage to those that implement the UEnemyInterface.
+ * The damage is applied in the form of a FPointDamageEvent, which is created for each actor hit.
+ *
+ * @param AllActorsHit A TArray of FHitResult representing all the actors hit.
+ */
 void AWeapons::ApplyDamage(const TArray<FHitResult>& AllActorsHit)
 {
 	if(!AllActorsHit.IsEmpty())
@@ -230,7 +283,6 @@ void AWeapons::ApplyDamage(const TArray<FHitResult>& AllActorsHit)
 	}
 }
 
-#pragma region Spawn Projectile
 /**
  * @brief Spawns a projectile in the game world.
  *
@@ -257,24 +309,46 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(const FTransform& Transform) 
 	}
 	return Projectile;
 }
-#pragma endregion
 
+/**
+ * @brief This method is used to activate the first special upgrade for a weapon.
+ * 
+ * When this method is called, it sets the `bSpecialUpgrade1Proj` member variable to true.
+ * This indicates that the first special upgrade has been activated for the weapon.
+ * 
+ * @note This method does not take any parameters and does not return any value.
+ */
 void AWeapons::SpecialUpgrade1()
 {
 	bSpecialUpgrade1Proj = true;
 }
 
+/**
+ * @brief This method is used to activate the second special upgrade for a weapon.
+ *
+ * When this method is called, it sets the `bSpecialUpgrade2Proj` member variable to true.
+ * This indicates that the second special upgrade has been activated for the weapon.
+ *
+ * @note This method does not take any parameters and does not return any value.
+ */
 void AWeapons::SpecialUpgrade2()
 {
 	bSpecialUpgrade2Proj = true;
 }
 
+/**
+ * @brief This method is used to activate the third special upgrade for a weapon.
+ *
+ * When this method is called, it sets the `bSpecialUpgrade3Proj` member variable to true.
+ * This indicates that the third special upgrade has been activated for the weapon.
+ *
+ * @note This method does not take any parameters and does not return any value.
+ */
 void AWeapons::SpecialUpgrade3()
 {
 	bSpecialUpgrade3Proj = true;
 }
 
-#pragma region Get Random Point Near Origin
 /**
  * @brief Generates a random point near a given origin within a specified distance range.
  *
@@ -301,9 +375,5 @@ FVector AWeapons::GetRandomPointNearOrigin(const FVector& Origin, const float Mi
 		RandomDirection = RandStream.VRand().GetSafeNormal() * RandStream.FRandRange(MinDistance, MaxDistance);
 		RandomPoint = FVector(Origin.X + RandomDirection.X, Origin.Y + RandomDirection.Y, Origin.Z);
 	}
-
-	//UE_LOGFMT(LogTemp, Warning, "Random EnemySpawned at {0}", RandomPoint.Z);
 	return RandomPoint;
-
 }
-#pragma endregion

@@ -2,23 +2,21 @@
 
 
 #include "BaseProjectile.h"
-#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 
-void ABaseProjectile::TraceCheck(const float DeltaTime)
+void ABaseProjectile::TraceCheck(const float& DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
 	ApplyDamage(ActorsHit);
-
 }
 
-void ABaseProjectile::Tick(float DeltaTime)
+void ABaseProjectile::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	if(bSpecialUpgrade1)
 	{
 		EndLocation = this->GetActorLocation() - FVector(0.f, 0.f, 90.f);
-		TArray<FHitResult> TrailActorsHit = SphereTrace(StartLocation, EndLocation, AffectRadius * 2);
+		const TArray<FHitResult> TrailActorsHit = SphereTrace(StartLocation, EndLocation, AffectRadius * 2);
 		ApplyDamage(TrailActorsHit);
 	}
 }
@@ -30,6 +28,13 @@ void ABaseProjectile::BeginPlay()
 	StartLocation = this->GetActorLocation() - FVector(0.f, 0.f, 90.f);
 }
 
+/**
+ * @brief Destroys the projectile and spawns a Flame Trail Upgrade if the special upgrade 1 is active.
+ * 
+ * This method is responsible for handling the destruction of the projectile. If the special upgrade 1 is active, 
+ * it spawns a Flame Trail Upgrade at the current actor's transform, sets its properties, and finishes its spawning.
+ * After handling the special upgrade, it calls the parent class's DestroyProjectile method.
+ */
 void ABaseProjectile::DestroyProjectile()
 {
 	if(bSpecialUpgrade1)
@@ -44,6 +49,5 @@ void ABaseProjectile::DestroyProjectile()
 			FlameTrailSpawn->FinishSpawning(this->GetActorTransform());
 		}
 	}
-
 	Super::DestroyProjectile();
 }

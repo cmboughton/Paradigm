@@ -17,22 +17,43 @@ UCLASS()
 class PARADIGM_IQ_API AWeaponUpgradeManager : public AActor
 {
 	GENERATED_BODY()
-	
+
+#pragma region Public Functions
 public:	
-	// Sets default values for this actor's properties
-	AWeaponUpgradeManager();
 
 	UFUNCTION()
-	void AddUpgrades(const FUpgradeManager Upgrade);
+	void AddUpgrades(const FUpgradeManager& Upgrade);
 
 	UFUNCTION()
 	void RollUpgrades(const int RollAmount);
 
+	UFUNCTION()
+	void UpgradeSelected(const FUpgradeCommunication& Upgrade);
+
+#pragma endregion
+
+#pragma region protected Functions
 protected:
-	// Called when the game starts or when spawned
+
+	AWeaponUpgradeManager();
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	UFUNCTION()
+	void UpgradeCategory(const FUpgradeCommunication& Upgrade);
+
+	UFUNCTION()
+	void UpgradeSingleUse(const FUpgradeCommunication& Upgrade);
+
+#pragma endregion
+
+
+#pragma region Protected Variables
+protected:
+
+	UPROPERTY()
+	TArray<int> UpgradeQueManager;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|References", meta = (ToolTip = "Reference to the Weapon Upgrade widget to create."))
 	TSubclassOf<UUserWidget> WeaponUpgradeWidget;
@@ -58,11 +79,12 @@ protected:
 	UPROPERTY()
 	APlayerCharacter* PlayerCharacter = nullptr;
 
+#pragma endregion
+
+#pragma region Getters and Setters
 public:
 
-	UFUNCTION()
-	void UpgradeSelected(FUpgradeCommunication Upgrade);
+	FORCEINLINE void					SetUpgradeQueManager			(const int& UpgradeAmount)			{ UpgradeQueManager.Add(UpgradeAmount); }
 
-	UPROPERTY()
-	TArray<int> UpgradeQueManager;
+#pragma endregion
 };

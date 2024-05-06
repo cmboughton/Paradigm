@@ -7,6 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 
+class AWeaponUpgradeManager;
 class AUltimateAbility;
 
 UCLASS()
@@ -15,6 +16,7 @@ class PARADIGM_IQ_API APlayerCharacter : public ABaseCharacter
 	GENERATED_BODY()
 
 #pragma region Components
+protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -27,6 +29,7 @@ class PARADIGM_IQ_API APlayerCharacter : public ABaseCharacter
 #pragma endregion
 
 #pragma region Input
+protected:
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|Input", meta = (AllowPrivateAccess = "true"))
@@ -43,14 +46,13 @@ class PARADIGM_IQ_API APlayerCharacter : public ABaseCharacter
 #pragma endregion
 
 #pragma region Public Functions
-
 public:
 
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
 	UFUNCTION()
-	void AddCollectable(struct FExperienceOrb Experience);
+	void AddCollectable(const FExperienceOrb Experience);
 
 	UFUNCTION()
 	void AddScore(const float AddedScore);
@@ -62,22 +64,20 @@ public:
 #pragma endregion
 
 #pragma region Protected Functions
-
 protected:
 
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Called every frame
 	virtual void Tick(const float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/** Called for movement input */
+	UFUNCTION()
 	void Move(const struct FInputActionValue& Value);
 
 	/** Called for Ultimate input */
+	UFUNCTION()
 	void Ultimate();
 
 	UFUNCTION()
@@ -86,11 +86,13 @@ protected:
 	UFUNCTION()
 	void CollectablePickUp();
 
+	UFUNCTION()
+	static int CalculateExperienceForLevel(const int Level, const int BaseExperience, const float GrowthRate);
+
 
 #pragma endregion
 
 #pragma  region Stats
-
 protected:
 
 	UPROPERTY()
@@ -98,7 +100,6 @@ protected:
 
 	UPROPERTY()
 	int MaxWeaponsEquipped = 6;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
 	TSoftObjectPtr<UDataTable> ShipDataTable;
@@ -115,10 +116,26 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The score duration modifer used to determine when the modifer increases."))
 	float ScoreDurationModifier = 5.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The growth rate used to determine the how expodential the exp required per level becomes."))
+	float LevelingGrowthRate = 1.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Varaibles|Stats", meta = (ToolTip = "The current level."))
+	int CurrentLevel = 1;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Varaibles|Stats", meta = (ToolTip = "The Radius of the sphere check that checks for collectables."))
+	float PickUpRadius = 200.f;
+
+#pragma endregion
+
+#pragma region References
+protected:
+
+	UPROPERTY()
+	AWeaponUpgradeManager* UpgradeManagerRef;
+
 #pragma endregion
 
 #pragma  region Trackers
-
 protected:
 
 	UPROPERTY()
@@ -128,7 +145,7 @@ protected:
 	float UltimateTracker = 0.f;
 
 	UPROPERTY()
-	float ExperienceTracker = 0.f;
+	int ExperienceTracker = 0;
 
 	UPROPERTY()
 	float FireRateTracker = 0.f;
@@ -142,10 +159,12 @@ protected:
 	UPROPERTY()
 	float ScoreModifierTracker = 0.f;
 
+	UPROPERTY()
+	int NextLevelReq = 0;
+
 #pragma endregion
 
 #pragma  region Ultimate
-
 protected:
 
 	UPROPERTY()
@@ -153,8 +172,7 @@ protected:
 
 #pragma endregion
 
-#pragma region Public Variables
-
+#pragma region Getters and Setters
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -165,6 +183,12 @@ public:
 	FORCEINLINE float					GetMaxUltimate()			const { return UltimateTracker; }
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE TArray<FName>			GetWeaponsEquipped()		const { return WeaponsEquipped; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int						GetCurrentXP()				const { return ExperienceTracker; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int						GetCurrentLevel()			const { return CurrentLevel; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int						GetNextLevelReq()			const { return NextLevelReq; }
 	FORCEINLINE int						GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
 
 

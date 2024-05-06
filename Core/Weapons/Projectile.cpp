@@ -7,10 +7,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 
 
-// Sets default values
 AProjectile::AProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Projectile Movement Component
@@ -26,7 +24,6 @@ AProjectile::AProjectile()
 	BulletMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
-// Called when the game starts or when spawned
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -38,7 +35,7 @@ void AProjectile::BeginPlay()
 	if(bIsArcImpulse)
 	{
 		BulletMesh->SetSimulatePhysics(true);
-		FVector ArcImpulse = FVector(FMath::RandRange(-Impulse, Impulse), FMath::RandRange(-Impulse, Impulse), FMath::RandRange(Impulse, Impulse * 2));
+		const FVector ArcImpulse = FVector(FMath::RandRange(-Impulse, Impulse), FMath::RandRange(-Impulse, Impulse), FMath::RandRange(Impulse, Impulse * 2));
 		BulletMesh->AddImpulse(ArcImpulse);
 	}
 
@@ -48,8 +45,20 @@ void AProjectile::BeginPlay()
 	}
 }
 
-
-float AProjectile::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+/**
+ * @brief This function is used to apply damage to the projectile.
+ * 
+ * @param DamageAmount The amount of damage to be applied to the projectile.
+ * @param DamageEvent The event that describes the cause of the damage.
+ * @param EventInstigator The controller that was responsible for causing the damage.
+ * @param DamageCauser The actor that directly caused the damage.
+ * 
+ * @return Returns 0.0f after applying the damage.
+ * 
+ * If the projectile is set to take damage, it will subtract the DamageAmount from the projectile's current damage.
+ * If the damage is less than or equal to zero after the subtraction, it will destroy the projectile.
+ */
+float AProjectile::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	if(bShouldTakeDamage)
 	{
@@ -62,12 +71,31 @@ float AProjectile::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	return 0.0f;
 }
 
+/**
+ * @brief Destroys the projectile instance.
+ *
+ * This method is responsible for destroying the current instance of the projectile.
+ * It is typically called when the projectile has reached its lifespan or has hit a target.
+ */
 void AProjectile::DestroyProjectile()
 {
 	this->Destroy();
 }
 
-TArray<FHitResult> AProjectile::SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius)
+/**
+ * @brief Performs a sphere trace from the start location to the end location with a specified radius.
+ *
+ * This function performs a sphere trace in the world, ignoring specific actors, and returns an array of hit results.
+ * The trace is performed from the start location to the end location with a specified radius. The trace ignores the player character and the projectile itself.
+ * The trace type is set to TraceTypeQuery1, and the trace is visible for one frame. The trace hits are displayed in red and green.
+ * The function returns an array of all actors hit by the sphere trace.
+ *
+ * @param ActorStartLocation The start location of the sphere trace.
+ * @param ActorEndLocation The end location of the sphere trace.
+ * @param TraceRadius The radius of the sphere trace.
+ * @return TArray<FHitResult> An array of hit results from the sphere trace.
+ */
+TArray<FHitResult> AProjectile::SphereTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation, const float& TraceRadius)
 {
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(PlayerCharacter);
@@ -90,7 +118,15 @@ TArray<FHitResult> AProjectile::SphereTrace(const FVector ActorStartLocation, co
 	return TArray<FHitResult>(AllActorsHit);
 }
 
-void AProjectile::ApplyDamage(const TArray<FHitResult> AllActorsHit)
+/**
+ * @brief Applies damage to all actors hit.
+ *
+ * This function iterates over all actors hit and applies damage to those that implement the UEnemyInterface.
+ * The damage is applied using the TakeDamage function of the actor hit.
+ *
+ * @param AllActorsHit A reference to an array of FHitResult representing all actors hit.
+ */
+void AProjectile::ApplyDamage(const TArray<FHitResult>& AllActorsHit)
 {
 	if(!AllActorsHit.IsEmpty())
 	{
@@ -110,15 +146,21 @@ void AProjectile::ApplyDamage(const TArray<FHitResult> AllActorsHit)
 	}
 }
 
-void AProjectile::TraceCheck(const float DeltaTime)
+/**
+ * @brief Performs a trace check for the projectile.
+ * 
+ * This method is responsible for performing a trace check for the projectile. It clears the list of actors hit by the projectile,
+ * performs a sphere trace from the current location of the projectile, and stores the hit results in the ActorsHit list.
+ * 
+ * @param DeltaTime The time elapsed since the last frame.
+ */
+void AProjectile::TraceCheck(const float& DeltaTime)
 {
 	ActorsHit.Empty();
 	ActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), AffectRadius);
 }
 
-
-// Called every frame
-void AProjectile::Tick(float DeltaTime)
+void AProjectile::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -134,4 +176,3 @@ void AProjectile::Tick(float DeltaTime)
 		DestroyDuration -= DeltaTime;
 	}
 }
-

@@ -7,23 +7,47 @@ void ASupportingFire::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
 
+	if(bSelectTargets)
+	{
+		EnemyLocation.Empty();
+		RandomLocation.Empty();
+		for (int i = 0; i < TriggerAmount; i++)
+		{
+			EnemiesFound = FindClosestEnemies(1000, this->GetActorLocation());
+			if(!EnemiesFound.IsEmpty())
+			{
+				RandRoll = FMath::RandRange(0, EnemiesFound.Num() - 1);
+				EnemyLocation.Add(EnemiesFound[RandRoll]->GetActorLocation());
+			}
+			RandomLocation.Add(GetRandomPointNearOrigin(this->GetActorLocation(), 800, 1200));
+		}
+		bSelectTargets = false;
+	}
+
 	for(int i = 0; i < TriggerAmount; i++)
 	{
-		TArray<AActor*> EnemiesFound = FindClosestEnemies(1000, this->GetActorLocation());
-		if(!EnemiesFound.IsEmpty())
+		if(EnemiesFound.IsValidIndex(i))
 		{
-			const int RandRoll = FMath::RandRange(0, EnemiesFound.Num() - 1);
-			TArray<FHitResult> ActorsHit = SphereTrace(EnemiesFound[RandRoll]->GetActorLocation(), EnemiesFound[RandRoll]->GetActorLocation(), AffectRadius);
+			TArray<FHitResult> ActorsHit = SphereTrace(EnemyLocation[i], EnemyLocation[i], AffectRadius);
 			ApplyDamage(ActorsHit);
-			WeaponTriggerBP(EnemiesFound[RandRoll]->GetActorLocation());
+			WeaponTriggerBP(EnemyLocation[i]);
 		}
-		else
+		else if(RandomLocation.IsValidIndex(i))
 		{
-			const FVector RandomLocation = GetRandomPointNearOrigin(this->GetActorLocation(), 800, 1200);
-			TArray<FHitResult> ActorsHit = SphereTrace(RandomLocation, RandomLocation, AffectRadius);
+			TArray<FHitResult> ActorsHit = SphereTrace(RandomLocation[i], RandomLocation[i], AffectRadius);
 			ApplyDamage(ActorsHit);
-			WeaponTriggerBP(RandomLocation);
+			WeaponTriggerBP(RandomLocation[i]);
 		}
 	}
-	FireRateTracker = FireRate;
+
+	if(ExplosionDelay <= 0)
+	{
+		FireRateTracker = FireRate;
+		bSelectTargets = true;
+		ExplosionDelay = 0.2f;
+	}
+	else
+	{
+		ExplosionDelay -= DeltaTime;
+	}
 }

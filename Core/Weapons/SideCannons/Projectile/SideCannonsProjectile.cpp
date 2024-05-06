@@ -3,6 +3,16 @@
 
 #include "SideCannonsProjectile.h"
 
+/**
+ * @brief This method is called when the game starts or when spawned.
+ * 
+ * If the projectile is a spawner, it will generate a number of projectiles
+ * based on the `TriggerAmount` property. Each projectile will be spawned
+ * at a location determined by the `SpawnLocationTracker` variable.
+ * 
+ * Each spawned projectile will have its properties set based on the properties
+ * of the spawner projectile.
+ */
 void ASideCannonsProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -30,7 +40,7 @@ void ASideCannonsProjectile::BeginPlay()
 	}
 }
 
-void ASideCannonsProjectile::TraceCheck(const float DeltaTime)
+void ASideCannonsProjectile::TraceCheck(const float& DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
 

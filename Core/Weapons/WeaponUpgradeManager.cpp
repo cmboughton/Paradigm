@@ -4,15 +4,11 @@
 #include "WeaponUpgradeManager.h"
 
 
-// Sets default values
 AWeaponUpgradeManager::AWeaponUpgradeManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
 void AWeaponUpgradeManager::BeginPlay()
 {
 	Super::BeginPlay();
@@ -22,7 +18,6 @@ void AWeaponUpgradeManager::BeginPlay()
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
 		TArray<FName> WeaponRows = WeaponsDataTableHardRef->GetRowNames();
-		UE_LOGFMT(LogTemp, Warning, "Weapons: {0}", WeaponRows);
 		for (FName WeaponRow: WeaponRows)
 		{
 			if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponRow, "Couldn't Add Weapon to Upgrade Pool", true))
@@ -30,9 +25,8 @@ void AWeaponUpgradeManager::BeginPlay()
 				if(!WeaponsData->bIsBaseWeapon)
 				{
 					TArray<FWeaponUpgrades> WeaponUnlocks;
-					WeaponUnlocks.Add(FWeaponUpgrades(WeaponRow, WeaponsData->Description, WeaponsData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, false, false));
+					WeaponUnlocks.Add(FWeaponUpgrades(WeaponRow, WeaponsData->Description, WeaponsData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
 	;				UpgradesAvailable.Add(FUpgradeManager(nullptr, WeaponUnlocks, 0, EWeaponType::Mechanical, true));
-					UE_LOGFMT(LogTemp, Warning, "Weapon Unlock: {0}", WeaponRow);
 				}
 			}
 		}
@@ -51,13 +45,27 @@ void AWeaponUpgradeManager::Tick(float DeltaSeconds)
 	}
 }
 
-void AWeaponUpgradeManager::AddUpgrades(const FUpgradeManager Upgrade)
+
+/**
+ * @brief Adds an upgrade to the available upgrades for the weapon.
+ * 
+ * @param Upgrade The upgrade to be added to the weapon.
+ */
+void AWeaponUpgradeManager::AddUpgrades(const FUpgradeManager& Upgrade)
 {
 	UpgradesAvailable.Add(Upgrade);
-	
-	//UE_LOGFMT(LogTemp, Warning, "Weapon {0} Upgrades Added", Upgrade.WeaponReference->GetName());
 }
 
+/**
+ * @brief This method is responsible for rolling the upgrades for weapons.
+ *
+ * The method takes an integer parameter which represents the amount of rolls to be performed.
+ * It then selects upgrades from the available upgrades based on their roll weight.
+ * The selected upgrades are then added to the UpgradesSelected array.
+ * If the UpgradesSelected array is not empty, a widget is created to display the selected upgrades.
+ *
+ * @param RollAmount The number of times the upgrade selection process should be performed.
+ */
 void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 {
 	bUpgradeActive = true;
@@ -74,7 +82,6 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 				if (UpgradeAvailable.WeaponUpgrades.IsValidIndex(UpgradeAvailable.CurrentUpgradeLevel))
 				{
 					RollRange += UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel].RollWeight;
-					UE_LOGFMT(LogTemp, Warning, "Upgrade: {0}, Roll Range: {1}", UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel].UniqueName, RollRange);
 				}
 			}
 
@@ -90,7 +97,6 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 					if(Roll <= CurrentRollTracker && Roll > CurrentRollTracker - UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel].RollWeight)
 					{
 						UpgradesSelected.Add(FUpgradeCommunication(UpgradeAvailable.WeaponReference, UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel], UpgradeAvailable.WeaponType, UpgradeAvailable.bIsWeaponUnlock));
-						UE_LOGFMT(LogTemp, Warning, "Roll : {0} UpgradeSelect: {1}", Roll, UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel].UniqueName);
 						break;
 
 					}
@@ -115,101 +121,126 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 	}
 }
 
-void AWeaponUpgradeManager::UpgradeSelected(FUpgradeCommunication Upgrade)
+/**
+ * @brief Upgrades the selected weapon or weapon category.
+ *
+ * This method is responsible for upgrading the selected weapon or weapon category based on the provided upgrade communication.
+ * If the upgrade is a weapon unlock, it adds the weapon to the player's weapons and checks if the player is at max weapons.
+ * If the player is at max weapons, all weapon unlock cards will be removed from the pool.
+ * If the upgrade is a category upgrade, it upgrades all weapons of that category.
+ * If an upgrade is marked as single use, it will be removed from the upgrade pool.
+ * It also increments the upgrade cards level so the next upgrade can be added to the upgrade pool.
+ *
+ * @param Upgrade The upgrade communication containing the details of the upgrade.
+ */
+void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade)
 {
 	if(Upgrade.bIsWeaponUnlock)
 	{
+		// Adds the weapon selected to the players weapons
 		PlayerCharacter->AddWeapon(Upgrade.WeaponUpgrades.UniqueName);
-		UE_LOGFMT(LogTemp, Warning, "Weapons Equipped: {0}", PlayerCharacter->GetWeaponsEquipped().Num());
+
+		// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
 		if(PlayerCharacter->GetWeaponsEquipped().Num() >= PlayerCharacter->GetMaxWeaponsEquipped())
 		{
 			UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsWeaponUnlock; });
 		}
 		else
 		{
-			int index = 0;
-			UE_LOGFMT(LogTemp, Warning, "Weapon Unlock Selected: {0}", Upgrade.WeaponUpgrades.UniqueName);
-			for (FUpgradeManager UpgradeAvailable : UpgradesAvailable)
-			{
-				int index2 = 0;
-				for (FWeaponUpgrades WeaponUpgrade: UpgradeAvailable.WeaponUpgrades)
-				{
-					if(WeaponUpgrade.UniqueName == Upgrade.WeaponUpgrades.UniqueName)
-					{
-						UpgradesAvailable[index].WeaponUpgrades.RemoveAt(index2);
-					}
-					index2++;
-				}
-				index++;
-			}
+			UpgradeSingleUse(Upgrade);
 		}
 	}
 	else
 	{
+		/**
+		 *	Checks if the Upgrade is a Category Upgrade
+		 *	If it is then it Upgrades all Weapons that of that Category
+		 */
 		if(Upgrade.WeaponUpgrades.bCategoryUpgrade)
 		{
-			for(FUpgradeManager CurrentWeapons : UpgradesAvailable)
-			{
-				if(CurrentWeapons.WeaponType == Upgrade.WeaponType)
-				{
-					if(CurrentWeapons.WeaponReference)
-					{
-						CurrentWeapons.WeaponReference->UpgradeWeapon(Upgrade.WeaponUpgrades);
-					}
-				}
-				//UE_LOGFMT(LogTemp, Warning, "Weapon: {0}", CurrentWeapons.WeaponReference->GetName());
-			}
+			UpgradeCategory(Upgrade);
 		}
 		else
 		{
 			Upgrade.WeaponReference->UpgradeWeapon(Upgrade.WeaponUpgrades);
 		}
 
-		//if(Upgrade.WeaponUpgrades.bSingleUse)
-		//{
-		//	int index2 = 0;
-		//	for (FUpgradeManager UpgradeAvailable : UpgradesAvailable)
-		//	{
-		//		if(UpgradeAvailable.WeaponReference == Upgrade.WeaponReference)
-		//		{
-		//			int index = 0;
-		//			for (FWeaponUpgrades Upgrades : UpgradeAvailable.WeaponUpgrades)
-		//			{
-		//				if(Upgrades.UniqueName == Upgrade.WeaponUpgrades.UniqueName)
-		//				{
-		//					if(UpgradesAvailable.IsValidIndex(index2))
-		//					{
-		//						if(UpgradesAvailable[index2].WeaponUpgrades.IsValidIndex(index))
-		//						{
-		//							//UE_LOGFMT(LogTemp, Warning, "Upgrade Name {0}", UpgradesAvailable[index2].WeaponUpgrades[index].UniqueName);
-		//							UpgradesAvailable[index2].WeaponUpgrades.RemoveAt(index);
-		//							break;
-		//						}
-		//					}
-		//				}
-		//				index++;
-		//			}
-		//		}
-		//		index2++;
-		//	}
-		//}
-		int index = 0;
-		for (FUpgradeManager UpgradeAvailable: UpgradesAvailable)
+		/**
+		 *	If an Upgrade is marked as Single Use. It will be removed from the upgrade pool.
+		 */
+		if(Upgrade.WeaponUpgrades.bSingleUse)
 		{
-			if (UpgradeAvailable.WeaponReference == Upgrade.WeaponReference)
+			UpgradeSingleUse(Upgrade);
+		}
+
+		/**
+		 *	Increments the Upgrade cards level so the next upgrade can be added to the upgrade pool.
+		 */
+		for(int i = 0; i < UpgradesAvailable.Num(); i ++)
+		{
+			if(UpgradesAvailable.IsValidIndex(i))
 			{
-				if(UpgradesAvailable.IsValidIndex(index))
+				if (UpgradesAvailable[i].WeaponReference == Upgrade.WeaponReference)
 				{
-					UpgradesAvailable[index].CurrentUpgradeLevel++;
-					UE_LOGFMT(LogTemp, Warning, "Upgrade Name {0}, Lvl: {1}", UpgradeAvailable.WeaponReference->GetName(), UpgradeAvailable.CurrentUpgradeLevel);
+					UpgradesAvailable[i].CurrentUpgradeLevel++;
 					break;
 				}
 			}
-			index++;
 		}
 	}
-
-	//UE_LOGFMT(LogTemp, Warning, "Weapon Selected: {0} Upgrade Selected {1}", Upgrade.WeaponReference->GetName(), Upgrade.WeaponUpgrades.UniqueName);
-
 	bUpgradeActive = false;
+}
+
+/**
+ * @brief Upgrades the category of a weapon.
+ *
+ * This function iterates over all available upgrades and applies the specified upgrade to all weapons of the same type.
+ *
+ * @param Upgrade The upgrade to be applied. This includes the type of the weapon to be upgraded and the details of the upgrade.
+ */
+void AWeaponUpgradeManager::UpgradeCategory(const FUpgradeCommunication& Upgrade)
+{
+	for (FUpgradeManager CurrentWeapons : UpgradesAvailable)
+	{
+		if (CurrentWeapons.WeaponType == Upgrade.WeaponType)
+		{
+			if (CurrentWeapons.WeaponReference)
+			{
+				CurrentWeapons.WeaponReference->UpgradeWeapon(Upgrade.WeaponUpgrades);
+			}
+		}
+	}
+}
+
+/**
+ * @brief Upgrades a single use weapon.
+ *
+ * This method iterates through all available upgrades and applies the specified upgrade to the weapon.
+ * If the upgrade is found and successfully applied, it is then removed from the list of available upgrades.
+ *
+ * @param Upgrade The upgrade to be applied. This is an instance of FUpgradeCommunication which contains the weapon reference and the details of the upgrade.
+ */
+void AWeaponUpgradeManager::UpgradeSingleUse(const FUpgradeCommunication& Upgrade)
+{
+	for(int i = 0; i < UpgradesAvailable.Num(); i++)
+	{
+		if(UpgradesAvailable.IsValidIndex(i))
+		{
+			if (UpgradesAvailable[i].WeaponReference == Upgrade.WeaponReference)
+			{
+				for(int j = 0; j < UpgradesAvailable[i].WeaponUpgrades.Num(); j++)
+				{
+					if (UpgradesAvailable[i].WeaponUpgrades.IsValidIndex(j))
+					{
+						if (UpgradesAvailable[i].WeaponUpgrades[j].UniqueName == Upgrade.WeaponUpgrades.UniqueName)
+						{
+							UpgradesAvailable[i].WeaponUpgrades.RemoveAt(j);
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+	
 }

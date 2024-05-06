@@ -2,11 +2,17 @@
 
 
 #include "GrenadeProjectile.h"
-#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 
+/**
+ * @brief Destroys the projectile and applies damage to all actors hit.
+ * 
+ * This method performs a sphere trace from the actor's location and applies damage to all actors hit.
+ * If the special upgrade 1 is active, it spawns additional grenade projectiles.
+ * Finally, it calls the parent class's DestroyProjectile method.
+ */
 void AGrenadeProjectile::DestroyProjectile()
 {
-	TArray<FHitResult> AllActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), AffectRadius * 10);
+	const TArray<FHitResult> AllActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), AffectRadius * 10);
 	ApplyDamage(AllActorsHit);
 	if (bSpecialUpgrade1)
 	{
@@ -27,7 +33,7 @@ void AGrenadeProjectile::DestroyProjectile()
 	Super::DestroyProjectile();
 }
 
-void AGrenadeProjectile::TraceCheck(const float DeltaTime)
+void AGrenadeProjectile::TraceCheck(const float& DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
 

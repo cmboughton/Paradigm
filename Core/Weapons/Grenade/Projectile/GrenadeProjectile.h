@@ -10,15 +10,24 @@ UCLASS()
 class PARADIGM_IQ_API AGrenadeProjectile : public AProjectile
 {
 	GENERATED_BODY()
+
+#pragma region Protected Functions
 protected:
 
 	virtual void DestroyProjectile() override;
 
-	virtual void TraceCheck(const float DeltaTime) override;
+	virtual void TraceCheck(const float& DeltaTime) override;
+
+#pragma endregion
+
+#pragma region Protected Variables
+protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Reference to the Grenade BP to spawn for the Bouncing Betty upgrade."))
 	const TSubclassOf<AGrenadeProjectile> GrenadeProjectile;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The amount of grenades to spawn with Bouncing Betty upgrade."))
 	int BouncingBettySpawn;
+
+#pragma endregion
 };

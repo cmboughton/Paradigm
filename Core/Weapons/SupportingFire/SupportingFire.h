@@ -22,4 +22,22 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WeaponTriggerBP(FVector SpawnLocation);
+
+	UPROPERTY()
+	bool bSelectTargets = true;
+
+	UPROPERTY()
+	float ExplosionDelay = .2f;
+
+	UPROPERTY()
+	TArray<AActor*> EnemiesFound;
+
+	UPROPERTY()
+	int RandRoll;
+
+	UPROPERTY()
+	TArray<FVector> EnemyLocation;
+
+	UPROPERTY()
+	TArray<FVector> RandomLocation;
 };

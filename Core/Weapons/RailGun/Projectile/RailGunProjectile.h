@@ -14,7 +14,10 @@ class PARADIGM_IQ_API ARailGunProjectile : public AProjectile
 {
 	GENERATED_BODY()
 
+#pragma region Protected Functions
 protected:
 
-	virtual void TraceCheck(const float DeltaTime) override;
+	virtual void TraceCheck(const float& DeltaTime) override;
+
+#pragma endregion
 };
