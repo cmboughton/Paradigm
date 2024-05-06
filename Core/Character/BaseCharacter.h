@@ -20,6 +20,9 @@ public:
 	UFUNCTION()
 	void UpdateMovementSpeed(const float Speed) const;
 
+	UFUNCTION()
+	void UpdateHealth(const float& HealthIn);
+
 #pragma endregion
 
 #pragma region Protected Functions

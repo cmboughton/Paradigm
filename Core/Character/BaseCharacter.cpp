@@ -114,6 +114,22 @@ void ABaseCharacter::SpawnActor(const TSubclassOf<AActor> ClassToSpawn, const FT
 	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
 }
 
+void ABaseCharacter::UpdateHealth(const float& HealthIn)
+{
+	if(CurrentHealth < MaxHealth)
+	{
+		if(CurrentHealth + HealthIn >= MaxHealth)
+		{
+			CurrentHealth = MaxHealth;
+		}
+		else
+		{
+			CurrentHealth += HealthIn;
+		}
+	}
+	UE_LOGFMT(LogTemp, Warning, "HealthIn: {0}", HealthIn);
+}
+
 /**
  * @brief Updates the character's movement speed.
  * 

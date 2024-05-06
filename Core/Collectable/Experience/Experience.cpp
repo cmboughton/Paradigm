@@ -5,16 +5,16 @@
 
 #include "Paradigm_IQ/Core/Data/Structs/Structs.h"
 
-void AExperience::Collected(APlayerCharacter* PlayerCharacterRef)
+void AExperience::Collected()
 {
-	Super::Collected(PlayerCharacterRef);
+	Super::Collected();
 	struct FExperienceOrb ExperienceStruct;
 	ExperienceStruct.Experience = Experience;
 	ExperienceStruct.UltimateExperience = UltimateExperience;
-	PlayerCharacterRef->AddCollectable(ExperienceStruct);
+	PlayerCharacter->AddCollectable(ExperienceStruct);
 }
 
-void AExperience::SetUp(FExperienceOrb ExperienceStruct)
+void AExperience::SetUp(const FExperienceOrb& ExperienceStruct)
 {
 	Experience = ExperienceStruct.Experience;
 	UltimateExperience = ExperienceStruct.UltimateExperience;

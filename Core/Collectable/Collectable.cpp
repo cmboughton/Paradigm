@@ -43,7 +43,7 @@ void ACollectable::PickUp_Implementation(APlayerCharacter* PlayerCharacterRef)
 	
 }
 
-void ACollectable::Collected(APlayerCharacter* PlayerCharacterRef)
+void ACollectable::Collected()
 {
 }
 
@@ -73,7 +73,7 @@ void ACollectable::Tick(float DeltaTime)
 
 			if (FMath::Sqrt(FVector::DistSquared(PlayerCharacter->GetActorLocation(), this->GetActorLocation())) <= 100)
 			{
-				Collected(PlayerCharacter);
+				Collected();
 				this->Destroy();
 			}
 		}

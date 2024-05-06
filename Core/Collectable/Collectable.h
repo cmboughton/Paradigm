@@ -27,7 +27,7 @@ protected:
 	virtual void PickUp_Implementation(APlayerCharacter* PlayerCharacterRef) override;
 
 	UFUNCTION()
-	virtual void Collected(APlayerCharacter* PlayerCharacterRef);
+	virtual void Collected();
 
 	UFUNCTION()
 	virtual void HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

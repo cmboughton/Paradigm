@@ -16,7 +16,7 @@ class PARADIGM_IQ_API AExperience : public ACollectable
 
 protected:
 
-	virtual void Collected(APlayerCharacter* PlayerCharacterRef) override;
+	virtual void Collected() override;
 
 	UPROPERTY(BlueprintReadOnly, meta = (ExposeOnSpawn = "true"))
 	float Experience = 0.f;
@@ -27,5 +27,5 @@ protected:
 public:
 
 	UFUNCTION()
-	void SetUp(struct FExperienceOrb ExperienceStruct);
+	void SetUp(const FExperienceOrb& ExperienceStruct);
 };

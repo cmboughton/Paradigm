@@ -16,7 +16,7 @@ class PARADIGM_IQ_API AWeaponUpgradeCollectable : public ACollectable
 
 protected:
 
-	virtual void Collected(APlayerCharacter* PlayerCharacterRef) override;
+	virtual void Collected() override;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaiables|Stats", meta = (ToolTip = "The amount of upgrades the manager should roll."))

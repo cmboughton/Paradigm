@@ -3,7 +3,6 @@
 
 #include "AttractOrb.h"
 
-#include "PropertyEditorModule.h"
 #include "Kismet/GameplayStatics.h"
 #include "Logging/StructuredLog.h"
 
