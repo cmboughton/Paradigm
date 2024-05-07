@@ -4,13 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Logging/StructuredLog.h"
-#include "Engine/DamageEvents.h"
-#include "Paradigm_IQ/Core/Weapons/Projectile.h"
-#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
+#include "Paradigm_IQ/Core/Data/Structs/Structs.h"
 #include "Weapons.generated.h"
 
+class APlayerCharacter;
+class AProjectile;
 class AWeaponUpgradeManager;
 
 UCLASS()
@@ -119,8 +118,9 @@ public:
 
 #pragma region Getters and Setters
 
-	FORCEINLINE AActor*						GetPlayerCharacter()			const { return PlayerCharacter; }
-	FORCEINLINE TSoftObjectPtr<UDataTable>	GetWeaponsDataTable()			const { return WeaponsDataTable; }
+	FORCEINLINE AActor*			GetPlayerCharacter()											const { return PlayerCharacter; }
+	FORCEINLINE TSoftObjectPtr<UDataTable>	GetWeaponsDataTable()											const { return WeaponsDataTable; }
+	FORCEINLINE void						SetPlayerCharacter(AActor* PlayerCharRef)							  { PlayerCharacter = PlayerCharRef; }
 
 #pragma endregion
 };

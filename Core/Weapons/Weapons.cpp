@@ -6,6 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
 #include "Paradigm_IQ/Core/Character/EnemyCharacter/EnemyCharacter.h"
+#include "Paradigm_IQ/Core/Weapons/Projectile.h"
+#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
+#include "Engine/DamageEvents.h"
 
 struct FWeaponsDataTable;
 
@@ -18,8 +21,6 @@ void AWeapons::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerCharacter = Cast<AActor>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
 		if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(RowName, "Weapons Data Table Not set up. Weapons.cpp", true))
@@ -31,7 +32,7 @@ void AWeapons::BeginPlay()
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)
 			{
-				FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, 0, WeaponsData->WeaponType, false);
+				const FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, 0, WeaponsData->WeaponType, false);
 				UpgradeManagerRef->AddUpgrades(WeaponUpgrades);
 			}
 		}
@@ -305,6 +306,7 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(const FTransform& Transform) 
 		ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
 		ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
 		ProjectileSpawn->SetTriggerAmount(TriggerAmount);
+		ProjectileSpawn->SetPlayerCharacter(PlayerCharacter);
 		ProjectileSpawn->FinishSpawning(Transform);
 		return Projectile;
 	}

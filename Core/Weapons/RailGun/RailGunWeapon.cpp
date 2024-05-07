@@ -2,7 +2,7 @@
 
 
 #include "RailGunWeapon.h"
-
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 void ARailGunWeapon::WeaponTriggered(const float DeltaTime)

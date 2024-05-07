@@ -46,7 +46,7 @@ struct FWeaponUpgrades
 	float WeaponUpgradeValue = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "This upgrade is Single Use and will be removed from the pool once selected."))
-	bool bSingleUse = true;
+	bool bSingleUse = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "This upgrade is category based upgrade. All weapons with same weapon type will recieve this upgrade."))
 	bool bCategoryUpgrade = false;
@@ -71,6 +71,9 @@ struct FUpgradeManager
 
 	UPROPERTY()
 	bool bIsWeaponUnlock = false;
+
+	UPROPERTY()
+	bool bIsPassiveUnlock = false;
 };
 
 USTRUCT(BlueprintType)
@@ -89,6 +92,9 @@ struct FUpgradeCommunication
 
 	UPROPERTY()
 	bool bIsWeaponUnlock = false;
+
+	UPROPERTY()
+	bool bIsPassiveUnlock = false;
 };
 
 USTRUCT(BlueprintType)

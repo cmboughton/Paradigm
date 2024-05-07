@@ -4,14 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Engine/DamageEvents.h"
-#include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "Logging/StructuredLog.h"
-#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
-#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "Projectile.generated.h"
 
 
+class APlayerCharacter;
 
 UCLASS()
 class PARADIGM_IQ_API AProjectile : public AActor
@@ -69,7 +66,7 @@ protected:
 	TArray<FHitResult> ActorsHit;
 
 	UPROPERTY()
-	APlayerCharacter* PlayerCharacter = nullptr;
+	AActor* PlayerCharacter = nullptr;
 
 	UPROPERTY()
 	bool bSpecialUpgrade1 = false;
@@ -120,6 +117,6 @@ public:
 	FORCEINLINE void	SetImpulse				(const float ImpulseValue)					{ Impulse = ImpulseValue; }
 	FORCEINLINE void	SetTriggerAmount		(const int TriggerValue)					{ TriggerAmount = TriggerValue; }
 	FORCEINLINE void	SetDestroyDuration		(const float DestroyDurationValue)			{ DestroyDuration = DestroyDurationValue; }
-
+	FORCEINLINE void	SetPlayerCharacter		(AActor* PlayerCharRef)						{ PlayerCharacter = PlayerCharRef; }
 #pragma endregion
 };

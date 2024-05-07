@@ -57,9 +57,11 @@ public:
 	UFUNCTION()
 	void AddScore(const float AddedScore);
 
+	UFUNCTION()
+	void AddWeapon(const FName& WeaponName);
 
 	UFUNCTION()
-	void AddWeapon(const FName WeaponName);
+	void AddPassive(const FName& PassiveName);
 
 #pragma endregion
 
@@ -89,7 +91,6 @@ protected:
 	UFUNCTION()
 	static int CalculateExperienceForLevel(const int Level, const int BaseExperience, const float GrowthRate);
 
-
 #pragma endregion
 
 #pragma  region Stats
@@ -101,6 +102,12 @@ protected:
 	UPROPERTY()
 	int MaxWeaponsEquipped = 6;
 
+	UPROPERTY()
+	TArray<FName> PassivesEquipped;
+
+	UPROPERTY()
+	int MaxPassivesEquipped = 6;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
 	TSoftObjectPtr<UDataTable> ShipDataTable;
 
@@ -109,6 +116,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
 	TSoftObjectPtr<UDataTable> WeaponsDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Passives."))
+	TSoftObjectPtr<UDataTable> PassivesDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The highest Score Modifer the player can achieve."))
 	int MaxScoringModifier = 10;
@@ -176,21 +186,26 @@ protected:
 public:
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetScoringModifier()		const { return ScoringModifier; }
+	FORCEINLINE int						GetScoringModifier()							const { return ScoringModifier; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float					GetCurrentUltimate()		const { return CurrentUltimateTracker; }
+	FORCEINLINE float					GetCurrentUltimate()							const { return CurrentUltimateTracker; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float					GetMaxUltimate()			const { return UltimateTracker; }
+	FORCEINLINE float					GetMaxUltimate()								const { return UltimateTracker; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE TArray<FName>			GetWeaponsEquipped()		const { return WeaponsEquipped; }
+	FORCEINLINE int						GetCurrentXP()									const { return ExperienceTracker; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetCurrentXP()				const { return ExperienceTracker; }
+	FORCEINLINE int						GetCurrentLevel()								const { return CurrentLevel; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetCurrentLevel()			const { return CurrentLevel; }
+	FORCEINLINE int						GetNextLevelReq()								const { return NextLevelReq; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetNextLevelReq()			const { return NextLevelReq; }
-	FORCEINLINE int						GetMaxWeaponsEquipped()		const { return MaxWeaponsEquipped; }
+	FORCEINLINE TArray<FName>			GetWeaponsEquipped()							const { return WeaponsEquipped; }
+	FORCEINLINE int						GetMaxWeaponsEquipped()							const { return MaxWeaponsEquipped; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE TArray<FName>			GetPassivesEquipped()							const { return PassivesEquipped; }
+	FORCEINLINE int						GetMaxPassivesEquipped()						const { return MaxPassivesEquipped; }
+	FORCEINLINE float					GetPickUpRadius()								const { return PickUpRadius; }
 
+	FORCEINLINE void					SetPickUpRadius(const float PickUpValue)			  { PickUpRadius = PickUpValue; }
 
 #pragma endregion
 };

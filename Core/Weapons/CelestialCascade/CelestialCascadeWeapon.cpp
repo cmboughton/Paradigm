@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Character/EnemyCharacter/EnemyCharacter.h"
+#include "Engine/DamageEvents.h"
 
 void ACelestialCascadeWeapon::WeaponTriggered(const float DeltaTime)
 {

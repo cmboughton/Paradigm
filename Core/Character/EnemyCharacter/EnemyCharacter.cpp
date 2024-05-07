@@ -6,7 +6,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Collectable/Experience/Experience.h"
 #include "Paradigm_IQ/Core/Collectable/WeaponUpgrade/WeaponUpgradeCollectable.h"
-#include "Paradigm_IQ/Core/Collectable/AttractOrb/AttractOrb.h"
 
 
 // Sets default values

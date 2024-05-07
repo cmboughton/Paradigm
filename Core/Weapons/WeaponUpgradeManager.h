@@ -7,8 +7,6 @@
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/UI/Menus/MenuComponets/WeaponUpgrade/WeaponUpgradeWidget.h"
-#include "Kismet/GameplayStatics.h"
-#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "WeaponUpgradeManager.generated.h"
 
 
@@ -60,6 +58,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
 	TSoftObjectPtr<UDataTable> WeaponsDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Passives."))
+	TSoftObjectPtr<UDataTable> PassivesDataTable;
 
 	UPROPERTY()
 	TArray<FUpgradeManager> UpgradesAvailable;

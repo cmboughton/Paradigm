@@ -18,6 +18,7 @@
 
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
+#include "Paradigm_IQ/Core/Passives/Passives.h"
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
 
@@ -173,7 +174,7 @@ void APlayerCharacter::Ultimate()
 		if(UltimateAbilityRef)
 		{
 			CurrentUltimateTracker = 0.f;
-			AUltimateAbility* UltimateSpawned = GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
+			GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
 		}
 		else
 		{
@@ -229,7 +230,7 @@ void APlayerCharacter::SetUpShip()
  */
 void APlayerCharacter::CollectablePickUp()
 {
-	TArray<FHitResult> SweepResult = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), 200.f);
+	TArray<FHitResult> SweepResult = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), PickUpRadius);
 	for(FHitResult ActorsToCheck : SweepResult)
 	{
 		if (ActorsToCheck.GetActor())
@@ -315,7 +316,7 @@ void APlayerCharacter::AddScore(const float AddedScore)
  * 
  * @param WeaponName The name of the weapon to be added.
  */
-void APlayerCharacter::AddWeapon(const FName WeaponName)
+void APlayerCharacter::AddWeapon(const FName& WeaponName)
 {
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
@@ -324,9 +325,39 @@ void APlayerCharacter::AddWeapon(const FName WeaponName)
 			if (UClass* WeaponSpawn = WeaponsData->Weapon.LoadSynchronous())
 			{
 				WeaponsEquipped.Add(WeaponName);
-				AWeapons* WeaponRef = GetWorld()->SpawnActor<AWeapons>(WeaponSpawn, this->GetActorTransform());
-				FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+				AWeapons* WeaponRef = GetWorld()->SpawnActorDeferred<AWeapons>(WeaponSpawn, this->GetActorTransform());
+				WeaponRef->SetPlayerCharacter(this);
+				WeaponRef->FinishSpawning(this->GetActorTransform());
+				const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
 				WeaponRef->AttachToActor(this, AttachmentRules);
+			}
+		}
+	}
+}
+
+/**
+ * @brief Adds a passive ability to the player character.
+ *
+ * This function loads the passive ability data from a data table using the provided name. 
+ * If the passive ability data is found and the passive ability class can be loaded, 
+ * the passive ability is spawned in the world and attached to the player character.
+ *
+ * @param PassiveName The name of the passive ability to add.
+ */
+void APlayerCharacter::AddPassive(const FName& PassiveName)
+{
+	if (const UDataTable* PassivesDataTableHardRef = PassivesDataTable.LoadSynchronous())
+	{
+		if (const FPassivesDataTable* PassivesData = PassivesDataTableHardRef->FindRow<FPassivesDataTable>(PassiveName, "Passive Data Table Not set up PlayerCharacter.cpp", true))
+		{
+			if (UClass* PassiveSpawn = PassivesData->Passive.LoadSynchronous())
+			{
+				PassivesEquipped.Add(PassiveName);
+				APassives* PassiveRef = GetWorld()->SpawnActorDeferred<APassives>(PassiveSpawn, this->GetActorTransform());
+				PassiveRef->SetPlayerCharacter(this);
+				PassiveRef->FinishSpawning(this->GetActorTransform());
+				const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
+				PassiveRef->AttachToActor(this, AttachmentRules);
 			}
 		}
 	}

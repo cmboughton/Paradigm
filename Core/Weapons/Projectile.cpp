@@ -3,8 +3,10 @@
 
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Engine/DamageEvents.h"
+#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
+
 
 
 AProjectile::AProjectile()
@@ -29,8 +31,6 @@ void AProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	MovementComponent->MaxSpeed = ProjectileSpeed;
-
-	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	if(bIsArcImpulse)
 	{
@@ -98,7 +98,7 @@ void AProjectile::DestroyProjectile()
 TArray<FHitResult> AProjectile::SphereTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation, const float& TraceRadius)
 {
 	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(PlayerCharacter);
+	ActorsToIgnore.Init(PlayerCharacter, 1);
 	ActorsToIgnore.Add(this);
 	//ActorsToIgnore.Init(PlayerCharacter, 1);
 	TArray<FHitResult> AllActorsHit;

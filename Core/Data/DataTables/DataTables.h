@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "Paradigm_IQ/Core/Data/Structs/Structs.h"
 #include "DataTables.generated.h"
 
+class APassives;
 class AUltimateAbility;
 class AEnemyCharacter;
 class ASpawnPoints;
@@ -111,9 +111,12 @@ struct FPassivesDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The description of the Passive."), meta = (MultiLine = true))
 	FString Description;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The Icon of the passive."))
+	UTexture2D* PassiveIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The weapon actor that is to be spawned."))
+	TSoftClassPtr<APassives> Passive;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The weight of this Passive to roll when called. The weight is caluculated by adding all upgrades to a pool and rolling."))
 	float RollWeight = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The upgrades that this Passive."))
-	TArray<FWeaponUpgrades> WeaponUpgrades;
 };

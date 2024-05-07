@@ -2,7 +2,8 @@
 
 
 #include "WeaponUpgradeManager.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 
 AWeaponUpgradeManager::AWeaponUpgradeManager()
 {
@@ -18,7 +19,7 @@ void AWeaponUpgradeManager::BeginPlay()
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
 		TArray<FName> WeaponRows = WeaponsDataTableHardRef->GetRowNames();
-		for (FName WeaponRow: WeaponRows)
+		for (const FName WeaponRow: WeaponRows)
 		{
 			if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponRow, "Couldn't Add Weapon to Upgrade Pool", true))
 			{
@@ -26,8 +27,22 @@ void AWeaponUpgradeManager::BeginPlay()
 				{
 					TArray<FWeaponUpgrades> WeaponUnlocks;
 					WeaponUnlocks.Add(FWeaponUpgrades(WeaponRow, WeaponsData->Description, WeaponsData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
-	;				UpgradesAvailable.Add(FUpgradeManager(nullptr, WeaponUnlocks, 0, EWeaponType::Mechanical, true));
+	;				UpgradesAvailable.Add(FUpgradeManager(nullptr, WeaponUnlocks, 0, EWeaponType::Mechanical, true, false));
 				}
+			}
+		}
+	}
+	if (const UDataTable* PassivesDataTableHardRef = PassivesDataTable.LoadSynchronous())
+	{
+		TArray<FName> PassiveRows = PassivesDataTableHardRef->GetRowNames();
+		for (const FName PassiveRow : PassiveRows)
+		{
+			if (const FPassivesDataTable* PassivesData = PassivesDataTableHardRef->FindRow<FPassivesDataTable>(PassiveRow, "Couldn't Add Passives to Upgrade Pool", true))
+			{
+				TArray<FWeaponUpgrades> PassiveUnlocks;
+				PassiveUnlocks.Add(FWeaponUpgrades(PassiveRow, PassivesData->Description, PassivesData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
+				UpgradesAvailable.Add(FUpgradeManager(nullptr, PassiveUnlocks, 0, EWeaponType::Mechanical, false, true));
+				
 			}
 		}
 	}
@@ -96,7 +111,7 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 					
 					if(Roll <= CurrentRollTracker && Roll > CurrentRollTracker - UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel].RollWeight)
 					{
-						UpgradesSelected.Add(FUpgradeCommunication(UpgradeAvailable.WeaponReference, UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel], UpgradeAvailable.WeaponType, UpgradeAvailable.bIsWeaponUnlock));
+						UpgradesSelected.Add(FUpgradeCommunication(UpgradeAvailable.WeaponReference, UpgradeAvailable.WeaponUpgrades[UpgradeAvailable.CurrentUpgradeLevel], UpgradeAvailable.WeaponType, UpgradeAvailable.bIsWeaponUnlock, UpgradeAvailable.bIsPassiveUnlock));
 						break;
 
 					}
@@ -139,11 +154,27 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 	{
 		// Adds the weapon selected to the players weapons
 		PlayerCharacter->AddWeapon(Upgrade.WeaponUpgrades.UniqueName);
+		UE_LOGFMT(LogTemp, Warning, "Weapon Name: {0}", Upgrade.WeaponUpgrades.UniqueName);
 
 		// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
 		if(PlayerCharacter->GetWeaponsEquipped().Num() >= PlayerCharacter->GetMaxWeaponsEquipped())
 		{
 			UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsWeaponUnlock; });
+		}
+		else
+		{
+			UpgradeSingleUse(Upgrade);
+		}
+	}
+	else if (Upgrade.bIsPassiveUnlock)
+	{
+		// Adds the weapon selected to the players weapons
+		PlayerCharacter->AddPassive(Upgrade.WeaponUpgrades.UniqueName);
+
+		// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
+		if (PlayerCharacter->GetPassivesEquipped().Num() >= PlayerCharacter->GetMaxPassivesEquipped())
+		{
+			UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsPassiveUnlock; });
 		}
 		else
 		{
@@ -234,6 +265,7 @@ void AWeaponUpgradeManager::UpgradeSingleUse(const FUpgradeCommunication& Upgrad
 					{
 						if (UpgradesAvailable[i].WeaponUpgrades[j].UniqueName == Upgrade.WeaponUpgrades.UniqueName)
 						{
+							//UE_LOGFMT(LogTemp, Warning, "Weapon Ref: {0}", UpgradesAvailable[i].WeaponUpgrades[j].UniqueName);
 							UpgradesAvailable[i].WeaponUpgrades.RemoveAt(j);
 							return;
 						}
@@ -242,5 +274,4 @@ void AWeaponUpgradeManager::UpgradeSingleUse(const FUpgradeCommunication& Upgrad
 			}
 		}
 	}
-	
 }
