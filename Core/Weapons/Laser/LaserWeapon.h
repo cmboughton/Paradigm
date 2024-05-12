@@ -18,11 +18,8 @@ protected:
 
 	virtual void WeaponTriggered(const float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the lasers should sweep or not."))
-	bool bShouldSweep = false;
-
 	UPROPERTY()
-	FRotator SweepRotation = FRotator(0.f, 0.f, 0.f);
+	bool bStartSweep = false;
 
 	UPROPERTY()
 	FRotator SweepTracker;
@@ -31,9 +28,5 @@ protected:
 	float LaserLengthTracker = 0.f;
 
 	UPROPERTY()
-	float LaserEndDelayTracker = 0.f;
-
-	UPROPERTY()
 	TArray<FHitResult> ActorsHit;
-
 };
