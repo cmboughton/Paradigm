@@ -69,6 +69,9 @@ struct FWeaponsDataTable : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "Debug to force an upgrade on start."))
+	EWeaponUpgradeType DeBugUpgrade = EWeaponUpgradeType::PercentDamage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The name of the weapon."))
 	FName Name;
 

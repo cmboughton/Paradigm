@@ -27,7 +27,8 @@ void AWeapons::BeginPlay()
 		{
 			FireRate = WeaponsData->FireRate;
 			Damage = WeaponsData->Damage;
-
+			FWeaponUpgrades DeBugWeaponUpgrade = FWeaponUpgrades("Name", "Des", 0, EUpgradeRarity::Basic, WeaponsData->DeBugUpgrade);
+			UpgradeWeapon(DeBugWeaponUpgrade);
 			AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)
@@ -115,7 +116,6 @@ void AWeapons::UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades)
 
 		bSpecialUpgrade1 = true;
 		SpecialUpgradeTracker++;
-		UE_LOGFMT(LogTemp, Warning, "SpecialUpgradeTracker {0}", SpecialUpgradeTracker);
 		break;
 
 	case EWeaponUpgradeType::SpecialUpgrade2:
