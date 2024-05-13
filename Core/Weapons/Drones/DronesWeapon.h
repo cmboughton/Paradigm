@@ -52,6 +52,9 @@ protected:
 	float DroneDurationTracker = 0.f;
 
 	UPROPERTY()
+	float DroneFireRateTracker = 0.f;
+
+	UPROPERTY()
 	FRotator SweepRotation = FRotator(0.f, 0.f, 0.f);
 
 	UPROPERTY()

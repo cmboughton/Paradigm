@@ -4,6 +4,7 @@
 #include "DronesWeapon.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Paradigm_IQ/Core/Weapons/Projectile.h"
 
 
 void ADronesWeapon::WeaponTriggered(const float DeltaTime)
@@ -182,6 +183,36 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 			{
 				SweepTracker.Yaw += DeltaTime * RotationSpeed;
 				DroneDurationTracker += DeltaTime;
+				if(bSpecialUpgrade1)
+				{
+					if(DroneFireRateTracker <= 0)
+					{
+						DroneFireRateTracker = FireRate;
+						for(auto DroneMesh : SpawnedDrones)
+						{
+							const FRotator DroneRotation = DroneMesh->GetRelativeRotation() + FRotator(0.f , 25.f, 0.f);
+							const FVector SpawnLocation = DroneMesh->GetComponentLocation() + DroneRotation.Vector();
+							const FTransform BulletSpawnLocation = FTransform(DroneRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
+							if (Projectile)
+							{
+								AProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<AProjectile>(Projectile, BulletSpawnLocation);
+								ProjectileSpawn->SetDamage(Damage);
+								ProjectileSpawn->SetAffectRadius(AffectRadius / 4);
+								ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
+								ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
+								ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
+								ProjectileSpawn->SetTriggerAmount(TriggerAmount);
+								ProjectileSpawn->SetPlayerCharacter(PlayerCharacter);
+								ProjectileSpawn->FinishSpawning(BulletSpawnLocation);
+								//SpawnProjectile(BulletSpawnLocation);
+							}
+						}
+					}
+					else
+					{
+						DroneFireRateTracker -= DeltaTime;
+					}
+				}
 				//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", SweepTracker.Yaw);
 			}
 			else
