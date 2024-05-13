@@ -20,7 +20,7 @@ class PARADIGM_IQ_API AWeaponUpgradeManager : public AActor
 public:	
 
 	UFUNCTION()
-	void AddUpgrades(const FUpgradeManager& Upgrade);
+	void AddUpgrades(const FUpgradeManager& Upgrade, const FUpgradeManager& SpecialUpgrade);
 
 	UFUNCTION()
 	void RollUpgrades(const int RollAmount);
@@ -44,6 +44,9 @@ protected:
 	UFUNCTION()
 	void UpgradeSingleUse(const FUpgradeCommunication& Upgrade);
 
+	UFUNCTION()
+	TArray<FUpgradeManager> SetUpSpecialUpgrades();
+
 #pragma endregion
 
 
@@ -64,6 +67,9 @@ protected:
 
 	UPROPERTY()
 	TArray<FUpgradeManager> UpgradesAvailable;
+
+	UPROPERTY()
+	TArray<FUpgradeManager> SpecialWeaponUpgrades;
 
 	UPROPERTY()
 	float RollRange = 0.f;

@@ -32,8 +32,9 @@ void AWeapons::BeginPlay()
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)
 			{
-				const FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, 0, WeaponsData->WeaponType, false);
-				UpgradeManagerRef->AddUpgrades(WeaponUpgrades);
+				const FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, WeaponsData->SpecialUpgradeLevels, WeaponsData->WeaponType, false, false, false);
+				const FUpgradeManager SpecialWeaponUpgrades = FUpgradeManager(this, WeaponsData->SpecialWeaponUpgrades, WeaponsData->SpecialUpgradeLevels, WeaponsData->WeaponType,  false, false, true);
+				UpgradeManagerRef->AddUpgrades(WeaponUpgrades, SpecialWeaponUpgrades);
 			}
 		}
 	}
@@ -113,16 +114,20 @@ void AWeapons::UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades)
 	case EWeaponUpgradeType::SpecialUpgrade1:
 
 		bSpecialUpgrade1 = true;
+		SpecialUpgradeTracker++;
+		UE_LOGFMT(LogTemp, Warning, "SpecialUpgradeTracker {0}", SpecialUpgradeTracker);
 		break;
 
 	case EWeaponUpgradeType::SpecialUpgrade2:
 
 		bSpecialUpgrade2 = true;
+		SpecialUpgradeTracker++;
 		break;
 
 	case EWeaponUpgradeType::SpecialUpgrade3:
 
 		bSpecialUpgrade3 = true;
+		SpecialUpgradeTracker++;
 		break;
 	}
 }

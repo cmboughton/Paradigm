@@ -64,7 +64,7 @@ struct FUpgradeManager
 	TArray<FWeaponUpgrades> WeaponUpgrades;
 
 	UPROPERTY()
-	int CurrentUpgradeLevel = 0;
+	TArray<int> SpecialUpgradeLevels;
 
 	UPROPERTY()
 	EWeaponType WeaponType = EWeaponType::Mechanical;
@@ -74,6 +74,9 @@ struct FUpgradeManager
 
 	UPROPERTY()
 	bool bIsPassiveUnlock = false;
+
+	UPROPERTY()
+	bool bIsSpecialUpgrade = false;
 };
 
 USTRUCT(BlueprintType)
@@ -95,6 +98,9 @@ struct FUpgradeCommunication
 
 	UPROPERTY()
 	bool bIsPassiveUnlock = false;
+
+	UPROPERTY()
+	bool bIsSpecialUpgrade = false;
 };
 
 USTRUCT(BlueprintType)

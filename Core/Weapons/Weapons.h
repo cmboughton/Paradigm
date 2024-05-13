@@ -102,6 +102,12 @@ protected:
 	UPROPERTY()
 	bool bSpecialUpgrade3 = false;
 
+	UPROPERTY()
+	int SpecialUpgradeTracker = 0;
+
+	UPROPERTY()
+	int WeaponLevel = 0;
+
 #pragma endregion
 
 public:	
@@ -118,9 +124,13 @@ public:
 
 #pragma region Getters and Setters
 
-	FORCEINLINE AActor*			GetPlayerCharacter()											const { return PlayerCharacter; }
+	FORCEINLINE AActor*						GetPlayerCharacter()											const { return PlayerCharacter; }
 	FORCEINLINE TSoftObjectPtr<UDataTable>	GetWeaponsDataTable()											const { return WeaponsDataTable; }
-	FORCEINLINE void						SetPlayerCharacter(AActor* PlayerCharRef)							  { PlayerCharacter = PlayerCharRef; }
+	FORCEINLINE int							GetSpecialUpgradeTracker()										const { return SpecialUpgradeTracker; }
+	FORCEINLINE int							GetWeaponLevel()												const { return  WeaponLevel; }
+
+	FORCEINLINE void						SetPlayerCharacter	(AActor* PlayerCharRef)							  { PlayerCharacter = PlayerCharRef; }
+	FORCEINLINE void						SetWeaponLevel		(const int& WeaponLevelRef)						  { WeaponLevel = WeaponLevelRef; }
 
 #pragma endregion
 };

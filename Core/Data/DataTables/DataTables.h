@@ -98,6 +98,12 @@ struct FWeaponsDataTable : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The upgrades that this weapon can have."))
 	TArray<FWeaponUpgrades> WeaponUpgrades;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The Special upgrades that this weapon can have."))
+	TArray<FWeaponUpgrades> SpecialWeaponUpgrades;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|AutoShooter", meta = (ToolTip = "The levels to which Special upgrades that this weapon can be added to the weapon."))
+	TArray<int> SpecialUpgradeLevels;
 };
 
 USTRUCT(BlueprintType)
