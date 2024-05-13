@@ -3,10 +3,38 @@
 
 #include "BaseProjectile.h"
 
+#include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
+
 void ABaseProjectile::TraceCheck(const float& DeltaTime)
 {
 	Super::TraceCheck(DeltaTime);
-	ApplyDamage(ActorsHit);
+	if (bSpecialUpgrade2)
+	{
+		if(!ActorsHit.IsEmpty())
+		{
+			bool bEnemyHit = false;
+			for (FHitResult ActorHit : ActorsHit)
+			{
+				if (ActorHit.GetActor())
+				{
+					if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
+					{
+						bEnemyHit = true;
+					}
+				}
+			}
+			if(bEnemyHit)
+			{
+				const TArray<FHitResult> ActorHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), AffectRadius * 5);
+				ApplyDamage(ActorHit);
+				DestroyProjectile();
+			}
+		}
+	}
+	else
+	{
+		ApplyDamage(ActorsHit);
+	}
 }
 
 void ABaseProjectile::Tick(const float DeltaTime)
