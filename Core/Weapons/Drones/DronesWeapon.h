@@ -74,4 +74,13 @@ protected:
 
 	UPROPERTY()
 	TArray<UNiagaraComponent*> SpawnedJets;
+
+	UPROPERTY()
+	float LaserLengthTracker = 0.f;
+
+	UPROPERTY()
+	FRotator LaserSweepTracker;
+
+	UPROPERTY()
+	bool bStartSweep = false;
 };
