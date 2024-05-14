@@ -47,6 +47,8 @@ enum class EWeaponUpgradeType : uint8
 	SpecialUpgrade1				UMETA(DisplayName = "Special Upgrade 1"),
 	SpecialUpgrade2				UMETA(DisplayName = "Special Upgrade 2"),
 	SpecialUpgrade3				UMETA(DisplayName = "Special Upgrade 3"),
+	SpecialUpgrade4				UMETA(DisplayName = "Special Upgrade 4"),
+	SpecialUpgrade5				UMETA(DisplayName = "Special Upgrade 5"),
 };
 
 UENUM(BlueprintType)

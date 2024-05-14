@@ -103,6 +103,12 @@ protected:
 	bool bSpecialUpgrade3 = false;
 
 	UPROPERTY()
+	bool bSpecialUpgrade4 = false;
+
+	UPROPERTY()
+	bool bSpecialUpgrade5 = false;
+
+	UPROPERTY()
 	int SpecialUpgradeTracker = 0;
 
 	UPROPERTY()

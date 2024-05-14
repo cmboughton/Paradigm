@@ -77,6 +77,12 @@ protected:
 	UPROPERTY()
 	bool bSpecialUpgrade3 = false;
 
+	UPROPERTY()
+	bool bSpecialUpgrade4 = false;
+
+	UPROPERTY()
+	bool bSpecialUpgrade5 = false;
+
 #pragma endregion
 
 #pragma region Protected Functions
@@ -110,9 +116,11 @@ public:
 
 	FORCEINLINE void	SetDamage				(const float DamageValue)					{ Damage = DamageValue; }
 	FORCEINLINE void	SetAffectRadius			(const float ExplosionRadiusValue)			{ AffectRadius = ExplosionRadiusValue; }
-	FORCEINLINE void	SetSpecialUpgrade1		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade1 = SpecialUpgrade1Value; }
-	FORCEINLINE void	SetSpecialUpgrade2		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade2 = SpecialUpgrade1Value; }
-	FORCEINLINE void	SetSpecialUpgrade3		(const bool SpecialUpgrade1Value)			{ bSpecialUpgrade3 = SpecialUpgrade1Value; }
+	FORCEINLINE void	SetSpecialUpgrade1		(const bool SpecialUpgradeValue)			{ bSpecialUpgrade1 = SpecialUpgradeValue; }
+	FORCEINLINE void	SetSpecialUpgrade2		(const bool SpecialUpgradeValue)			{ bSpecialUpgrade2 = SpecialUpgradeValue; }
+	FORCEINLINE void	SetSpecialUpgrade3		(const bool SpecialUpgradeValue)			{ bSpecialUpgrade3 = SpecialUpgradeValue; }
+	FORCEINLINE void	SetSpecialUpgrade4		(const bool SpecialUpgradeValue)			{ bSpecialUpgrade4 = SpecialUpgradeValue; }
+	FORCEINLINE void	SetSpecialUpgrade5		(const bool SpecialUpgradeValue)			{ bSpecialUpgrade5 = SpecialUpgradeValue; }
 	FORCEINLINE void	SetIsArcImpulse			(const bool IsArcImpulseValue)				{ bIsArcImpulse = IsArcImpulseValue; }
 	FORCEINLINE void	SetImpulse				(const float ImpulseValue)					{ Impulse = ImpulseValue; }
 	FORCEINLINE void	SetTriggerAmount		(const int TriggerValue)					{ TriggerAmount = TriggerValue; }

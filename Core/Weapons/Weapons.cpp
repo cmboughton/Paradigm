@@ -129,6 +129,18 @@ void AWeapons::UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades)
 		bSpecialUpgrade3 = true;
 		SpecialUpgradeTracker++;
 		break;
+
+	case EWeaponUpgradeType::SpecialUpgrade4:
+
+		bSpecialUpgrade4 = true;
+		SpecialUpgradeTracker++;
+		break;
+
+	case EWeaponUpgradeType::SpecialUpgrade5:
+
+		bSpecialUpgrade5 = true;
+		SpecialUpgradeTracker++;
+		break;
 	}
 }
 
@@ -310,6 +322,8 @@ TSubclassOf<AProjectile> AWeapons::SpawnProjectile(const FTransform& Transform) 
 		ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
 		ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
 		ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
+		ProjectileSpawn->SetSpecialUpgrade4(bSpecialUpgrade4);
+		ProjectileSpawn->SetSpecialUpgrade5(bSpecialUpgrade5);
 		ProjectileSpawn->SetTriggerAmount(TriggerAmount);
 		ProjectileSpawn->SetPlayerCharacter(PlayerCharacter);
 		ProjectileSpawn->FinishSpawning(Transform);

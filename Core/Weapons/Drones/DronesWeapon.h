@@ -30,8 +30,32 @@ protected:
 	UFUNCTION()
 	void SpecialUpgrade2(const float& DeltaTime);
 
+	UFUNCTION()
+	void SpecialUpgrade4(const int& Index, const FVector& SpawnLocation);
+
+	UFUNCTION()
+	void ResetDrones();
+
+	UFUNCTION()
+	void LerpDroneRotation(UStaticMeshComponent* MeshToLerp, const FRotator& LerpRotation, const float& DeltaTime);
+
+	UFUNCTION()
+	static void SetDroneLocation(UStaticMeshComponent* MeshToLerp, const FVector& NewLocation);
+
+	UFUNCTION()
+	void ExpandDrones(const bool& IsExpanding, const int& Index, const float& DeltaTime, const float& YawModifier);
+
+	UFUNCTION()
+	void RotateDronesForward(const int& Index, const float& DeltaTime);
+
+	UFUNCTION()
+	TArray<FHitResult> CheckSphereTrace(const int& Index);
+
 	UPROPERTY()
 	float RadialDistance = 0.f;
+
+	UPROPERTY()
+	FRotator DroneRot;
 
 	UPROPERTY()
 	bool InitialSpawn = false;
@@ -89,4 +113,7 @@ protected:
 
 	UPROPERTY()
 	bool bStartSweep = false;
+
+	UPROPERTY()
+	TArray<bool> bIsDroneAlive;
 };

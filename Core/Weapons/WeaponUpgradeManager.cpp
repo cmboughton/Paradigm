@@ -286,13 +286,13 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 				{
 					if (const AWeapons* WeaponRef = SpecialWeaponUpgrades[i].WeaponReference.LoadSynchronous())
 					{
-						if(WeaponRef->GetSpecialUpgradeTracker() >= SpecialWeaponUpgrades[i].WeaponUpgrades.Num())
+						/*if(WeaponRef->GetSpecialUpgradeTracker() >= SpecialWeaponUpgrades[i].WeaponUpgrades.Num())
 						{
+							UE_LOGFMT(LogTemp, Warning, "Upgrade Tracker: {0} WeaponUpgradesNum: {1}", WeaponRef->GetSpecialUpgradeTracker(), SpecialWeaponUpgrades[i].WeaponUpgrades.Num());
 							SpecialWeaponUpgrades.RemoveAllSwap([&](const FUpgradeManager& Weapon) {return Weapon.WeaponReference == WeaponRef; });
-							//UE_LOGFMT(LogTemp, Warning, "All Special Upgrades Removed");
 						}
 						else
-						{
+						{*/
 							for(int j = 0; j < SpecialWeaponUpgrades[i].WeaponUpgrades.Num(); j++)
 							{
 								if(SpecialWeaponUpgrades[i].WeaponUpgrades.IsValidIndex(j))
@@ -304,7 +304,7 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 									}
 								}
 							}
-						}
+						
 					}
 				}
 			}
