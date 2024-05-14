@@ -11,7 +11,7 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
 
-	if(bSetUpDrones)
+	if(bSetUpDrones || SpawnedDrones.Num() < TriggerAmount)
 	{
 		SpawnedDrones.Empty();
 		for(int i = 0; i < TriggerAmount; i++)
