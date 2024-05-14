@@ -24,6 +24,12 @@ protected:
 
 	virtual void WeaponTriggered(const float DeltaTime) override;
 
+	UFUNCTION()
+	void SpecialUpgrade1(const float& DeltaTime);
+
+	UFUNCTION()
+	void SpecialUpgrade2(const float& DeltaTime);
+
 	UPROPERTY()
 	float RadialDistance = 0.f;
 

@@ -145,25 +145,28 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 					SpawnedDrone->SetRelativeRotation(LerpedRotation);
 				}
 			}
-			if (LaserLengthTracker <= 0)
+			if (bSpecialUpgrade2)
 			{
-				LaserSweepTracker.Yaw = 0.f;
-				LaserLengthTracker = 0.f;
-				bStartSweep = false;
-			}
-			else
-			{
-				for (auto DroneMesh : SpawnedDrones)
+				if (LaserLengthTracker <= 0)
 				{
-					const FVector StartLocation = DroneMesh->GetComponentLocation();
-					const FRotator LaserRot = FRotator(0.f, 360 / TriggerAmount, 0.f);
-					for (int i = 0; i < TriggerAmount; i++)
+					LaserSweepTracker.Yaw = 0.f;
+					LaserLengthTracker = 0.f;
+					bStartSweep = false;
+				}
+				else
+				{
+					for (auto DroneMesh : SpawnedDrones)
 					{
-						LaserLengthTracker -= DeltaTime * (((1 - FireRate) * 300) + 300);
-						const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)) + 45, 0.f) + LaserSweepTracker;
-						const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-						TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-						ActorsHit.Append(ActiveActorsHit);
+						const FVector StartLocation = DroneMesh->GetComponentLocation();
+						const FRotator LaserRot = FRotator(0.f, 360 / TriggerAmount, 0.f);
+						for (int i = 0; i < TriggerAmount; i++)
+						{
+							LaserLengthTracker -= DeltaTime * (((1 - FireRate) * 300) + 300);
+							const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)) + 45, 0.f) + LaserSweepTracker;
+							const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
+							TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
+							ActorsHit.Append(ActiveActorsHit);
+						}
 					}
 				}
 			}
@@ -178,14 +181,14 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 			RadialDistance = 0.f;
 			for (UStaticMeshComponent* SpawnedDrone : SpawnedDrones)
 			{
-				if(SpawnedDrone)
+				if (SpawnedDrone)
 				{
 					SpawnedDrone->DestroyComponent();
 				}
 			}
 			for (UNiagaraComponent* SpawnedJet : SpawnedJets)
 			{
-				if(SpawnedJet)
+				if (SpawnedJet)
 				{
 					SpawnedJet->Deactivate();
 				}
@@ -195,79 +198,111 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 	}
 
 	SweepRotation.Yaw = DroneRot.Yaw * 10;
-	if (RadialDistance >= (AffectRadius * 5))
-	{
-		if (DroneDurationTracker <= DroneDuration)
-		{
-			SweepTracker.Yaw += DeltaTime * RotationSpeed;
-			DroneDurationTracker += DeltaTime;
-			if(bSpecialUpgrade1)
-			{
-				if(DroneFireRateTracker <= 0)
-				{
-					DroneFireRateTracker = FireRate;
-					for(auto DroneMesh : SpawnedDrones)
-					{
-						const FRotator DroneRotation = DroneMesh->GetRelativeRotation() + FRotator(0.f , 25.f, 0.f);
-						const FVector SpawnLocation = DroneMesh->GetComponentLocation() + DroneRotation.Vector();
-						const FTransform BulletSpawnLocation = FTransform(DroneRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
-						if (Projectile)
-						{
-							AProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<AProjectile>(Projectile, BulletSpawnLocation);
-							ProjectileSpawn->SetDamage(Damage);
-							ProjectileSpawn->SetAffectRadius(AffectRadius / 4);
-							ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
-							ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
-							ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
-							ProjectileSpawn->SetTriggerAmount(TriggerAmount);
-							ProjectileSpawn->SetPlayerCharacter(PlayerCharacter);
-							ProjectileSpawn->FinishSpawning(BulletSpawnLocation);
-						}
-					}
-				}
-				else
-				{
-					DroneFireRateTracker -= DeltaTime;
-				}
-			}
-			if(bSpecialUpgrade2)
-			{
-				for (auto DroneMesh : SpawnedDrones)
-				{
-					const FVector StartLocation = DroneMesh->GetComponentLocation();
-					const FRotator LaserRot = FRotator(0.f, 360 / TriggerAmount, 0.f);
-					for (int i = 0; i < TriggerAmount; i++)
-					{
-						const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)), 0.f) + LaserSweepTracker;
 
-						if (LaserLengthTracker < AffectRadius * 2)
-						{
-							LaserLengthTracker += DeltaTime * (((1 - FireRate) * 300) + 300);
-							const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-							const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-							ActorsHit.Append(ActiveActorsHit);
-						}
-						else
-						{
-							const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-							const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-							ActorsHit.Append(ActiveActorsHit);
-							bStartSweep = true;
-						}
-					}
-					if (bStartSweep)
-					{
-						LaserSweepTracker.Yaw += DeltaTime * (RotationSpeed / 2);
-						LaserSweepTracker.Normalize();
-					}
-				}
-			}
-			//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", SweepTracker.Yaw);
-		}
-		else
+	// Drones staying up forever
+	if(bSpecialUpgrade3)
+	{
+		SweepTracker.Yaw += DeltaTime * RotationSpeed;
+		SweepTracker.Normalize();
+		if (bSpecialUpgrade1)
 		{
-			bIsExpanding = false;
-			//UE_LOGFMT(LogTemp, Warning, "Delay: {0}", LaserEndDelayTracker);
+			SpecialUpgrade1(DeltaTime);
+		}
+		if (bSpecialUpgrade2)
+		{
+			SpecialUpgrade2(DeltaTime);
+		}
+	}
+	else
+	{
+		if (RadialDistance >= (AffectRadius * 5))
+		{
+			if (DroneDurationTracker <= DroneDuration)
+			{
+				SweepTracker.Yaw += DeltaTime * RotationSpeed;
+				SweepTracker.Normalize();
+				DroneDurationTracker += DeltaTime;
+				if (bSpecialUpgrade1)
+				{
+					SpecialUpgrade1(DeltaTime);
+				}
+				if (bSpecialUpgrade2)
+				{
+					SpecialUpgrade2(DeltaTime);
+				}
+				//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", SweepTracker.Yaw);
+			}
+			else
+			{
+				bIsExpanding = false;
+				//UE_LOGFMT(LogTemp, Warning, "Delay: {0}", LaserEndDelayTracker);
+			}
+		}
+	}
+}
+
+// Drones shooting Laser Projectile
+void ADronesWeapon::SpecialUpgrade1(const float& DeltaTime)
+{
+	if (DroneFireRateTracker <= 0)
+	{
+		DroneFireRateTracker = FireRate;
+		for (const auto DroneMesh : SpawnedDrones)
+		{
+			const FRotator DroneRotation = DroneMesh->GetRelativeRotation() + FRotator(0.f, 25.f, 0.f);
+			const FVector SpawnLocation = DroneMesh->GetComponentLocation() + DroneRotation.Vector();
+			const FTransform BulletSpawnLocation = FTransform(DroneRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
+			if (Projectile)
+			{
+				AProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<AProjectile>(Projectile, BulletSpawnLocation);
+				ProjectileSpawn->SetDamage(Damage);
+				ProjectileSpawn->SetAffectRadius(AffectRadius / 4);
+				ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
+				ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
+				ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
+				ProjectileSpawn->SetTriggerAmount(TriggerAmount);
+				ProjectileSpawn->SetPlayerCharacter(PlayerCharacter);
+				ProjectileSpawn->FinishSpawning(BulletSpawnLocation);
+
+			}
+		}
+	}
+	else
+	{
+		DroneFireRateTracker -= DeltaTime;
+	}
+}
+
+// Drones rotating lasers
+void ADronesWeapon::SpecialUpgrade2(const float& DeltaTime)
+{
+	for (const auto DroneMesh : SpawnedDrones)
+	{
+		const FVector StartLocation = DroneMesh->GetComponentLocation();
+		const FRotator LaserRot = FRotator(0.f, 360 / TriggerAmount, 0.f);
+		for (int i = 0; i < TriggerAmount; i++)
+		{
+			const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)), 0.f) + LaserSweepTracker;
+
+			if (LaserLengthTracker < AffectRadius * 2)
+			{
+				LaserLengthTracker += DeltaTime * (((1 - FireRate) * 300) + 300);
+				const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
+				const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
+				ActorsHit.Append(ActiveActorsHit);
+			}
+			else
+			{
+				const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
+				const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
+				ActorsHit.Append(ActiveActorsHit);
+				bStartSweep = true;
+			}
+		}
+		if (bStartSweep)
+		{
+			LaserSweepTracker.Yaw += DeltaTime * (RotationSpeed / 2);
+			LaserSweepTracker.Normalize();
 		}
 	}
 }
