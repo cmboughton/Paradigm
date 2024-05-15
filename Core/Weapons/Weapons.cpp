@@ -27,8 +27,14 @@ void AWeapons::BeginPlay()
 		{
 			FireRate = WeaponsData->FireRate;
 			Damage = WeaponsData->Damage;
-			FWeaponUpgrades DeBugWeaponUpgrade = FWeaponUpgrades("Name", "Des", 0, EUpgradeRarity::Basic, WeaponsData->DeBugUpgrade);
-			UpgradeWeapon(DeBugWeaponUpgrade);
+			if (!WeaponsData->DeBugUpgrade.IsEmpty())
+			{
+				for (const auto DeBugUpgrades : WeaponsData->DeBugUpgrade)
+				{
+					FWeaponUpgrades DeBugWeaponUpgrade = FWeaponUpgrades("Name", "Des", 0, EUpgradeRarity::Basic, DeBugUpgrades);
+					UpgradeWeapon(DeBugWeaponUpgrade);
+				}
+			}
 			AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)
@@ -293,8 +299,9 @@ void AWeapons::ApplyDamage(const TArray<FHitResult>& AllActorsHit)
 				{
 					AActor* EnemyHit = ActorHit.GetActor();
 					const FVector ActorLocation = ActorHit.GetActor()->GetActorLocation();
-					const FPointDamageEvent DamageEvent(Damage, ActorHit, ActorLocation, nullptr);
-					EnemyHit->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+					const float UpdatedDamage = UpdateDamage();
+					const FPointDamageEvent DamageEvent(UpdatedDamage, ActorHit, ActorLocation, nullptr);
+					EnemyHit->TakeDamage(UpdatedDamage, DamageEvent, GetInstigatorController(), this);
 				}
 			}
 		}
@@ -359,4 +366,12 @@ FVector AWeapons::GetRandomPointNearOrigin(const FVector& Origin, const float Mi
 		RandomPoint = FVector(Origin.X + RandomDirection.X, Origin.Y + RandomDirection.Y, Origin.Z);
 	}
 	return RandomPoint;
+}
+
+float AWeapons::UpdateDamage()
+{
+	float NewDamage = Damage;
+
+	NewDamage *= DamageModifier;
+	return NewDamage;
 }

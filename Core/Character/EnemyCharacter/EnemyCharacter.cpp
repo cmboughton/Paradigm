@@ -47,6 +47,7 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
         return CurrentHealth;
     }
     CurrentHealth -= DamageAmount;
+	UE_LOGFMT(LogTemp, Warning, "CurrentHealth: {0} DamageAmount: {1}", CurrentHealth, DamageAmount);
     if (DamageCauser)
     {
         ApplyBackDamage(DamageAmount, DamageCauser);

@@ -43,13 +43,16 @@ protected:
 	static void SetDroneLocation(UStaticMeshComponent* MeshToLerp, const FVector& NewLocation);
 
 	UFUNCTION()
-	void ExpandDrones(const bool& IsExpanding, const int& Index, const float& DeltaTime, const float& YawModifier);
+	void ExpandDrones(const int& Index, const float& DeltaTime, const float& YawModifier);
 
 	UFUNCTION()
 	void RotateDronesForward(const int& Index, const float& DeltaTime);
 
 	UFUNCTION()
 	TArray<FHitResult> CheckSphereTrace(const int& Index);
+
+	UFUNCTION()
+	virtual float TakeDamage(const float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	UPROPERTY()
 	float RadialDistance = 0.f;
@@ -66,6 +69,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The static mesh that the drones will be."))
 	UStaticMesh* DroneMeshRef;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The static mesh that the healing drones will be."))
+	UStaticMesh* HealingDroneMeshRef;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Niagara System to spawn for the jets."))
 	UNiagaraSystem* JetNiagara;
 
@@ -77,6 +83,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the Drones should sweep or not."))
 	float RotationSpeed = 50.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the % of damage reduced for drones being healing drones."))
+	float DamageReduction = .5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the % healing sent back to the player based on damage done."))
+	float LifeStealPercent = .25f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the modifer that determines the explosion damage of the drones."))
+	float DroneExplosionDamageModifier = 2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the modifer that determines the explosion of the drones."))
+	float DroneExplosionModifier = 4.f;
 
 	UPROPERTY()
 	float DroneDurationTracker = 0.f;
@@ -116,4 +134,7 @@ protected:
 
 	UPROPERTY()
 	TArray<bool> bIsDroneAlive;
+
+	UPROPERTY()
+	float LifeStealImmuneTracker = 0.f;
 };

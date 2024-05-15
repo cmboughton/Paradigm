@@ -42,13 +42,16 @@ protected:
 	virtual TArray<FHitResult> SphereTrace(const FVector& ActorStartLocation, const FVector& ActorEndLocation, const float& TraceRadius);
 
 	UFUNCTION()
-	void ApplyDamage(const TArray<FHitResult>& AllActorsHit);
+	virtual void ApplyDamage(const TArray<FHitResult>& AllActorsHit);
 
 	UFUNCTION()
 	TSubclassOf<AProjectile> SpawnProjectile(const FTransform& Transform) const;
 
 	UFUNCTION()
 	static FVector GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance);
+
+	UFUNCTION()
+	float UpdateDamage();
 
 #pragma endregion
 
@@ -77,6 +80,9 @@ protected:
 
 	UPROPERTY()
 	float Damage = 0.f;
+
+	UPROPERTY()
+	float DamageModifier = 1.f;
 
 	UPROPERTY()
 	float FireRateTracker = 0.f;
