@@ -23,6 +23,8 @@ protected:
 
 	virtual void Tick(const float DeltaTime) override;
 
+	UFUNCTION()
+	virtual TArray<FHitResult> SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius);
 #pragma endregion
 
 #pragma region Protected Variables
@@ -35,6 +37,9 @@ protected:
 
 	UPROPERTY()
 	APlayerCharacter* PlayerCharacter = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The max radius that can reach."))
+	float AffectRadius = 2000.f;
 
 #pragma endregion
 

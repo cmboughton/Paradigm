@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
 
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
+
 APassives::APassives()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,6 +17,8 @@ APassives::APassives()
 void APassives::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	/*if (const UDataTable* PassivesDataTableHardRef = PassivesDataTable.LoadSynchronous())
 	{
@@ -35,5 +39,25 @@ void APassives::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+TArray<FHitResult> APassives::SphereTrace(const FVector ActorStartLocation, const FVector ActorEndLocation, const float TraceRadius)
+{
+	TArray<AActor*> ActorsToIgnore;
+	TArray<FHitResult> AllActorsHit;
+	UKismetSystemLibrary::SphereTraceMulti(	GetWorld(),
+											ActorStartLocation,
+											ActorEndLocation,
+											TraceRadius,
+											ETraceTypeQuery::TraceTypeQuery1,
+											false,
+											ActorsToIgnore,
+											EDrawDebugTrace::ForOneFrame,
+											AllActorsHit,
+											true,
+											FLinearColor::Red,
+											FLinearColor::Green,
+											5.f);
+	return TArray<FHitResult>(AllActorsHit);
 }
 

@@ -7,6 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 
+class AArcanicEcho;
 class AWeaponUpgradeManager;
 class AUltimateAbility;
 
@@ -73,6 +74,8 @@ protected:
 	virtual void Tick(const float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual float TakeDamage(const float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)override;
 
 	/** Called for movement input */
 	UFUNCTION()
@@ -143,6 +146,9 @@ protected:
 	UPROPERTY()
 	AWeaponUpgradeManager* UpgradeManagerRef;
 
+	UPROPERTY()
+	AArcanicEcho* ArcanicEcho;
+
 #pragma endregion
 
 #pragma  region Trackers
@@ -206,6 +212,7 @@ public:
 	FORCEINLINE float					GetPickUpRadius()								const { return PickUpRadius; }
 
 	FORCEINLINE void					SetPickUpRadius(const float PickUpValue)			  { PickUpRadius = PickUpValue; }
+	FORCEINLINE void					SetArcanicEchoRef(AArcanicEcho* AeValue)			  { ArcanicEcho = AeValue; }
 
 #pragma endregion
 };

@@ -19,8 +19,11 @@
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
 #include "Paradigm_IQ/Core/Passives/Passives.h"
+#include "Paradigm_IQ/Core/Passives/ArcanicEcho/ArcanicEcho.h"
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
+
+#include "Engine/DamageEvents.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -89,6 +92,7 @@ void APlayerCharacter::Tick(const float DeltaTime)
 			ScoreModifierTracker += DeltaTime;
 		}
 	}
+
 }
 
 /**
@@ -113,6 +117,17 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(UltimateAction, ETriggerEvent::Started, this, &APlayerCharacter::Ultimate);
 
 	}
+}
+
+float APlayerCharacter::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if(ArcanicEcho)
+	{
+		ArcanicEcho->SetWasHit(true);
+		ArcanicEcho->SetDamage(DamageAmount);
+	}
+	return CurrentHealth;
 }
 
 /**
