@@ -55,6 +55,24 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (MainWidgetUI)
+	{
+		if (IsValid(WidgetInstance = CreateWidget<UMainHUDWidget>(GetWorld(), MainWidgetUI)))
+		{
+			WidgetInstance->AddToViewport();
+			WidgetInstance->SetScoreMultiplier(ScoringModifier);
+
+			for(int i = 0; i < MaxWeaponsEquipped; i++)
+			{
+				WidgetInstance->SetUpDefaultIcons(EIconType::WeaponIcon);
+			}
+			for (int i = 0; i < MaxPassivesEquipped; i++)
+			{
+				WidgetInstance->SetUpDefaultIcons(EIconType::PassiveIcon);
+			}
+		}
+	}
+
 	SetUpShip();
 
 	AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
@@ -70,15 +88,6 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	if (IsValid(MainWidgetUI))
-	{
-		WidgetInstance = CreateWidget<UMainHUDWidget>(GetWorld(), MainWidgetUI);
-		if (WidgetInstance != nullptr)
-		{
-			WidgetInstance->AddToViewport();
-			WidgetInstance->SetScoreMultiplier(ScoringModifier);
-		}
-	}
 
 	NextLevelReq = CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate);
 	WidgetInstance->SetCurrentLevel(CurrentLevel);
@@ -366,6 +375,11 @@ void APlayerCharacter::AddWeapon(const FName& WeaponName)
 				WeaponRef->FinishSpawning(this->GetActorTransform());
 				const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
 				WeaponRef->AttachToActor(this, AttachmentRules);
+
+				if(WidgetInstance)
+				{
+					WidgetInstance->AddIcon(WeaponsData->WeaponIcon, EIconType::WeaponIcon);
+				}
 			}
 		}
 	}
@@ -394,6 +408,11 @@ void APlayerCharacter::AddPassive(const FName& PassiveName)
 				PassiveRef->FinishSpawning(this->GetActorTransform());
 				const FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false);
 				PassiveRef->AttachToActor(this, AttachmentRules);
+
+				if (WidgetInstance)
+				{
+					WidgetInstance->AddIcon(PassivesData->PassiveIcon, EIconType::PassiveIcon);
+				}
 			}
 		}
 	}

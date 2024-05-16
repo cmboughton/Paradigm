@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "MainHUDWidget.generated.h"
 
+class UIconWidget;
 /**
  * 
  */
@@ -36,6 +38,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* LevelText;
 
+	UPROPERTY(meta = (BindWidget))
+	class UHorizontalBox* WeaponIconsHB;
+
+	UPROPERTY(meta = (BindWidget))
+	class UHorizontalBox* PassiveIconsHB;
+
 	UPROPERTY()
 	float ScoreText = 0.f;
 
@@ -50,6 +58,20 @@ protected:
 
 	UPROPERTY()
 	int NextLevelReq;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Reference to BP_IconWidget."))
+	TSubclassOf<UUserWidget> IconWidget = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Refernece to the defualt Icon Texture."))
+	UTexture2D* DefaultIcon = nullptr;
+
+public:
+
+	UFUNCTION()
+	void AddIcon(UTexture2D* Icon, const EIconType& IconType) const;
+
+	UFUNCTION()
+	void SetUpDefaultIcons(const EIconType& IconType) const;
 
 public:
 

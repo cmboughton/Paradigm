@@ -13,5 +13,18 @@ UCLASS()
 class PARADIGM_IQ_API UIconWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+protected:
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* Icon;
+
+	UPROPERTY()
+	UTexture2D* IconTexture;
+
+	virtual void NativeConstruct() override;
+
+public:
+
+	FORCEINLINE void						SetIconTexture(UTexture2D* IconTextureValue)		{ IconTexture = IconTextureValue; }
 };

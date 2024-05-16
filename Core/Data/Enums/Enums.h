@@ -74,3 +74,10 @@ enum class ESpawnerType : uint8
 	Scatter						UMETA(DisplayName = "Scatter"),
 	SpecificLocation			UMETA(DisplayName = "Specific Location"),
 };
+
+UENUM(BlueprintType)
+enum class EIconType : uint8
+{
+	WeaponIcon					UMETA(DisplayName = "Weapon Icon"),
+	PassiveIcon					UMETA(DisplayName = "Passive Icon"),
+};

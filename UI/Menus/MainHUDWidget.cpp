@@ -2,10 +2,15 @@
 
 
 #include "MainHUDWidget.h"
+
+#include "IconWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+#include "Components/HorizontalBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
+
 
 FString UMainHUDWidget::AddCommasToInt(const int& NumberToAddCommas)
 {
@@ -54,4 +59,52 @@ void UMainHUDWidget::NativeTick(const FGeometry& MyGeometry, const float InDelta
 
     LevelText->SetText(FText::FromString(FString::FromInt(CurrentLevel)));
 	XPProgressBar->SetPercent(UKismetMathLibrary::NormalizeToRange(ExperienceTracker, 0, NextLevelReq));
+}
+
+void UMainHUDWidget::AddIcon(UTexture2D* Icon, const EIconType& IconType) const
+{
+    if (IconWidget)
+    {
+        UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+
+        switch (IconType)
+        {
+        case EIconType::WeaponIcon:
+
+            WeaponIconsHB->RemoveChildAt(0);
+            WidgetInstance->SetIconTexture(Icon);
+            WeaponIconsHB->AddChild(WidgetInstance);
+            break;
+
+        case EIconType::PassiveIcon:
+
+            PassiveIconsHB->RemoveChildAt(0);
+            WidgetInstance->SetIconTexture(Icon);
+            PassiveIconsHB->AddChild(WidgetInstance);
+            break;
+        }
+    }
+}
+
+void UMainHUDWidget::SetUpDefaultIcons(const EIconType& IconType) const
+{
+    if (IconWidget)
+    {
+        UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+
+        switch (IconType)
+        {
+        case EIconType::WeaponIcon:
+
+            WidgetInstance->SetIconTexture(DefaultIcon);
+            WeaponIconsHB->AddChild(WidgetInstance);
+            break;
+
+        case EIconType::PassiveIcon:
+
+            WidgetInstance->SetIconTexture(DefaultIcon);
+            PassiveIconsHB->AddChild(WidgetInstance);
+            break;
+        }
+    }
 }
