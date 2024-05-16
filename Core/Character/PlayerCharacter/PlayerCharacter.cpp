@@ -23,7 +23,7 @@
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
 
-#include "Engine/DamageEvents.h"
+#include "Paradigm_IQ/UI/Menus/MainHUDWidget.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -70,7 +70,20 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	if (IsValid(MainWidgetUI))
+	{
+		WidgetInstance = CreateWidget<UMainHUDWidget>(GetWorld(), MainWidgetUI);
+		if (WidgetInstance != nullptr)
+		{
+			WidgetInstance->AddToViewport();
+			WidgetInstance->SetScoreMultiplier(ScoringModifier);
+		}
+	}
+
 	NextLevelReq = CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate);
+	WidgetInstance->SetCurrentLevel(CurrentLevel);
+	WidgetInstance->SetNextLevelReq(NextLevelReq);
+	AddCollectable(FExperienceOrb(0, 0));
 }
 
 void APlayerCharacter::Tick(const float DeltaTime)
@@ -85,6 +98,7 @@ void APlayerCharacter::Tick(const float DeltaTime)
 		if(ScoringModifier * ScoreDurationModifier <= ScoreModifierTracker)
 		{
 			ScoringModifier++;
+			WidgetInstance->SetScoreMultiplier(ScoringModifier);
 			ScoreModifierTracker = 0.f;
 		}
 		else
@@ -122,6 +136,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float APlayerCharacter::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	ScoringModifier = 1;
 	if(ArcanicEcho)
 	{
 		ArcanicEcho->SetWasHit(true);
@@ -272,10 +287,15 @@ void APlayerCharacter::CollectablePickUp()
 void APlayerCharacter::AddCollectable(const FExperienceOrb Experience)
 {
 	ExperienceTracker = FMath::RoundToInt(ExperienceTracker + Experience.Experience);
+	WidgetInstance->SetCurrentXP(ExperienceTracker);
 	if(ExperienceTracker >= CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate))
 	{
 		CurrentLevel++;
+		WidgetInstance->SetCurrentLevel(CurrentLevel);
+
 		NextLevelReq = CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate);
+		WidgetInstance->SetNextLevelReq(NextLevelReq);
+
 		if(UpgradeManagerRef)
 		{
 			UpgradeManagerRef->SetUpgradeQueManager(3);
@@ -319,6 +339,7 @@ int APlayerCharacter::CalculateExperienceForLevel(const int Level, const int Bas
 void APlayerCharacter::AddScore(const float AddedScore)
 {
 	Score += (AddedScore * ScoringModifier);
+	WidgetInstance->SetScore(Score);
 	UE_LOGFMT(LogTemp, Warning, "Score: {0}", Score);
 }
 

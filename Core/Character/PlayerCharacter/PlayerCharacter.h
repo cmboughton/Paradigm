@@ -10,6 +10,7 @@
 class AArcanicEcho;
 class AWeaponUpgradeManager;
 class AUltimateAbility;
+class UMainHUDWidget;
 
 UCLASS()
 class PARADIGM_IQ_API APlayerCharacter : public ABaseCharacter
@@ -148,6 +149,12 @@ protected:
 
 	UPROPERTY()
 	AArcanicEcho* ArcanicEcho;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Reference to the Main Widget BP."))
+	TSubclassOf<UUserWidget> MainWidgetUI = nullptr;
+
+	UPROPERTY()
+	class UMainHUDWidget* WidgetInstance;
 
 #pragma endregion
 
