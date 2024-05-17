@@ -15,6 +15,7 @@
 
 #include "GameFramework/Controller.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
@@ -213,6 +214,7 @@ void APlayerCharacter::Ultimate()
 		if(UltimateAbilityRef)
 		{
 			CurrentUltimateTracker = 0.f;
+			WidgetInstance->SetUltimateXP(UKismetMathLibrary::NormalizeToRange(CurrentUltimateTracker, 0, UltimateTracker));
 			GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
 		}
 		else
@@ -313,7 +315,9 @@ void APlayerCharacter::AddCollectable(const FExperienceOrb Experience)
 
 	if(CurrentUltimateTracker < UltimateTracker)
 	{
-		CurrentUltimateTracker += Experience.UltimateExperience;
+		CurrentUltimateTracker = FMath::Clamp(CurrentUltimateTracker + Experience.UltimateExperience, 0, UltimateTracker);
+		WidgetInstance->SetUltimateXP(UKismetMathLibrary::NormalizeToRange(CurrentUltimateTracker, 0, UltimateTracker));
+		UE_LOGFMT(LogTemp, Warning, "Ultimate XP: {0}", CurrentUltimateTracker);
 	}
 }
 

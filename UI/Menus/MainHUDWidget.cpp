@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/HorizontalBox.h"
+#include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
@@ -59,6 +60,14 @@ void UMainHUDWidget::NativeTick(const FGeometry& MyGeometry, const float InDelta
 
     LevelText->SetText(FText::FromString(FString::FromInt(CurrentLevel)));
 	XPProgressBar->SetPercent(UKismetMathLibrary::NormalizeToRange(ExperienceTracker, 0, NextLevelReq));
+
+    if (CurrentUltimateXP != UltimateXP)
+    {
+        constexpr float LerpSpeed = 3.0f;
+        CurrentUltimateXP = FMath::Lerp(CurrentUltimateXP, UltimateXP, InDeltaTime * LerpSpeed);
+    }
+	LeftProgress->GetDynamicMaterial()->SetScalarParameterValue("Percentage", CurrentUltimateXP);
+	RightProgress->GetDynamicMaterial()->SetScalarParameterValue("Percentage", CurrentUltimateXP);
 }
 
 void UMainHUDWidget::AddIcon(UTexture2D* Icon, const EIconType& IconType) const
@@ -70,7 +79,7 @@ void UMainHUDWidget::AddIcon(UTexture2D* Icon, const EIconType& IconType) const
         switch (IconType)
         {
         case EIconType::WeaponIcon:
-
+            
             WeaponIconsHB->RemoveChildAt(0);
             WidgetInstance->SetIconTexture(Icon);
             WeaponIconsHB->AddChild(WidgetInstance);

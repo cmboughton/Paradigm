@@ -44,6 +44,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* PassiveIconsHB;
 
+	UPROPERTY(meta = (BindWidget))
+	class UImage* LeftProgress;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* RightProgress;
+
 	UPROPERTY()
 	float ScoreText = 0.f;
 
@@ -58,6 +64,12 @@ protected:
 
 	UPROPERTY()
 	int NextLevelReq;
+
+	UPROPERTY()
+	float CurrentUltimateXP = 0.f;
+
+	UPROPERTY()
+	float UltimateXP = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Reference to BP_IconWidget."))
 	TSubclassOf<UUserWidget> IconWidget = nullptr;
@@ -80,4 +92,5 @@ public:
 	FORCEINLINE void						SetCurrentXP(const int XPValue)					{ ExperienceTracker = XPValue; }
 	FORCEINLINE void						SetCurrentLevel(const int LvlValue)				{ CurrentLevel = LvlValue; }
 	FORCEINLINE void						SetNextLevelReq(const int NextLvlValue)			{ NextLevelReq = NextLvlValue; }
+	FORCEINLINE void						SetUltimateXP(const float UltimateValue)		{ UltimateXP = UltimateValue; }
 };
