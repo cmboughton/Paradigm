@@ -7,6 +7,10 @@
 #include "Paradigm_IQ/Core/Collectable/Experience/Experience.h"
 #include "Paradigm_IQ/Core/Collectable/WeaponUpgrade/WeaponUpgradeCollectable.h"
 
+#include "NavigationSystem.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -19,9 +23,20 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	CurrentHealth = MaxHealth;
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+}
 
+void AEnemyCharacter::Tick(const float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	const FVector TargetLocation = PlayerCharacter->GetActorLocation();
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
+	if(FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
+	{
+		Death();
+	}
 }
 
 /**
@@ -93,7 +108,7 @@ void AEnemyCharacter::Death()
 {
 	Super::Death();
 
-	if(APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	if(PlayerCharacter)
 	{
 		PlayerCharacter->AddScore(Score);
 	}

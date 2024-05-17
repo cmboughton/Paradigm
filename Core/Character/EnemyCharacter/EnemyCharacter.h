@@ -9,6 +9,8 @@
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "EnemyCharacter.generated.h"
 
+class APlayerCharacter;
+
 UCLASS()
 class PARADIGM_IQ_API AEnemyCharacter : public ABaseCharacter, public IEnemyInterface
 {
@@ -19,6 +21,8 @@ protected:
 	AEnemyCharacter();
 
 	virtual void BeginPlay() override;
+
+	virtual void Tick(const float DeltaTime) override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -34,6 +38,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Damage of this actor."))
 	float Damage = 75.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The attack range of this actor."))
+	float AttackRange = 100.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Experience and Ultimate experience that is dropped on death."))
 	struct FExperienceOrb ExperienceStruct;
 
@@ -42,6 +49,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Collectables that can drop"))
 	FCollectableStruct CollectableLootTable;
+
+	UPROPERTY()
+	APlayerCharacter* PlayerCharacter = nullptr;
 
 public:
 
