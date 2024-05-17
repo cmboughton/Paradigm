@@ -216,7 +216,6 @@ void AEnemySpawner::SpawnEnemies(const int AmountToSpawn, const TSubclassOf<AEne
 		if(AEnemyCharacter* EnemySpawned = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(ActorToSpawn, SpawnTransform))
 		{
 			EnemySpawned->UpdateStats(GrowthTracker / 400);
-			EnemySpawned->AutoPossessAI;
 			EnemySpawned->FinishSpawning(SpawnTransform);
 		}
 	}
