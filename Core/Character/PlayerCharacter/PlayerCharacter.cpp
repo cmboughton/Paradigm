@@ -238,7 +238,7 @@ void APlayerCharacter::SetUpShip()
 {
 	if (const UDataTable* ShipDataTableHardRef = ShipDataTable.LoadSynchronous())
 	{
-		if(const FShipsDataTable* ShipData = ShipDataTableHardRef->FindRow<FShipsDataTable>("BaseShip", "Ships Data Table Not set up", true))
+		if(const FShipsDataTable* ShipData = ShipDataTableHardRef->FindRow<FShipsDataTable>(SelectedShipName, "Ships Data Table Not set up", true))
 		{
 			GetCharacterMovement()->MaxWalkSpeed = ShipData->MovementSpeed;
 			CurrentHealth = ShipData->Health;

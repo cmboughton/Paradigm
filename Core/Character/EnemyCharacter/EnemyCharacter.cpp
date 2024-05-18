@@ -30,12 +30,14 @@ void AEnemyCharacter::BeginPlay()
 void AEnemyCharacter::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	const FVector TargetLocation = PlayerCharacter->GetActorLocation();
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
-	if(FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
+	if (PlayerCharacter)
 	{
-		Death();
+		const FVector TargetLocation = PlayerCharacter->GetActorLocation();
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
+		if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
+		{
+			Death();
+		}
 	}
 }
 

@@ -245,33 +245,49 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 {
 	if(Upgrade.bIsWeaponUnlock)
 	{
-		// Adds the weapon selected to the players weapons
-		PlayerCharacter->AddWeapon(Upgrade.WeaponUpgrades.UniqueName);
-		UE_LOGFMT(LogTemp, Warning, "Weapon Name: {0}", Upgrade.WeaponUpgrades.UniqueName);
-
-		// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
-		if(PlayerCharacter->GetWeaponsEquipped().Num() >= PlayerCharacter->GetMaxWeaponsEquipped())
+		if (PlayerCharacter)
 		{
-			UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsWeaponUnlock; });
+			// Adds the weapon selected to the players weapons
+			PlayerCharacter->AddWeapon(Upgrade.WeaponUpgrades.UniqueName);
+			UE_LOGFMT(LogTemp, Warning, "Weapon Name: {0}", Upgrade.WeaponUpgrades.UniqueName);
+
+			// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
+			if (PlayerCharacter->GetWeaponsEquipped().Num() >= PlayerCharacter->GetMaxWeaponsEquipped())
+			{
+				UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsWeaponUnlock; });
+			}
+			else
+			{
+				UpgradeSingleUse(Upgrade);
+			}
 		}
 		else
 		{
-			UpgradeSingleUse(Upgrade);
+			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			UpgradeSelected(Upgrade);
 		}
 	}
 	else if (Upgrade.bIsPassiveUnlock)
 	{
-		// Adds the weapon selected to the players weapons
-		PlayerCharacter->AddPassive(Upgrade.WeaponUpgrades.UniqueName);
-
-		// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
-		if (PlayerCharacter->GetPassivesEquipped().Num() >= PlayerCharacter->GetMaxPassivesEquipped())
+		if (PlayerCharacter)
 		{
-			UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsPassiveUnlock; });
+			// Adds the weapon selected to the players weapons
+			PlayerCharacter->AddPassive(Upgrade.WeaponUpgrades.UniqueName);
+
+			// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
+			if (PlayerCharacter->GetPassivesEquipped().Num() >= PlayerCharacter->GetMaxPassivesEquipped())
+			{
+				UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsPassiveUnlock; });
+			}
+			else
+			{
+				UpgradeSingleUse(Upgrade);
+			}
 		}
 		else
 		{
-			UpgradeSingleUse(Upgrade);
+			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			UpgradeSelected(Upgrade);
 		}
 	}
 	else if (Upgrade.bIsSpecialUpgrade)

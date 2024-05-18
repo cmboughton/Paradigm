@@ -22,7 +22,8 @@ AProjectile::AProjectile()
 	BulletMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("BulletMesh"));
 	SetRootComponent(BulletMesh);
 	BulletMesh->CastShadow = false;
-	BulletMesh->SetMassOverrideInKg("None", MeshMass);
+	BulletMesh->BodyInstance.bOverrideMass = true;
+	BulletMesh->BodyInstance.SetMassOverride(MeshMass);
 	BulletMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 

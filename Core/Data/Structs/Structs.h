@@ -220,11 +220,11 @@ struct FSpawnPointsInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	FVector SpawnPointLocation;
+	FVector SpawnPointLocation = FVector(0.f, 0.f, 0.f);
 
 	UPROPERTY()
-	FVector BoxExtent;
+	FVector BoxExtent = FVector(0.f, 0.f, 0.f);
 
 	UPROPERTY()
-	FVector BoxOrigin;
+	FVector BoxOrigin = FVector(0.f, 0.f, 0.f);
 };

@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainGameMode.generated.h"
 
+class APlayerCharacter;
 /**
  * 
  */
@@ -14,8 +15,18 @@ class PARADIGM_IQ_API AMainGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+protected:
+
+	UPROPERTY()
+	FName ShipRowName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Reference", meta = (ToolTip = "A Reference to the Player Character BP."))
+	TSubclassOf<APawn> PlayerCharacterRef;
+
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The exact Row name to the ship the player starts with."))
-	FName ShipRowName;
+	UFUNCTION(BlueprintCallable)
+	void SpawnPlayer() const;
+
+	FORCEINLINE void	SetShipRowName(const FName& ShipTextValue) { ShipRowName = ShipTextValue; }
 };

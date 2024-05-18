@@ -21,7 +21,7 @@ void AShipRenderer::BeginPlay()
 	
 }
 
-void AShipRenderer::SetShipMesh(const FName RowName)
+void AShipRenderer::SetShipMesh(const FName RowName) const
 {
 	if (const UDataTable* ShipDataTableHardRef = ShipDataTable.LoadSynchronous())
 	{

@@ -139,6 +139,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Varaibles|Stats", meta = (ToolTip = "The Radius of the sphere check that checks for collectables."))
 	float PickUpRadius = 200.f;
 
+	UPROPERTY()
+	FName SelectedShipName;
+
 #pragma endregion
 
 #pragma region References
@@ -220,6 +223,7 @@ public:
 
 	FORCEINLINE void					SetPickUpRadius(const float PickUpValue)			  { PickUpRadius = PickUpValue; }
 	FORCEINLINE void					SetArcanicEchoRef(AArcanicEcho* AeValue)			  { ArcanicEcho = AeValue; }
+	FORCEINLINE void					SetSelectedShipName(const FName ShipNameValue)		  { SelectedShipName = ShipNameValue; }
 
 #pragma endregion
 };
