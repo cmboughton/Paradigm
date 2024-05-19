@@ -3,14 +3,16 @@
 
 #include "CelestialCascadeWeapon.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Character/EnemyCharacter/EnemyCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "NiagaraFunctionLibrary.h"
 
 void ACelestialCascadeWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
-
 
 	AActor* CurrentEnemy = this;
 	EnemiesToDamage.Empty();
@@ -39,6 +41,13 @@ void ACelestialCascadeWeapon::WeaponTriggered(const float DeltaTime)
 					const FHitResult HitResult;
 					const FPointDamageEvent DamageEvent(Damage, HitResult, ActorLocation, nullptr);
 					EnemyHit->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+					if (LightningSystem)
+					{
+						UNiagaraComponent* LightningSystemSpawned = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), LightningSystem, FVector(0, 0, 0), FRotator(0, 0, 0), FVector(0, 0, 0), true, true, ENCPoolMethod::None, true);
+						LightningSystemSpawned->SetVariableVec3("BeamStartPoint", StartLoc);
+						LightningSystemSpawned->SetVariableVec3("BeamEndPoint", ActorLocation);
+						UE_LOGFMT(LogTemp, Warning, "StartPoint: {0}, {1}, {2} EndPoint {3}, {4}, {5}", StartLoc.X, StartLoc.Y, StartLoc.Z, ActorLocation.X, ActorLocation.Y, ActorLocation.Z);
+					}
 				}
 			}
 			

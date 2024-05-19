@@ -3,8 +3,6 @@
 
 #include "ProjectileWeapon.h"
 
-#include "Paradigm_IQ/Core/Weapons/BasicProjectile/Projectile/BaseProjectile.h"
-
 
 void AProjectileWeapon::WeaponTriggered(const float DeltaTime)
 {

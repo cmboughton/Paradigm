@@ -7,6 +7,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Logging/StructuredLog.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 
 
 // Sets default values

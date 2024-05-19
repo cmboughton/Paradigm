@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/TargetPoint.h"
+#include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "SpawnPoints.generated.h"
 
 UCLASS()
@@ -15,6 +16,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* EdgeSpawnerZone;
+
+	UPROPERTY(EditAnywhere)
+	ESpawnerType SpawnType = ESpawnerType::Edge;
 
 protected:
 

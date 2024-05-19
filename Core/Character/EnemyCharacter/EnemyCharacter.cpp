@@ -6,10 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Collectable/Experience/Experience.h"
 #include "Paradigm_IQ/Core/Collectable/WeaponUpgrade/WeaponUpgradeCollectable.h"
-
-#include "NavigationSystem.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 
 
 // Sets default values
@@ -30,15 +27,6 @@ void AEnemyCharacter::BeginPlay()
 void AEnemyCharacter::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (PlayerCharacter)
-	{
-		const FVector TargetLocation = PlayerCharacter->GetActorLocation();
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
-		if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
-		{
-			Death();
-		}
-	}
 }
 
 /**
@@ -114,6 +102,12 @@ void AEnemyCharacter::Death()
 	{
 		PlayerCharacter->AddScore(Score);
 	}
+	else
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		Death();
+		return;
+	}
 	const int RandExpOrbs = FMath::RandRange(1, 3);
 	ExperienceStruct.Experience = ExperienceStruct.Experience / RandExpOrbs;
 	ExperienceStruct.UltimateExperience = ExperienceStruct.UltimateExperience / RandExpOrbs;
@@ -162,7 +156,7 @@ void AEnemyCharacter::UpdateStats(const float& GrowthModifier)
 	CurrentHealth *= (1 + GrowthModifier);
 	MaxHealth *= (1 + GrowthModifier);
 	Score *= (1 + GrowthModifier);
-	UpdateMovementSpeed(GetCharacterMovement()->MaxWalkSpeed * (1 + GrowthModifier));
+	//UpdateMovementSpeed(GetCharacterMovement()->MaxWalkSpeed * (1 + GrowthModifier));
 	Damage *= (1 + GrowthModifier);
 	ExperienceStruct.Experience *= (1 + GrowthModifier);
 	ExperienceStruct.UltimateExperience *= (1 + GrowthModifier);

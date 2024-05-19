@@ -237,7 +237,7 @@ TArray<FHitResult> AWeapons::LineTrace(const FVector& ActorStartLocation, const 
 											ETraceTypeQuery::TraceTypeQuery1,
 											false, 
 											ActorsToIgnore, 
-											EDrawDebugTrace::ForOneFrame,
+											EDrawDebugTrace::None,
 											AllActorsHit,
 											true, 
 											FLinearColor::Red,

@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Paradigm_IQ/Core/Data/Structs/Structs.h"
-#include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "Paradigm_IQ/Core/Character/BaseCharacter.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "EnemyCharacter.generated.h"

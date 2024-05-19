@@ -28,8 +28,26 @@ void AEnemySpawner::BeginPlay()
 		if(const ASpawnPoints* SpawnPoint = Cast<ASpawnPoints>(PointRef))
 		{
 			const FBoxSphereBounds Bounds = SpawnPoint->EdgeSpawnerZone->Bounds;
-			const FSpawnPointsInfo SpawnInfo = FSpawnPointsInfo(SpawnPoint->GetActorLocation(), Bounds.BoxExtent, Bounds.Origin);
-			SpawnPoints.Add(SpawnInfo);
+			const FSpawnPointsInfo SpawnEdgeInfo = FSpawnPointsInfo(SpawnPoint->GetActorLocation(), Bounds.BoxExtent, Bounds.Origin);
+			const FSpawnPointsInfo SpawnCornerInfo = FSpawnPointsInfo(SpawnPoint->GetActorLocation(),FVector(0, 0, 0), FVector(0, 0, 0));
+			switch (SpawnPoint->SpawnType)
+			{
+			case ESpawnerType::Edge:
+
+				SpawnPointsEdge.Add(SpawnEdgeInfo);
+				break;
+
+			case ESpawnerType::Corner:
+
+				SpawnPointsCorner.Add(SpawnCornerInfo);
+				break;
+
+			case ESpawnerType::Scatter:
+				break;
+
+			case ESpawnerType::SpecificLocation:
+				break;
+			}
 			PointRef->Destroy();
 		}
 	}
@@ -74,6 +92,7 @@ void AEnemySpawner::Tick(const float DeltaTime)
 							FTransform SpawnTransform;
 							FVector RandomSpawnLocation;
 							FSpawnPointsInfo EdgeSpawnZone;
+							FVector CornerSpawnLocation;
 							if (!SpawnerModifier.EnemySpawnLocation.IsEmpty())
 							{
 								const int Roll = FMath::RandRange(0, SpawnerModifier.EnemySpawnLocation.Num() - 1);
@@ -82,12 +101,20 @@ void AEnemySpawner::Tick(const float DeltaTime)
 									RandomSpawnLocation = SpawnerModifier.EnemySpawnLocation[Roll];
 								}
 							}
-							if (!SpawnPoints.IsEmpty())
+							if (!SpawnPointsEdge.IsEmpty())
 							{
-								const int Roll = FMath::RandRange(0, SpawnPoints.Num() - 1);
-								if (SpawnPoints.IsValidIndex(Roll))
+								const int Roll = FMath::RandRange(0, SpawnPointsEdge.Num() - 1);
+								if (SpawnPointsEdge.IsValidIndex(Roll))
 								{
-									EdgeSpawnZone = SpawnPoints[Roll];
+									EdgeSpawnZone = SpawnPointsEdge[Roll];
+								}
+							}
+							if(!SpawnPointsCorner.IsEmpty())
+							{
+								const int Roll = FMath::RandRange(0, SpawnPointsCorner.Num() - 1);
+								if(SpawnPointsCorner.IsValidIndex(Roll))
+								{
+									CornerSpawnLocation = SpawnPointsCorner[Roll].SpawnPointLocation;
 								}
 							}
 							switch (SpawnerModifier.SpawnType)
@@ -98,7 +125,7 @@ void AEnemySpawner::Tick(const float DeltaTime)
 								{
 									for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
 									{
-										SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(RandomSpawnLocation.X + FMath::RandRange(-CornerScatterDist, CornerScatterDist), RandomSpawnLocation.Y + FMath::RandRange(-CornerScatterDist, CornerScatterDist), RandomSpawnLocation.Z), FVector(1.f, 1.f, 1.f));
+										SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(CornerSpawnLocation.X + FMath::RandRange(-CornerScatterDist, CornerScatterDist), CornerSpawnLocation.Y + FMath::RandRange(-CornerScatterDist, CornerScatterDist), CornerSpawnLocation.Z), FVector(1.f, 1.f, 1.f));
 										SpawnEnemies(1, EnemyToSpawn, SpawnTransform);
 									}
 								}

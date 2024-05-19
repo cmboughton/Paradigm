@@ -16,12 +16,15 @@
  */
 void AWeaponUpgradeCollectable::Collected()
 {
-	Super::Collected();
-
 	AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
 
 	if (AWeaponUpgradeManager* UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager))
 	{
+		Super::Collected();
 		UpgradeManagerRef->SetUpgradeQueManager(UpgradeRolls);
+	}
+	else
+	{
+		Collected();
 	}
 }

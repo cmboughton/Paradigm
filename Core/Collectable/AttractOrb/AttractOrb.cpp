@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Logging/StructuredLog.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 
 
 void AAttractOrb::Tick(float DeltaTime)
@@ -56,13 +57,6 @@ void AAttractOrb::Tick(float DeltaTime)
 		{
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		}
-		/*for (AActor* Actor : ActorsFound)
-		{
-			if(Actor)
-			{
-				UE_LOGFMT(LogTemp, Warning, "Actors Found: {0}", Actor->GetName());
-			}
-		}*/
 	}
 
 	if (DestroyDuration <= 0)

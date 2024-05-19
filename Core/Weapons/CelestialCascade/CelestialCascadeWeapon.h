@@ -6,6 +6,7 @@
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "CelestialCascadeWeapon.generated.h"
 
+class UNiagaraSystem;
 /**
  * 
  */
@@ -22,6 +23,9 @@ protected:
 
 	UPROPERTY()
 	TArray<AActor*> EnemiesToDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The lightning niagara system to spawn"))
+	UNiagaraSystem* LightningSystem;
 
 public:
 

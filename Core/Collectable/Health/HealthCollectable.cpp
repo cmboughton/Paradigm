@@ -3,9 +3,19 @@
 
 #include "HealthCollectable.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
+
 void AHealthCollectable::Collected()
 {
-	Super::Collected();
-
-	PlayerCharacter->UpdateHealth(AddedHealth);
+	if(PlayerCharacter)
+	{
+		Super::Collected();
+		PlayerCharacter->UpdateHealth(AddedHealth);
+	}
+	else
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		Collected();
+	}
 }

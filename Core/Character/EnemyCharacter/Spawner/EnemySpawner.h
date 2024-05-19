@@ -61,7 +61,10 @@ protected:
 	APlayerCharacter* PlayerCharacter = nullptr;
 
 	UPROPERTY()
-	TArray<FSpawnPointsInfo> SpawnPoints;
+	TArray<FSpawnPointsInfo> SpawnPointsEdge;
+
+	UPROPERTY()
+	TArray<FSpawnPointsInfo> SpawnPointsCorner;
 
 #pragma endregion
 };

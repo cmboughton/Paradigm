@@ -6,6 +6,7 @@
 #include "Paradigm_IQ/Core/Collectable/Collectable.h"
 #include "Experience.generated.h"
 
+struct FExperienceOrb;
 /**
  * 
  */

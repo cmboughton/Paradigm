@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
-#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "Collectable.generated.h"
+
+class APlayerCharacter;
 
 UCLASS()
 class PARADIGM_IQ_API ACollectable : public AActor, public ICollectableInterface

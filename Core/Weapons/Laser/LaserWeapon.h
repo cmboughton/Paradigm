@@ -18,6 +18,18 @@ protected:
 
 	virtual void WeaponTriggered(const float DeltaTime) override;
 
+	UFUNCTION()
+	void SetLaserTransform(const int& MeshIndex, const FTransform& LaserTransform);
+
+	UPROPERTY()
+	bool bSpawnLasers = true;
+
+	UPROPERTY()
+	TArray<UStaticMeshComponent*> LaserMeshes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Reference", meta = (ToolTip = "The static mesh that the laser will be."))
+	UStaticMesh* LaserMeshRef;
+
 	UPROPERTY()
 	bool bStartSweep = false;
 
