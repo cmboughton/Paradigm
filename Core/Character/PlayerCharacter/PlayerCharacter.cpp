@@ -62,6 +62,7 @@ void APlayerCharacter::BeginPlay()
 		{
 			WidgetInstance->AddToViewport();
 			WidgetInstance->SetScoreMultiplier(ScoringModifier);
+			WidgetInstance->SetPlayerCharacter(this);
 
 			for(int i = 0; i < MaxWeaponsEquipped; i++)
 			{
@@ -94,6 +95,11 @@ void APlayerCharacter::BeginPlay()
 	WidgetInstance->SetCurrentLevel(CurrentLevel);
 	WidgetInstance->SetNextLevelReq(NextLevelReq);
 	AddCollectable(FExperienceOrb(0, 0));
+
+	if(APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		PlayerController->ActivateTouchInterface(TouchInterface);
+	}
 }
 
 void APlayerCharacter::Tick(const float DeltaTime)
@@ -189,7 +195,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
         const FRotator DesiredRotation = MovementDirection.Rotation() + FRotator(0.f, -90.f, 0.f);
 
 		// Calculate the new position of the pickup using linear interpolation
-		const FRotator NewRotation = FMath::Lerp(BaseModel->GetRelativeRotation(),DesiredRotation, .1f);
+		const FRotator NewRotation = FMath::Lerp(BaseModel->GetRelativeRotation(),DesiredRotation, 1.f);
 
         BaseModel->SetRelativeRotation(NewRotation);
 		

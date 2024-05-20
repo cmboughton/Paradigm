@@ -7,6 +7,7 @@
 #include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "MainHUDWidget.generated.h"
 
+class APlayerCharacter;
 class UIconWidget;
 /**
  * 
@@ -21,7 +22,12 @@ protected:
 	UFUNCTION()
 	static FString AddCommasToInt(const int& NumberToAddCommas);
 
+	virtual void NativeConstruct() override;
+
 	virtual void NativeTick(const FGeometry& MyGeometry, const float InDeltaTime) override;
+
+	UFUNCTION()
+	void OnButtonClicked();
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ScoreValue;
@@ -50,6 +56,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UImage* RightProgress;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* UltimateButton;
+
 	UPROPERTY()
 	float ScoreText = 0.f;
 
@@ -77,6 +86,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Refernece to the defualt Icon Texture."))
 	UTexture2D* DefaultIcon = nullptr;
 
+	UPROPERTY()
+	APlayerCharacter* PlayerCharacter = nullptr;
+
 public:
 
 	UFUNCTION()
@@ -87,10 +99,11 @@ public:
 
 public:
 
-	FORCEINLINE void						SetScore(const float Value)						{ ScoreText = Value; }
-	FORCEINLINE void						SetScoreMultiplier(const float MultiValue)		{ ScoreMultiplierText = MultiValue; }
-	FORCEINLINE void						SetCurrentXP(const int XPValue)					{ ExperienceTracker = XPValue; }
-	FORCEINLINE void						SetCurrentLevel(const int LvlValue)				{ CurrentLevel = LvlValue; }
-	FORCEINLINE void						SetNextLevelReq(const int NextLvlValue)			{ NextLevelReq = NextLvlValue; }
-	FORCEINLINE void						SetUltimateXP(const float UltimateValue)		{ UltimateXP = UltimateValue; }
+	FORCEINLINE void						SetScore(const float Value)								{ ScoreText = Value; }
+	FORCEINLINE void						SetScoreMultiplier(const float MultiValue)				{ ScoreMultiplierText = MultiValue; }
+	FORCEINLINE void						SetCurrentXP(const int XPValue)							{ ExperienceTracker = XPValue; }
+	FORCEINLINE void						SetCurrentLevel(const int LvlValue)						{ CurrentLevel = LvlValue; }
+	FORCEINLINE void						SetNextLevelReq(const int NextLvlValue)					{ NextLevelReq = NextLvlValue; }
+	FORCEINLINE void						SetUltimateXP(const float UltimateValue)				{ UltimateXP = UltimateValue; }
+	FORCEINLINE void						SetPlayerCharacter(APlayerCharacter* PlayerCharRef)		{ PlayerCharacter = PlayerCharRef; }
 };

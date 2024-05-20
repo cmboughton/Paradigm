@@ -13,7 +13,7 @@ void UMainMenu::NativeConstruct()
 
 	WBShipSelectMenu->SetVisibility(ESlateVisibility::Collapsed);
 
-	StartButton->OnClicked.AddDynamic(this, &UMainMenu::OnButtonClicked);
+	StartButton->OnHovered.AddDynamic(this, &UMainMenu::OnButtonClicked);
 }
 
 void UMainMenu::OnButtonClicked()

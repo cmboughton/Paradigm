@@ -24,7 +24,7 @@ void UShipSelectMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	PlayButton->OnClicked.AddDynamic(this, &UShipSelectMenu::OnButtonClicked);
+	PlayButton->OnHovered.AddDynamic(this, &UShipSelectMenu::OnButtonClicked);
 
 	if (const UDataTable* ShipDataTableHardRef = ShipDataTable.LoadSynchronous())
 	{

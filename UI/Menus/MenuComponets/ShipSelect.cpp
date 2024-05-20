@@ -12,7 +12,7 @@ void UShipSelect::NativeConstruct()
 
 	ShipName->SetText(FText::FromName(ShipText));
 
-	ShipButton->OnClicked.AddDynamic(this, &UShipSelect::OnButtonClicked);
+	ShipButton->OnHovered.AddDynamic(this, &UShipSelect::OnButtonClicked);
 }
 
 void UShipSelect::OnButtonClicked()

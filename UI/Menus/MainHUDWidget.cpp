@@ -4,14 +4,37 @@
 #include "MainHUDWidget.h"
 
 #include "IconWidget.h"
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/HorizontalBox.h"
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 
+void UMainHUDWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+    UltimateButton->OnClicked.AddDynamic(this, &UMainHUDWidget::OnButtonClicked);
+}
+
+void UMainHUDWidget::OnButtonClicked()
+{
+    if(PlayerCharacter)
+    {
+        PlayerCharacter->Ultimate();
+    }
+    else
+    {
+	    if(IsValid(PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))))
+	    {
+            PlayerCharacter->Ultimate();
+	    }
+    }
+}
 
 FString UMainHUDWidget::AddCommasToInt(const int& NumberToAddCommas)
 {
@@ -35,6 +58,7 @@ FString UMainHUDWidget::AddCommasToInt(const int& NumberToAddCommas)
     }
     return NumberString;
 }
+
 
 void UMainHUDWidget::NativeTick(const FGeometry& MyGeometry, const float InDeltaTime)
 {

@@ -45,6 +45,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* UltimateAction;
 
+	/** Touch Interface**/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|Input", meta = (AllowPrivateAccess = "true"))
+	class UTouchInterface* TouchInterface;
+	
+
 #pragma endregion
 
 #pragma region Public Functions
@@ -65,6 +70,10 @@ public:
 	UFUNCTION()
 	void AddPassive(const FName& PassiveName);
 
+	/** Called for Ultimate input */
+	UFUNCTION()
+	void Ultimate();
+
 #pragma endregion
 
 #pragma region Protected Functions
@@ -81,10 +90,6 @@ protected:
 	/** Called for movement input */
 	UFUNCTION()
 	void Move(const struct FInputActionValue& Value);
-
-	/** Called for Ultimate input */
-	UFUNCTION()
-	void Ultimate();
 
 	UFUNCTION()
 	void SetUpShip();
