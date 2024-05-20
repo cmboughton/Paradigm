@@ -6,6 +6,7 @@
 #include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "Structs.generated.h"
 
+class ACollectable;
 class AWeapons;
 class AEnemyCharacter;
 class ASpawnPoints;
@@ -20,6 +21,16 @@ struct FExperienceOrb
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Experience", meta = (ToolTip = "The amount of ultimate ability experience gained."))
 	float UltimateExperience = 20.f;
+
+	FExperienceOrb() {}
+
+	FExperienceOrb(
+		const float InExperience,
+		const float InUltimateExperience)
+		:
+		Experience(InExperience),
+		UltimateExperience(InUltimateExperience)
+	{}
 };
 
 USTRUCT(BlueprintType)
@@ -50,6 +61,28 @@ struct FWeaponUpgrades
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "This upgrade is category based upgrade. All weapons with same weapon type will recieve this upgrade."))
 	bool bCategoryUpgrade = false;
+
+	FWeaponUpgrades() {}
+
+	FWeaponUpgrades(
+		const FName InUniqueName, 
+		const FString& InDescription, 
+		const float InRollWeight, 
+		const EUpgradeRarity InUpgradeRarity, 
+		const EWeaponUpgradeType InWeaponUpgrade, 
+		const float InWeaponUpgradeValue, 
+		const bool InbSingleUse, 
+		const bool InbCategoryUpgrade)
+		:
+		UniqueName(InUniqueName),
+		Description(InDescription),
+		RollWeight(InRollWeight),
+		UpgradeRarity(InUpgradeRarity),
+		WeaponUpgrade(InWeaponUpgrade),
+		WeaponUpgradeValue(InWeaponUpgradeValue),
+		bSingleUse(InbSingleUse),
+		bCategoryUpgrade(InbCategoryUpgrade)
+	{}
 };
 
 USTRUCT(BlueprintType)
@@ -77,6 +110,26 @@ struct FUpgradeManager
 
 	UPROPERTY()
 	bool bIsSpecialUpgrade = false;
+
+	FUpgradeManager() {}
+
+	FUpgradeManager(
+		const TSoftObjectPtr<AWeapons>& InWeaponReference, 
+		const TArray<FWeaponUpgrades>& InWeaponUpgrades, 
+		const TArray<int32>& InSpecialUpgradeLevels,
+		const EWeaponType InWeaponType, 
+		const bool InbIsWeaponUnlock, 
+		const bool InbIsPassiveUnlock, 
+		const bool InbIsSpecialUpgrade)
+		:
+		WeaponReference(InWeaponReference),
+		WeaponUpgrades(InWeaponUpgrades),
+		SpecialUpgradeLevels(InSpecialUpgradeLevels),
+		WeaponType(InWeaponType),
+		bIsWeaponUnlock(InbIsWeaponUnlock),
+		bIsPassiveUnlock(InbIsPassiveUnlock),
+		bIsSpecialUpgrade(InbIsSpecialUpgrade)
+	{}
 };
 
 USTRUCT(BlueprintType)
@@ -101,6 +154,25 @@ struct FUpgradeCommunication
 
 	UPROPERTY()
 	bool bIsSpecialUpgrade = false;
+
+	FUpgradeCommunication() {}
+
+	FUpgradeCommunication(
+		const TSoftObjectPtr<AWeapons>& InWeaponReference,
+		const FWeaponUpgrades& InWeaponUpgrades,
+		const EWeaponType InWeaponType,
+		const bool InbIsWeaponUnlock,
+		const bool InbIsPassiveUnlock,
+		const bool InbIsSpecialUpgrade)
+		:
+		WeaponReference(InWeaponReference),
+		WeaponUpgrades(InWeaponUpgrades),
+		WeaponType(InWeaponType),
+		bIsWeaponUnlock(InbIsWeaponUnlock),
+		bIsPassiveUnlock(InbIsPassiveUnlock),
+		bIsSpecialUpgrade(InbIsSpecialUpgrade)
+	{}
+
 };
 
 USTRUCT(BlueprintType)
@@ -196,10 +268,20 @@ struct FCollectableRoll
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "Blueprint ref to Collectbale to spawn."))
-	TSoftClassPtr<class ACollectable> Collectable = nullptr;
+	TSoftClassPtr<ACollectable> Collectable = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The weight that will determine the probability of this collectable being dropped."))
 	float RollWeight = 0.f;
+
+	FCollectableRoll() {}
+
+	FCollectableRoll(
+		const TSoftClassPtr<ACollectable>& InCollectable,
+		const float InRollWeight)
+		:
+		Collectable(InCollectable),
+		RollWeight(InRollWeight)
+	{}
 };
 
 USTRUCT(BlueprintType)
@@ -227,4 +309,34 @@ struct FSpawnPointsInfo
 
 	UPROPERTY()
 	FVector BoxOrigin = FVector(0.f, 0.f, 0.f);
+
+	FSpawnPointsInfo() {}
+
+	FSpawnPointsInfo(
+		const FVector& InSpawnPointLocation,
+		const FVector& InBoxExtent,
+		const FVector& InBoxOrigin)
+		:
+		SpawnPointLocation(InSpawnPointLocation),
+		BoxExtent(InBoxExtent),
+		BoxOrigin(InBoxOrigin)
+	{}
+};
+
+USTRUCT(BlueprintType)
+struct FStatsStruct
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The Name of the stat that will be displayed."))
+	FName StatName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The type of stat that will be calculated."))
+	EStatsType StatType = EStatsType::Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The value of the stat that will be calculated."))
+	float StatValue = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "This value is used to calcualte where the Stat Value lies within the progress bar UI. This stat should be the same for all of the same ship stats."))
+	float MaxStatValue = 0.f;
 };

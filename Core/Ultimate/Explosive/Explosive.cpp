@@ -19,7 +19,7 @@ void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, con
 				ActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), CurrentRadius);
 				UE_LOGFMT(LogTemp, Warning, "ExplosionRadius: {0}", CurrentRadius);
 
-				for(const FHitResult ActorHit : ActorsHit)
+				for(const FHitResult& ActorHit : ActorsHit)
 				{
 					if (ActorHit.GetActor())
 					{
@@ -43,7 +43,7 @@ void AExplosive::Explosion(const float DeltaTime, const bool bShouldExplode, con
 			ActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), Radius);
 			UE_LOGFMT(LogTemp, Warning, "ExplosionRadius: {0}", Radius);
 
-			for (const FHitResult ActorHit : ActorsHit)
+			for (const FHitResult& ActorHit : ActorsHit)
 			{
 				if (ActorHit.GetActor())
 				{

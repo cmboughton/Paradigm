@@ -81,3 +81,13 @@ enum class EIconType : uint8
 	WeaponIcon					UMETA(DisplayName = "Weapon Icon"),
 	PassiveIcon					UMETA(DisplayName = "Passive Icon"),
 };
+
+UENUM(BlueprintType)
+enum class EStatsType : uint8
+{
+	Health						UMETA(DisplayName = "Health"),
+	DamageModifier				UMETA(DisplayName = "Damage Modifier"),
+	CritChanceModifier			UMETA(DisplayName = "Crit Chance Modifier"),
+	CritDamageModifier			UMETA(DisplayName = "Crit Damage Modifier"),
+	MovementSpeed				UMETA(DisplayName = "Movement Speed"),
+};

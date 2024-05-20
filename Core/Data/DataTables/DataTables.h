@@ -24,11 +24,14 @@ struct FShipsDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The static mesh model of the ship."))
 	TSoftObjectPtr<UStaticMesh> ShipMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Health of the ship."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Ship Stats"))
+	TArray<FStatsStruct> ShipStats;
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Health of the ship."))
 	float Health = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The base movement speed of the ship."))
-	float MovementSpeed = 0.f;
+	float MovementSpeed = 0.f;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The name of the Row from the Ultimate Ability Data Table."))
 	FName UltimateAbility;

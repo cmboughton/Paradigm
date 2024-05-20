@@ -11,7 +11,10 @@
 #include "MenuComponets/ShipRenderer.h"
 #include "Paradigm_IQ/Core/Game/MainGameMode.h"
 #include "Components/Button.h"
+#include "Components/VerticalBox.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Logging/StructuredLog.h"
+#include "MenuComponets/ShipStatsComponent.h"
 #include "Paradigm_IQ/Core/Game/MainGameInstance.h"
 
 struct FShipsDataTable;
@@ -60,7 +63,7 @@ void UShipSelectMenu::NativeConstruct()
 	}
 }
 
-void UShipSelectMenu::DisplayShip(const FName& RowName) const
+void UShipSelectMenu::DisplayShip(const FName& RowName)
 {
 	if(ShipRenderMat)
 	{
@@ -76,9 +79,39 @@ void UShipSelectMenu::DisplayShip(const FName& RowName) const
 	{
 		MainGameInstance->SetSelectedShip(RowName);
 	}
+
+	SetShipStats(RowName);
 }
 
 void UShipSelectMenu::OnButtonClicked()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), "BaseLevel");
+}
+
+void UShipSelectMenu::SetShipStats(const FName& DTRowName)
+{
+	ShipStatsVB->ClearChildren();
+	if (const UDataTable* ShipDataTableHardRef = ShipDataTable.LoadSynchronous())
+	{
+		if (const FShipsDataTable* ShipData = ShipDataTableHardRef->FindRow<FShipsDataTable>(DTRowName, "Ships Data Table Not set up", true))
+		{
+			if (!ShipData->ShipStats.IsEmpty())
+			{
+				for (const auto Stat : ShipData->ShipStats)
+				{
+					if (ShipStatsRef)
+					{
+						if (UShipStatsComponent* WidgetInstance = CreateWidget<UShipStatsComponent>(GetWorld(), ShipStatsRef))
+						{
+							WidgetInstance->SetStatName(FText::FromName(Stat.StatName));
+							WidgetInstance->SetStatValue(Stat.StatValue);
+							WidgetInstance->SetStatValuePB(UKismetMathLibrary::NormalizeToRange(Stat.StatValue, 0, Stat.MaxStatValue));
+							WidgetInstance->SetPadding(FMargin(0.f, 5.f));
+							ShipStatsVB->AddChild(WidgetInstance);
+						}
+					}
+				}
+			}
+		}
+	}
 }

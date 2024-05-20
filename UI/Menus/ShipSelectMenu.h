@@ -20,6 +20,9 @@ protected:
 	UFUNCTION()
 	void OnButtonClicked();
 
+	UFUNCTION()
+	void SetShipStats(const FName& DTRowName);
+
 	UPROPERTY(meta = (BindWidget))
 	class UUniformGridPanel* ShipSelectGrid;
 
@@ -29,6 +32,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* PlayButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UVerticalBox* ShipStatsVB;
+
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
@@ -37,11 +43,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Reference to the Ship Select BP"))
 	TSubclassOf<UUserWidget> ShipSelectRef;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Reference to the Ship Stat BP"))
+	TSubclassOf<UUserWidget> ShipStatsRef;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Reference to Ship Render Material"))
 	UMaterial* ShipRenderMat;
 
 public:
 
 	UFUNCTION()
-	void DisplayShip(const FName& RowName) const;
+	void DisplayShip(const FName& RowName);
 };

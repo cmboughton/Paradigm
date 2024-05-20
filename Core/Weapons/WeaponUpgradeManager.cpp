@@ -8,6 +8,7 @@
 AWeaponUpgradeManager::AWeaponUpgradeManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 void AWeaponUpgradeManager::BeginPlay()
@@ -133,7 +134,7 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 			}
 			const float Roll = FMath::RandRange(0.f, RollRange);
 			int ArrayTracker = -1;
-			for (FUpgradeManager UpgradeAvailable : CurrentUpgrades)
+			for (const FUpgradeManager& UpgradeAvailable : CurrentUpgrades)
 			{
 				ArrayTracker++;
 				if (UpgradeAvailable.bIsPassiveUnlock || UpgradeAvailable.bIsWeaponUnlock)
@@ -300,27 +301,16 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 			{
 				if(SpecialWeaponUpgrades[i].WeaponReference == Upgrade.WeaponReference)
 				{
-					if (const AWeapons* WeaponRef = SpecialWeaponUpgrades[i].WeaponReference.LoadSynchronous())
+					for(int j = 0; j < SpecialWeaponUpgrades[i].WeaponUpgrades.Num(); j++)
 					{
-						/*if(WeaponRef->GetSpecialUpgradeTracker() >= SpecialWeaponUpgrades[i].WeaponUpgrades.Num())
+						if(SpecialWeaponUpgrades[i].WeaponUpgrades.IsValidIndex(j))
 						{
-							UE_LOGFMT(LogTemp, Warning, "Upgrade Tracker: {0} WeaponUpgradesNum: {1}", WeaponRef->GetSpecialUpgradeTracker(), SpecialWeaponUpgrades[i].WeaponUpgrades.Num());
-							SpecialWeaponUpgrades.RemoveAllSwap([&](const FUpgradeManager& Weapon) {return Weapon.WeaponReference == WeaponRef; });
-						}
-						else
-						{*/
-							for(int j = 0; j < SpecialWeaponUpgrades[i].WeaponUpgrades.Num(); j++)
+							if(SpecialWeaponUpgrades[i].WeaponUpgrades[j].UniqueName == Upgrade.WeaponUpgrades.UniqueName)
 							{
-								if(SpecialWeaponUpgrades[i].WeaponUpgrades.IsValidIndex(j))
-								{
-									if(SpecialWeaponUpgrades[i].WeaponUpgrades[j].UniqueName == Upgrade.WeaponUpgrades.UniqueName)
-									{
-										//UE_LOGFMT(LogTemp, Warning, "Upgrade Removed: {0}", SpecialWeaponUpgrades[i].WeaponUpgrades[j].UniqueName);
-										SpecialWeaponUpgrades[i].WeaponUpgrades.RemoveAt(j);
-									}
-								}
+								//UE_LOGFMT(LogTemp, Warning, "Upgrade Removed: {0}", SpecialWeaponUpgrades[i].WeaponUpgrades[j].UniqueName);
+								SpecialWeaponUpgrades[i].WeaponUpgrades.RemoveAt(j);
 							}
-						
+						}
 					}
 				}
 			}
@@ -439,12 +429,12 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpSpecialUpgrades()
 {
 	TArray<FUpgradeManager> SpecialUpgrades;
 
-	for (const FUpgradeManager SpecialWeaponUpgrade : SpecialWeaponUpgrades)
+	for (const FUpgradeManager& SpecialWeaponUpgrade : SpecialWeaponUpgrades)
 	{
 		if(const AWeapons* WeaponRef = SpecialWeaponUpgrade.WeaponReference.LoadSynchronous())
 		{
 			int index = 0;
-			for (const auto WeaponUpgrade : SpecialWeaponUpgrade.WeaponUpgrades)
+			for (const auto& WeaponUpgrade : SpecialWeaponUpgrade.WeaponUpgrades)
 			{
 				if((!SpecialWeaponUpgrade.WeaponUpgrades.IsEmpty()) && SpecialWeaponUpgrade.SpecialUpgradeLevels.IsValidIndex(WeaponRef->GetSpecialUpgradeTracker()))
 				{

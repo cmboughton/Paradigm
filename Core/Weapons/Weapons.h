@@ -97,9 +97,6 @@ protected:
 	AWeaponUpgradeManager* UpgradeManagerRef = nullptr;
 
 	UPROPERTY()
-	FWeaponUpgrades WeaponUpgrade;
-
-	UPROPERTY()
 	bool bSpecialUpgrade1 = false;
 
 	UPROPERTY()

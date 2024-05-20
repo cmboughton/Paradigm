@@ -167,7 +167,7 @@ float APlayerCharacter::TakeDamage(const float DamageAmount, FDamageEvent const&
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -186,7 +186,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
         MovementDirection.Z = 0.f; // Zero out Z component to ensure movement is on the XY plane
 
         // Calculate the rotation angle based on the movement direction
-        FRotator DesiredRotation = MovementDirection.Rotation() + FRotator(0.f, -90.f, 0.f);
+        const FRotator DesiredRotation = MovementDirection.Rotation() + FRotator(0.f, -90.f, 0.f);
 
 		// Calculate the new position of the pickup using linear interpolation
 		const FRotator NewRotation = FMath::Lerp(BaseModel->GetRelativeRotation(),DesiredRotation, .1f);
@@ -240,9 +240,37 @@ void APlayerCharacter::SetUpShip()
 	{
 		if(const FShipsDataTable* ShipData = ShipDataTableHardRef->FindRow<FShipsDataTable>(SelectedShipName, "Ships Data Table Not set up", true))
 		{
-			GetCharacterMovement()->MaxWalkSpeed = ShipData->MovementSpeed;
-			CurrentHealth = ShipData->Health;
-			MaxHealth = ShipData->Health;
+			if (!ShipData->ShipStats.IsEmpty())
+			{
+				for (const auto Stats : ShipData->ShipStats)
+				{
+					switch (Stats.StatType)
+					{
+					case EStatsType::Health:
+
+						CurrentHealth = Stats.StatValue;
+						MaxHealth = Stats.StatValue;
+						break;
+
+					case EStatsType::DamageModifier:
+
+						break;
+
+					case EStatsType::CritChanceModifier:
+
+						break;
+
+					case EStatsType::CritDamageModifier:
+
+						break;
+
+					case EStatsType::MovementSpeed:
+
+						GetCharacterMovement()->MaxWalkSpeed = Stats.StatValue;
+						break;
+					}
+				}
+			}
 
 			if (UStaticMesh* ShipMeshData = ShipData->ShipMesh.LoadSynchronous())
 			{

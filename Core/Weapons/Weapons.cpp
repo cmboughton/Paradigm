@@ -27,14 +27,14 @@ void AWeapons::BeginPlay()
 		{
 			FireRate = WeaponsData->FireRate;
 			Damage = WeaponsData->Damage;
-			if (!WeaponsData->DeBugUpgrade.IsEmpty())
+			/*if (!WeaponsData->DeBugUpgrade.IsEmpty())
 			{
-				for (const auto DeBugUpgrades : WeaponsData->DeBugUpgrade)
+				for (const auto& DeBugUpgrades : WeaponsData->DeBugUpgrade)
 				{
-					FWeaponUpgrades DeBugWeaponUpgrade = FWeaponUpgrades("Name", "Des", 0, EUpgradeRarity::Basic, DeBugUpgrades);
+					const FWeaponUpgrades DeBugWeaponUpgrade = FWeaponUpgrades("Name", "Des", 0, EUpgradeRarity::Basic, DeBugUpgrades, 0.f, false, false);
 					UpgradeWeapon(DeBugWeaponUpgrade);
 				}
-			}
+			}*/
 			AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)

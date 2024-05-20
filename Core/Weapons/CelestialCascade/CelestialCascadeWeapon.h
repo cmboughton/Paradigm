@@ -27,6 +27,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The lightning niagara system to spawn"))
 	UNiagaraSystem* LightningSystem;
 
+	UPROPERTY()
+	bool bEnemiesFound = false;
+
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)

@@ -26,7 +26,7 @@ void UWeaponUpgradeWidget::AddWidget(const bool WidgetStatus)
 {
 	if(WidgetStatus)
 	{
-		for (const FUpgradeCommunication WeaponUpgrade : WeaponUpgrades)
+		for (const FUpgradeCommunication& WeaponUpgrade : WeaponUpgrades)
 		{
 			if (WeaponUpgradeCardWidget)
 			{

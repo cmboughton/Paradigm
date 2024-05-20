@@ -24,7 +24,7 @@ void AArcanicEcho::Tick(float DeltaTime)
 			{
 				CurrentRadius += (DeltaTime * GrowthModifier);
 				const TArray<FHitResult> ActorsHit = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), CurrentRadius);
-				for (const FHitResult ActorHit : ActorsHit)
+				for (const FHitResult& ActorHit : ActorsHit)
 				{
 					if (ActorHit.GetActor())
 					{

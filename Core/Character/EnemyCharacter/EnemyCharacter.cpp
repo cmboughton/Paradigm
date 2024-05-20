@@ -128,14 +128,14 @@ void AEnemyCharacter::Death()
 	{
 		float RollRange = 0;
 		float CurrentRollTracker = 0.f;
-		for (const FCollectableRoll Collectable : CollectableLootTable.Collectables)
+		for (const FCollectableRoll& Collectable : CollectableLootTable.Collectables)
 		{
 			RollRange += Collectable.RollWeight;
 		}
 
 		const float Roll = FMath::RandRange(0.f, RollRange);
 
-		for (const FCollectableRoll Collectable : CollectableLootTable.Collectables)
+		for (const FCollectableRoll& Collectable : CollectableLootTable.Collectables)
 		{
 			CurrentRollTracker += Collectable.RollWeight;
 			if (Roll <= CurrentRollTracker && Roll > CurrentRollTracker - Collectable.RollWeight)

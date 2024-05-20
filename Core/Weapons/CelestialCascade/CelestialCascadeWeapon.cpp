@@ -20,7 +20,7 @@ void ACelestialCascadeWeapon::WeaponTriggered(const float DeltaTime)
 	{
 		if(AActor* EnemyFound = FindClosestEnemy(CurrentEnemy->GetActorLocation()))
 		{
-			if (FMath::Sqrt(FVector::DistSquared(CurrentEnemy->GetActorLocation(), EnemyFound->GetActorLocation())) <= 600)
+			if (FMath::Sqrt(FVector::DistSquared(CurrentEnemy->GetActorLocation(), EnemyFound->GetActorLocation())) <= 700)
 			{
 				CurrentEnemy = EnemyFound;
 				EnemiesToDamage.Add(EnemyFound);
@@ -46,7 +46,8 @@ void ACelestialCascadeWeapon::WeaponTriggered(const float DeltaTime)
 						UNiagaraComponent* LightningSystemSpawned = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), LightningSystem, FVector(0, 0, 0), FRotator(0, 0, 0), FVector(0, 0, 0), true, true, ENCPoolMethod::None, true);
 						LightningSystemSpawned->SetVariableVec3("BeamStartPoint", StartLoc);
 						LightningSystemSpawned->SetVariableVec3("BeamEndPoint", ActorLocation);
-						UE_LOGFMT(LogTemp, Warning, "StartPoint: {0}, {1}, {2} EndPoint {3}, {4}, {5}", StartLoc.X, StartLoc.Y, StartLoc.Z, ActorLocation.X, ActorLocation.Y, ActorLocation.Z);
+						bEnemiesFound = true;
+						//UE_LOGFMT(LogTemp, Warning, "StartPoint: {0}, {1}, {2} EndPoint {3}, {4}, {5}", StartLoc.X, StartLoc.Y, StartLoc.Z, ActorLocation.X, ActorLocation.Y, ActorLocation.Z);
 					}
 				}
 			}
@@ -56,9 +57,12 @@ void ACelestialCascadeWeapon::WeaponTriggered(const float DeltaTime)
 			//SphereTrace(StartLoc, EndLoc, 20);
 			StartLoc = EnemyHit->GetActorLocation();
 		}
+		if(bEnemiesFound)
+		{
+			FireRateTracker = FireRate;
+			bEnemiesFound = false;
+		}
 	}
-
-	FireRateTracker = FireRate;
 }
 
 AActor* ACelestialCascadeWeapon::FindClosestEnemy(const FVector& Origin) const
