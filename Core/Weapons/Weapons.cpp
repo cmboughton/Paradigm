@@ -27,14 +27,14 @@ void AWeapons::BeginPlay()
 		{
 			FireRate = WeaponsData->FireRate;
 			Damage = WeaponsData->Damage;
-			/*if (!WeaponsData->DeBugUpgrade.IsEmpty())
+			if (!WeaponsData->DeBugUpgrade.IsEmpty())
 			{
 				for (const auto& DeBugUpgrades : WeaponsData->DeBugUpgrade)
 				{
 					const FWeaponUpgrades DeBugWeaponUpgrade = FWeaponUpgrades("Name", "Des", 0, EUpgradeRarity::Basic, DeBugUpgrades, 0.f, false, false);
 					UpgradeWeapon(DeBugWeaponUpgrade);
 				}
-			}*/
+			}
 			AActor* FoundManager = UGameplayStatics::GetActorOfClass(GetWorld(), AWeaponUpgradeManager::StaticClass());
 			UpgradeManagerRef = Cast<AWeaponUpgradeManager>(FoundManager);
 			if(UpgradeManagerRef)
@@ -270,7 +270,7 @@ TArray<FHitResult> AWeapons::SphereTrace(const FVector& ActorStartLocation, cons
 											ETraceTypeQuery::TraceTypeQuery1,
 											false,
 											ActorsToIgnore,
-											EDrawDebugTrace::ForOneFrame,
+											EDrawDebugTrace::None,
 											AllActorsHit,
 											true,
 											FLinearColor::Red,

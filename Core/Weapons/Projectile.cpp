@@ -110,7 +110,7 @@ TArray<FHitResult> AProjectile::SphereTrace(const FVector& ActorStartLocation, c
 											ETraceTypeQuery::TraceTypeQuery1,
 											false,
 											ActorsToIgnore,
-											EDrawDebugTrace::ForOneFrame,
+											EDrawDebugTrace::None,
 											AllActorsHit,
 											true,
 											FLinearColor::Red,

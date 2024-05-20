@@ -288,7 +288,7 @@ void ADronesWeapon::SpecialUpgrade1(const float& DeltaTime)
 		{
 			if (bIsDroneAlive[i])
 			{
-				const FRotator DroneRotation = SpawnedDrones[i]->GetRelativeRotation() + FRotator(0.f, 25.f, 0.f);
+				const FRotator DroneRotation = SpawnedDrones[i]->GetRelativeRotation() + FRotator(0.f, 10.f, 0.f);
 				const FVector SpawnLocation = SpawnedDrones[i]->GetComponentLocation() + DroneRotation.Vector();
 				const FTransform BulletSpawnLocation = FTransform(DroneRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
 				if (Projectile)
