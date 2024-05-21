@@ -9,7 +9,6 @@
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "MenuComponets/ShipRenderer.h"
-#include "Paradigm_IQ/Core/Game/MainGameMode.h"
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
 #include "Kismet/KismetMathLibrary.h"

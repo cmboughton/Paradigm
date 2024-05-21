@@ -21,7 +21,7 @@ public:
 	void UpdateMovementSpeed(const float Speed) const;
 
 	UFUNCTION()
-	void UpdateHealth(const float& HealthIn);
+	virtual void UpdateHealth(const float& HealthIn);
 
 #pragma endregion
 
@@ -78,10 +78,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int						GetScore()					const { return Score; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float					GetHealth()					const { return CurrentHealth; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float					GetMaxHealth()				const { return MaxHealth; }
 	FORCEINLINE ECharacterState			GetCharacterState()			const { return CurrentState; }
 	FORCEINLINE UStaticMeshComponent*	GetBaseModel()				const { return BaseModel; }
 

@@ -82,8 +82,7 @@ float ABaseCharacter::TakeDamage(const float DamageAmount, FDamageEvent const& D
 	{
 		if (CurrentState != ECharacterState::Invulnerable)
 		{
-			CurrentHealth -= DamageAmount;
-			ScoringModifier = 0;
+			UpdateHealth(-DamageAmount);
 			if (CurrentHealth <= 0)
 			{
 				Death();
@@ -114,20 +113,17 @@ void ABaseCharacter::SpawnActor(const TSubclassOf<AActor> ClassToSpawn, const FT
 	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
 }
 
+/**
+ * @brief Updates the health of the character.
+ * 
+ * This method adjusts the current health of the character based on the input parameter. 
+ * The new health value is clamped between 0 and the maximum health of the character.
+ * 
+ * @param HealthIn The amount to adjust the health by. Can be positive (for healing) or negative (for damage).
+ */
 void ABaseCharacter::UpdateHealth(const float& HealthIn)
 {
-	if(CurrentHealth < MaxHealth)
-	{
-		if(CurrentHealth + HealthIn >= MaxHealth)
-		{
-			CurrentHealth = MaxHealth;
-		}
-		else
-		{
-			CurrentHealth += HealthIn;
-		}
-	}
-	UE_LOGFMT(LogTemp, Warning, "HealthIn: {0}", HealthIn);
+	CurrentHealth = FMath::Clamp(CurrentHealth + HealthIn, 0, MaxHealth);
 }
 
 /**

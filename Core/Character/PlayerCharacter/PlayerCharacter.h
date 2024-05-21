@@ -7,6 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 
+class UHealthBarComponent;
 class AArcanicEcho;
 class AWeaponUpgradeManager;
 class AUltimateAbility;
@@ -27,6 +28,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UWidgetComponent* HealthWidget;
 
 #pragma endregion
 
@@ -74,6 +77,8 @@ public:
 	UFUNCTION()
 	void Ultimate();
 
+	virtual float TakeDamage(const float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)override;
+
 #pragma endregion
 
 #pragma region Protected Functions
@@ -85,7 +90,6 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual float TakeDamage(const float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)override;
 
 	/** Called for movement input */
 	UFUNCTION()
@@ -99,6 +103,9 @@ protected:
 
 	UFUNCTION()
 	static int CalculateExperienceForLevel(const int Level, const int BaseExperience, const float GrowthRate);
+
+	UFUNCTION()
+	void LerpHealthBar(const float& InDeltaTime);
 
 #pragma endregion
 
@@ -147,6 +154,9 @@ protected:
 	UPROPERTY()
 	FName SelectedShipName;
 
+	UPROPERTY()
+	float HealthRegenRate = 0.f;
+
 #pragma endregion
 
 #pragma region References
@@ -163,6 +173,9 @@ protected:
 
 	UPROPERTY()
 	class UMainHUDWidget* WidgetInstance;
+
+	UPROPERTY()
+	UHealthBarComponent* HealthBar;
 
 #pragma endregion
 
@@ -192,6 +205,12 @@ protected:
 
 	UPROPERTY()
 	int NextLevelReq = 0;
+
+	UPROPERTY()
+	float HealthRegenTracker = 0.f;
+
+	UPROPERTY()
+	float LerpCurrentHealth = 0.f;
 
 #pragma endregion
 

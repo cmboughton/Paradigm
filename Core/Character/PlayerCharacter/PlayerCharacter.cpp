@@ -9,6 +9,7 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WidgetComponent.h"
 
 #include "Paradigm_IQ/Core/Ultimate/UltimateAbility.h"
 #include "../EnemyCharacter/EnemyCharacter.h"
@@ -19,12 +20,15 @@
 
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/CollectableInterface.h"
+
 #include "Paradigm_IQ/Core/Passives/Passives.h"
 #include "Paradigm_IQ/Core/Passives/ArcanicEcho/ArcanicEcho.h"
+
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "Paradigm_IQ/Core/Weapons/WeaponUpgradeManager.h"
 
 #include "Paradigm_IQ/UI/Menus/MainHUDWidget.h"
+#include "Paradigm_IQ/UI/Menus/MenuComponets/HealthBarComponent.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -50,6 +54,9 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	HealthWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Widget"));
+	HealthWidget->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -100,6 +107,11 @@ void APlayerCharacter::BeginPlay()
 	{
 		PlayerController->ActivateTouchInterface(TouchInterface);
 	}
+
+	if (HealthWidget)
+	{
+		HealthBar = Cast<UHealthBarComponent>(HealthWidget->GetUserWidgetObject());
+	}
 }
 
 void APlayerCharacter::Tick(const float DeltaTime)
@@ -123,6 +135,17 @@ void APlayerCharacter::Tick(const float DeltaTime)
 		}
 	}
 
+	if(CurrentHealth < MaxHealth && HealthRegenTracker <= 0)
+	{
+		UpdateHealth(HealthRegenRate * (MaxHealth * 0.05));
+		HealthRegenTracker = 5.f;
+	}
+	else if(HealthRegenTracker > 0)
+	{
+		HealthRegenTracker -= DeltaTime;
+	}
+
+	LerpHealthBar(DeltaTime);
 }
 
 /**
@@ -149,16 +172,43 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+/**
+ * @brief This function is used to apply damage to the player character.
+ * 
+ * @param DamageAmount The amount of damage to be applied.
+ * @param DamageEvent The type of damage event that is causing the damage.
+ * @param EventInstigator The controller that was responsible for causing this damage.
+ * @param DamageCauser The actor that was responsible for causing this damage.
+ * 
+ * @return The current health of the player character after the damage has been applied.
+ */
 float APlayerCharacter::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	ScoringModifier = 1;
+	WidgetInstance->SetScoreMultiplier(ScoringModifier);
+	ScoreModifierTracker = 0.f;
 	if(ArcanicEcho)
 	{
 		ArcanicEcho->SetWasHit(true);
 		ArcanicEcho->SetDamage(DamageAmount);
 	}
 	return CurrentHealth;
+}
+
+/**
+ * @brief Interpolates the health bar value based on the current health of the player character.
+ *
+ * This function is used to smoothly transition the health bar value to match the current health of the player character.
+ * The interpolation speed is defined by a constant value.
+ *
+ * @param InDeltaTime The time elapsed since the last frame, used to ensure frame rate independent lerp speed.
+ */
+void APlayerCharacter::LerpHealthBar(const float& InDeltaTime)
+{
+	constexpr float LerpSpeed = 5.0f;
+	LerpCurrentHealth = FMath::Lerp(LerpCurrentHealth, CurrentHealth, InDeltaTime * LerpSpeed);
+	HealthBar->UpdateHealthBar(LerpCurrentHealth, MaxHealth);
 }
 
 /**
@@ -256,6 +306,12 @@ void APlayerCharacter::SetUpShip()
 
 						CurrentHealth = Stats.StatValue;
 						MaxHealth = Stats.StatValue;
+						UpdateHealth(0);
+						break;
+
+					case EStatsType::HealthRegen:
+
+						HealthRegenRate = Stats.StatValue;
 						break;
 
 					case EStatsType::DamageModifier:
@@ -305,7 +361,7 @@ void APlayerCharacter::SetUpShip()
  */
 void APlayerCharacter::CollectablePickUp()
 {
-	TArray<FHitResult> SweepResult = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), PickUpRadius);
+	const TArray<FHitResult> SweepResult = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), PickUpRadius);
 	for(FHitResult ActorsToCheck : SweepResult)
 	{
 		if (ActorsToCheck.GetActor())

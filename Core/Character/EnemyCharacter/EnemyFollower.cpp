@@ -6,6 +6,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
+#include "Engine/DamageEvents.h"
 
 void AEnemyFollower::Tick(const float DeltaTime)
 {
@@ -17,6 +18,9 @@ void AEnemyFollower::Tick(const float DeltaTime)
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
 		if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
 		{
+			FHitResult EmptyResult;
+			const FPointDamageEvent DamageEvent(Damage, EmptyResult , this->GetActorLocation(), nullptr);
+			PlayerCharacter->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
 			Death();
 		}
 	}
