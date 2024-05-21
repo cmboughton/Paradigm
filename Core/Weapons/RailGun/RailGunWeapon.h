@@ -18,11 +18,6 @@ protected:
 
 	virtual void WeaponTriggered(const float DeltaTime) override;
 
-	virtual void BeginPlay() override;
-
 	UPROPERTY()
 	int BulletTracker = 0;
-
-	UPROPERTY()
-	APlayerCharacter* PlayerCharacterRef = nullptr;
 };

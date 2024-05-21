@@ -9,6 +9,7 @@
 #include "Paradigm_IQ/Core/Weapons/Projectile.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
 #include "Engine/DamageEvents.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 
 struct FWeaponsDataTable;
 
@@ -45,6 +46,8 @@ void AWeapons::BeginPlay()
 			}
 		}
 	}
+
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 
@@ -56,34 +59,44 @@ void AWeapons::WeaponTriggered(const float DeltaTime)
 void AWeapons::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if(bShouldUseBulletDelay)
+	if (PlayerCharacter)
 	{
-		if (FireRateTracker <= 0)
+		if (PlayerCharacter->GetCharacterState() == ECharacterState::Normal)
 		{
-			if (BulletDelayTracker <= 0)
+			if (bShouldUseBulletDelay)
 			{
-				WeaponTriggered(DeltaTime);
+				if (FireRateTracker <= 0)
+				{
+					if (BulletDelayTracker <= 0)
+					{
+						WeaponTriggered(DeltaTime);
+					}
+					else
+					{
+						BulletDelayTracker -= DeltaTime;
+					}
+				}
+				else
+				{
+					FireRateTracker -= DeltaTime;
+				}
 			}
 			else
 			{
-				BulletDelayTracker -= DeltaTime;
+				if (FireRateTracker <= 0)
+				{
+					WeaponTriggered(DeltaTime);
+				}
+				else
+				{
+					FireRateTracker -= DeltaTime;
+				}
 			}
-		}	
-		else
-		{
-			FireRateTracker -= DeltaTime;
 		}
 	}
 	else
 	{
-		if (FireRateTracker <= 0)
-		{
-			WeaponTriggered(DeltaTime);
-		}
-		else
-		{
-			FireRateTracker -= DeltaTime;
-		}
+		PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	}
 }
 

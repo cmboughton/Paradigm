@@ -172,6 +172,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+void APlayerCharacter::Death()
+{
+	Super::Death();
+	BaseModel->SetVisibility(false, true);
+	WidgetInstance->ActivateDeathWidget();
+}
+
 /**
  * @brief This function is used to apply damage to the player character.
  * 
@@ -206,9 +213,16 @@ float APlayerCharacter::TakeDamage(const float DamageAmount, FDamageEvent const&
  */
 void APlayerCharacter::LerpHealthBar(const float& InDeltaTime)
 {
-	constexpr float LerpSpeed = 5.0f;
-	LerpCurrentHealth = FMath::Lerp(LerpCurrentHealth, CurrentHealth, InDeltaTime * LerpSpeed);
-	HealthBar->UpdateHealthBar(LerpCurrentHealth, MaxHealth);
+	if (CurrentHealth > 0)
+	{
+		constexpr float LerpSpeed = 5.0f;
+		LerpCurrentHealth = FMath::Lerp(LerpCurrentHealth, CurrentHealth, InDeltaTime * LerpSpeed);
+		HealthBar->UpdateHealthBar(LerpCurrentHealth, MaxHealth);
+	}
+	else
+	{
+		HealthBar->UpdateHealthBar(CurrentHealth, MaxHealth);
+	}
 }
 
 /**
@@ -222,36 +236,39 @@ void APlayerCharacter::LerpHealthBar(const float& InDeltaTime)
  */
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
-	const FVector2D MovementVector = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
+	if (CurrentState != ECharacterState::Death && CurrentState != ECharacterState::Stunned)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		// input is a Vector2D
+		const FVector2D MovementVector = Value.Get<FVector2D>();
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		if (Controller != nullptr)
+		{
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			// get forward vector
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		 // Calculate the movement direction as a 2D vector
-        FVector MovementDirection = MovementVector.Y * ForwardDirection + MovementVector.X * RightDirection;
-        MovementDirection.Z = 0.f; // Zero out Z component to ensure movement is on the XY plane
+			// get right vector 
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-        // Calculate the rotation angle based on the movement direction
-        const FRotator DesiredRotation = MovementDirection.Rotation() + FRotator(0.f, -90.f, 0.f);
+			// Calculate the movement direction as a 2D vector
+			FVector MovementDirection = MovementVector.Y * ForwardDirection + MovementVector.X * RightDirection;
+			MovementDirection.Z = 0.f; // Zero out Z component to ensure movement is on the XY plane
 
-		// Calculate the new position of the pickup using linear interpolation
-		const FRotator NewRotation = FMath::Lerp(BaseModel->GetRelativeRotation(),DesiredRotation, 1.f);
+			// Calculate the rotation angle based on the movement direction
+			const FRotator DesiredRotation = MovementDirection.Rotation() + FRotator(0.f, -90.f, 0.f);
 
-        BaseModel->SetRelativeRotation(NewRotation);
-		
-		// add movement 
-		AddMovementInput(ForwardDirection,	MovementVector.Y);
-		AddMovementInput(RightDirection,	MovementVector.X);
+			// Calculate the new position of the pickup using linear interpolation
+			const FRotator NewRotation = FMath::Lerp(BaseModel->GetRelativeRotation(), DesiredRotation, 1.f);
+
+			BaseModel->SetRelativeRotation(NewRotation);
+
+			// add movement 
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
 	}
 }
 
@@ -265,17 +282,20 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
  */
 void APlayerCharacter::Ultimate()
 {
-	if(CurrentUltimateTracker >= UltimateTracker)
+	if (CurrentState != ECharacterState::Death && CurrentState != ECharacterState::Stunned)
 	{
-		if(UltimateAbilityRef)
+		if (CurrentUltimateTracker >= UltimateTracker)
 		{
-			CurrentUltimateTracker = 0.f;
-			WidgetInstance->SetUltimateXP(UKismetMathLibrary::NormalizeToRange(CurrentUltimateTracker, 0, UltimateTracker));
-			GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
-		}
-		else
-		{
-			UE_LOGFMT(LogTemp, Warning, "Ultimate Ability Ref Not Valid");
+			if (UltimateAbilityRef)
+			{
+				CurrentUltimateTracker = 0.f;
+				WidgetInstance->SetUltimateXP(UKismetMathLibrary::NormalizeToRange(CurrentUltimateTracker, 0, UltimateTracker));
+				GetWorld()->SpawnActor<AUltimateAbility>(UltimateAbilityRef, this->GetActorTransform());
+			}
+			else
+			{
+				UE_LOGFMT(LogTemp, Warning, "Ultimate Ability Ref Not Valid");
+			}
 		}
 	}
 }
@@ -361,14 +381,17 @@ void APlayerCharacter::SetUpShip()
  */
 void APlayerCharacter::CollectablePickUp()
 {
-	const TArray<FHitResult> SweepResult = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), PickUpRadius);
-	for(FHitResult ActorsToCheck : SweepResult)
+	if (CurrentState != ECharacterState::Death && CurrentState != ECharacterState::Stunned)
 	{
-		if (ActorsToCheck.GetActor())
+		const TArray<FHitResult> SweepResult = SphereTrace(this->GetActorLocation(), this->GetActorLocation(), PickUpRadius);
+		for (FHitResult ActorsToCheck : SweepResult)
 		{
-			if (ActorsToCheck.GetActor()->GetClass()->ImplementsInterface(UCollectableInterface::StaticClass()))
+			if (ActorsToCheck.GetActor())
 			{
-				ICollectableInterface::Execute_PickUp(ActorsToCheck.GetActor(), this);
+				if (ActorsToCheck.GetActor()->GetClass()->ImplementsInterface(UCollectableInterface::StaticClass()))
+				{
+					ICollectableInterface::Execute_PickUp(ActorsToCheck.GetActor(), this);
+				}
 			}
 		}
 	}

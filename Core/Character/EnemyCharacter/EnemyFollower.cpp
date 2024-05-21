@@ -14,14 +14,17 @@ void AEnemyFollower::Tick(const float DeltaTime)
 
 	if (PlayerCharacter)
 	{
-		const FVector TargetLocation = PlayerCharacter->GetActorLocation();
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
-		if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
+		if (PlayerCharacter->GetCharacterState() != ECharacterState::Death)
 		{
-			FHitResult EmptyResult;
-			const FPointDamageEvent DamageEvent(Damage, EmptyResult , this->GetActorLocation(), nullptr);
-			PlayerCharacter->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
-			Death();
+			const FVector TargetLocation = PlayerCharacter->GetActorLocation();
+			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
+			if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
+			{
+				FHitResult EmptyResult;
+				const FPointDamageEvent DamageEvent(Damage, EmptyResult, this->GetActorLocation(), nullptr);
+				PlayerCharacter->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+				Death();
+			}
 		}
 	}
 	else

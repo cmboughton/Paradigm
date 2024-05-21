@@ -91,7 +91,7 @@ protected:
 	float BulletDelayTracker = 0.f;
 
 	UPROPERTY()
-	AActor* PlayerCharacter = nullptr;
+	APlayerCharacter* PlayerCharacter = nullptr;
 
 	UPROPERTY()
 	AWeaponUpgradeManager* UpgradeManagerRef = nullptr;
@@ -133,12 +133,12 @@ public:
 
 #pragma region Getters and Setters
 
-	FORCEINLINE AActor*						GetPlayerCharacter()											const { return PlayerCharacter; }
+	FORCEINLINE APlayerCharacter*			GetPlayerCharacter()											const { return PlayerCharacter; }
 	FORCEINLINE TSoftObjectPtr<UDataTable>	GetWeaponsDataTable()											const { return WeaponsDataTable; }
 	FORCEINLINE int							GetSpecialUpgradeTracker()										const { return SpecialUpgradeTracker; }
 	FORCEINLINE int							GetWeaponLevel()												const { return  WeaponLevel; }
 
-	FORCEINLINE void						SetPlayerCharacter	(AActor* PlayerCharRef)							  { PlayerCharacter = PlayerCharRef; }
+	FORCEINLINE void						SetPlayerCharacter	(APlayerCharacter* PlayerCharRef)				  { PlayerCharacter = PlayerCharRef; }
 	FORCEINLINE void						SetWeaponLevel		(const int& WeaponLevelRef)						  { WeaponLevel = WeaponLevelRef; }
 
 #pragma endregion

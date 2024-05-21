@@ -90,6 +90,7 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Death() override;
 
 	/** Called for movement input */
 	UFUNCTION()

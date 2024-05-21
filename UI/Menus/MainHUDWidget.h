@@ -59,6 +59,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* UltimateButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UDeathScreenWidget* WBDeathScreenWidget;
+
 	UPROPERTY()
 	float ScoreText = 0.f;
 
@@ -96,6 +99,9 @@ public:
 
 	UFUNCTION()
 	void SetUpDefaultIcons(const EIconType& IconType) const;
+
+	UFUNCTION()
+	void ActivateDeathWidget() const;
 
 public:
 

@@ -13,7 +13,7 @@ void ARailGunWeapon::WeaponTriggered(const float DeltaTime)
 	{
 		BulletTracker++;
 		BulletDelayTracker = (FireRate / TriggerAmount) * 0.5;
-		FRotator PlayerRot = PlayerCharacterRef->GetBaseModel()->GetRelativeRotation() + FRotator(0.f, 90.f, 0.f);
+		FRotator PlayerRot = PlayerCharacter->GetBaseModel()->GetRelativeRotation() + FRotator(0.f, 90.f, 0.f);
 		FVector SpawnLocation = GetActorLocation() + PlayerRot.Vector();
 		const FTransform BulletSpawnLocation = FTransform(PlayerRot, SpawnLocation, FVector(1.f, 1.f, 1.f));
 		SpawnProjectile(BulletSpawnLocation);
@@ -23,13 +23,6 @@ void ARailGunWeapon::WeaponTriggered(const float DeltaTime)
 		FireRateTracker = FireRate;
 		BulletTracker = 0;
 	}
-}
-
-void ARailGunWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-
-	PlayerCharacterRef = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 							/* This is another way to spawn projectiles that are in a fan visual */	

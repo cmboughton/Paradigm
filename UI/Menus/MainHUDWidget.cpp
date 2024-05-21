@@ -3,6 +3,7 @@
 
 #include "MainHUDWidget.h"
 
+#include "DeathScreenWidget.h"
 #include "IconWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -34,6 +35,12 @@ void UMainHUDWidget::OnButtonClicked()
             PlayerCharacter->Ultimate();
 	    }
     }
+}
+
+void UMainHUDWidget::ActivateDeathWidget() const
+{
+    WBDeathScreenWidget->SetVisibility(ESlateVisibility::Visible);
+    WBDeathScreenWidget->PlayAnimation(WBDeathScreenWidget->GetFadeIn());
 }
 
 FString UMainHUDWidget::AddCommasToInt(const int& NumberToAddCommas)

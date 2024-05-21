@@ -7,6 +7,7 @@
 
 void APlasmaCannon::WeaponTriggered(const float DeltaTime)
 {
+	Super::WeaponTriggered(DeltaTime);
 	if(PlasmaDelay <= 0)
 	{
 		bIsPlasmaDelay = true;
