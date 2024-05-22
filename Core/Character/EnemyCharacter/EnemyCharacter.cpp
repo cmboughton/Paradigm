@@ -98,57 +98,64 @@ void AEnemyCharacter::Death()
 {
 	Super::Death();
 
-	if(PlayerCharacter)
+	if (bHasAttacked)
 	{
-		PlayerCharacter->AddScore(Score);
+		this->Destroy();
 	}
 	else
 	{
-		PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		Death();
-		return;
-	}
-	const int RandExpOrbs = FMath::RandRange(1, 3);
-	ExperienceStruct.Experience = ExperienceStruct.Experience / RandExpOrbs;
-	ExperienceStruct.UltimateExperience = ExperienceStruct.UltimateExperience / RandExpOrbs;
-	//UE_LOGFMT(LogTemp, Warning, "RandExpOrbs: {0}", RandExpOrbs);
-
-	for (int i = 0; i < RandExpOrbs; i++)
-	{
-		if(ExperienceOrb)
+		if(PlayerCharacter)
 		{
-			FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
-			AExperience* ExperienceOrbSpawn = GetWorld()->SpawnActorDeferred<AExperience>(ExperienceOrb, XPSpawnTransform);
-			ExperienceOrbSpawn->SetUp(ExperienceStruct);
-			ExperienceOrbSpawn->FinishSpawning(XPSpawnTransform);
-			//UE_LOGFMT(LogTemp, Warning, "Actor Spawned: {0}", ExperienceOrbSpawn->GetName());
+			PlayerCharacter->AddScore(Score);
 		}
-	}
-	if(CollectableLootTable.DropChance >= FMath::RandRange(0.f, 1.f))
-	{
-		float RollRange = 0;
-		float CurrentRollTracker = 0.f;
-		for (const FCollectableRoll& Collectable : CollectableLootTable.Collectables)
+		else
 		{
-			RollRange += Collectable.RollWeight;
+			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			Death();
+			return;
 		}
+		const int RandExpOrbs = FMath::RandRange(1, 3);
+		ExperienceStruct.Experience = ExperienceStruct.Experience / RandExpOrbs;
+		ExperienceStruct.UltimateExperience = ExperienceStruct.UltimateExperience / RandExpOrbs;
+		//UE_LOGFMT(LogTemp, Warning, "RandExpOrbs: {0}", RandExpOrbs);
 
-		const float Roll = FMath::RandRange(0.f, RollRange);
-
-		for (const FCollectableRoll& Collectable : CollectableLootTable.Collectables)
+		for (int i = 0; i < RandExpOrbs; i++)
 		{
-			CurrentRollTracker += Collectable.RollWeight;
-			if (Roll <= CurrentRollTracker && Roll > CurrentRollTracker - Collectable.RollWeight)
+			if (ExperienceOrb)
 			{
-				if (TSubclassOf<ACollectable> CollectableRef = Collectable.Collectable.LoadSynchronous())
+				FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
+				AExperience* ExperienceOrbSpawn = GetWorld()->SpawnActorDeferred<AExperience>(ExperienceOrb, XPSpawnTransform);
+				ExperienceOrbSpawn->SetUp(ExperienceStruct);
+				ExperienceOrbSpawn->FinishSpawning(XPSpawnTransform);
+				//UE_LOGFMT(LogTemp, Warning, "Actor Spawned: {0}", ExperienceOrbSpawn->GetName());
+			}
+		}
+		if (CollectableLootTable.DropChance >= FMath::RandRange(0.f, 1.f))
+		{
+			float RollRange = 0;
+			float CurrentRollTracker = 0.f;
+			for (const FCollectableRoll& Collectable : CollectableLootTable.Collectables)
+			{
+				RollRange += Collectable.RollWeight;
+			}
+
+			const float Roll = FMath::RandRange(0.f, RollRange);
+
+			for (const FCollectableRoll& Collectable : CollectableLootTable.Collectables)
+			{
+				CurrentRollTracker += Collectable.RollWeight;
+				if (Roll <= CurrentRollTracker && Roll > CurrentRollTracker - Collectable.RollWeight)
 				{
-					FTransform CollectableSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
-					SpawnActor(CollectableRef, CollectableSpawnTransform);
+					if (TSubclassOf<ACollectable> CollectableRef = Collectable.Collectable.LoadSynchronous())
+					{
+						FTransform CollectableSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
+						SpawnActor(CollectableRef, CollectableSpawnTransform);
+					}
 				}
 			}
 		}
+		this->Destroy();
 	}
-	this->Destroy();
 }
 
 void AEnemyCharacter::UpdateStats(const float& GrowthModifier)

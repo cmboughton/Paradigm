@@ -176,6 +176,7 @@ void APlayerCharacter::Death()
 {
 	Super::Death();
 	BaseModel->SetVisibility(false, true);
+	HealthWidget->SetVisibility(false, true);
 	WidgetInstance->ActivateDeathWidget();
 }
 

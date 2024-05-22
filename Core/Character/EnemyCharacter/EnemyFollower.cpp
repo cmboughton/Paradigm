@@ -23,6 +23,7 @@ void AEnemyFollower::Tick(const float DeltaTime)
 				FHitResult EmptyResult;
 				const FPointDamageEvent DamageEvent(Damage, EmptyResult, this->GetActorLocation(), nullptr);
 				PlayerCharacter->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+				bHasAttacked = true;
 				Death();
 			}
 		}

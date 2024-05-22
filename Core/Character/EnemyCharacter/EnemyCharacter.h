@@ -51,6 +51,9 @@ protected:
 	UPROPERTY()
 	APlayerCharacter* PlayerCharacter = nullptr;
 
+	UPROPERTY()
+	bool bHasAttacked = false;
+
 public:
 
 	UFUNCTION()
