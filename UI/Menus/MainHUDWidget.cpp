@@ -12,6 +12,7 @@
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "MenuComponets/WeaponUpgrade/WeaponUpgradeWidget.h"
 #include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 
@@ -41,6 +42,12 @@ void UMainHUDWidget::ActivateDeathWidget() const
 {
     WBDeathScreenWidget->SetVisibility(ESlateVisibility::Visible);
     WBDeathScreenWidget->PlayAnimation(WBDeathScreenWidget->GetFadeIn());
+}
+
+void UMainHUDWidget::DisplayUpgrades(const bool& bShouldDisplay, const TArray<FUpgradeCommunication> UpgradesAdded) const
+{
+    (bShouldDisplay) ? WBWeaponUpgradeWidget->SetVisibility(ESlateVisibility::Visible) : WBWeaponUpgradeWidget->SetVisibility(ESlateVisibility::Collapsed);
+    WBWeaponUpgradeWidget->AddWidget(bShouldDisplay, UpgradesAdded);
 }
 
 FString UMainHUDWidget::AddCommasToInt(const int& NumberToAddCommas)

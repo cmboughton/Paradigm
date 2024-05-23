@@ -4,6 +4,8 @@
 #include "WeaponUpgradeManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
+#include "Paradigm_IQ/UI/Menus/MainHUDWidget.h"
+
 
 AWeaponUpgradeManager::AWeaponUpgradeManager()
 {
@@ -14,8 +16,6 @@ AWeaponUpgradeManager::AWeaponUpgradeManager()
 void AWeaponUpgradeManager::BeginPlay()
 {
 	Super::BeginPlay();
-
-	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
 	{
@@ -49,6 +49,8 @@ void AWeaponUpgradeManager::BeginPlay()
 			}
 		}
 	}
+
+	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 void AWeaponUpgradeManager::Tick(float DeltaSeconds)
@@ -219,13 +221,17 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 	}
 	if(!UpgradesSelected.IsEmpty())
 	{
-		if(WeaponUpgradeWidget)
+		if (PlayerCharacter)
 		{
-			if(UWeaponUpgradeWidget* WidgetInstance = CreateWidget<UWeaponUpgradeWidget>(GetWorld(), WeaponUpgradeWidget))
+			if (PlayerCharacter->GetMainHUDWidget())
 			{
-				WidgetInstance->SetUpgradesToAdd(UpgradesSelected);
-				WidgetInstance->AddToViewport();
+				PlayerCharacter->GetMainHUDWidget()->DisplayUpgrades(true, UpgradesSelected);
 			}
+		}
+		else
+		{
+			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			RollUpgrades(RollAmount);
 		}
 	}
 }
@@ -359,6 +365,8 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 			}
 		}*/
 	}
+	const TArray<FUpgradeCommunication> EmptyUpgrade;
+	PlayerCharacter->GetMainHUDWidget()->DisplayUpgrades(false, EmptyUpgrade);
 	bUpgradeActive = false;
 }
 

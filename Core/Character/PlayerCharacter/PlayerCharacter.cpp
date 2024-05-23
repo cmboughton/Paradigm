@@ -29,7 +29,7 @@
 
 #include "Paradigm_IQ/UI/Menus/MainHUDWidget.h"
 #include "Paradigm_IQ/UI/Menus/MenuComponets/HealthBarComponent.h"
-
+//#include "Android/AndroidPlatformMisc.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -146,6 +146,27 @@ void APlayerCharacter::Tick(const float DeltaTime)
 	}
 
 	LerpHealthBar(DeltaTime);
+
+
+	/*EDeviceScreenOrientation Orientation = FAndroidMisc::GetDeviceOrientation();
+	switch (Orientation)
+	{
+	case EDeviceScreenOrientation::Portrait:
+		CameraBoom->TargetArmLength = 4000;
+		break;
+	case EDeviceScreenOrientation::PortraitUpsideDown:
+		CameraBoom->TargetArmLength = 4000;
+		break;
+	case EDeviceScreenOrientation::LandscapeLeft:
+		CameraBoom->TargetArmLength = 2000;
+		break;
+	case EDeviceScreenOrientation::LandscapeRight:
+		CameraBoom->TargetArmLength = 2000;
+		break;
+	case EDeviceScreenOrientation::Unknown:
+	default:
+		break;
+	}*/
 }
 
 /**

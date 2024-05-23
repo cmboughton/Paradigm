@@ -5,16 +5,19 @@
 
 #include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "Paradigm_IQ/UI/Menus/MenuComponets/ShipSelect.h"
+#include "Paradigm_IQ/Core/Game/MainGameInstance.h"
+
 #include "Components/UniformGridPanel.h"
 #include "Components/Image.h"
-#include "Kismet/GameplayStatics.h"
-#include "MenuComponets/ShipRenderer.h"
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
+
+#include "MenuComponets/ShipStatsComponent.h"
+#include "MenuComponets/ShipRenderer.h"
+
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Logging/StructuredLog.h"
-#include "MenuComponets/ShipStatsComponent.h"
-#include "Paradigm_IQ/Core/Game/MainGameInstance.h"
 
 struct FShipsDataTable;
 
@@ -23,8 +26,9 @@ void UShipSelectMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	PlayButton->OnHovered.AddDynamic(this, &UShipSelectMenu::OnButtonClicked);
+	PlayButton->OnClicked.AddDynamic(this, &UShipSelectMenu::OnButtonClicked);
 
+	ShipSelectGrid->ClearChildren();
 	if (const UDataTable* ShipDataTableHardRef = ShipDataTable.LoadSynchronous())
 	{
 		int RowTracker = -1;
@@ -105,7 +109,6 @@ void UShipSelectMenu::SetShipStats(const FName& DTRowName)
 							WidgetInstance->SetStatName(FText::FromName(Stat.StatName));
 							WidgetInstance->SetStatValue(Stat.StatValue);
 							WidgetInstance->SetStatValuePB(UKismetMathLibrary::NormalizeToRange(Stat.StatValue, 0, Stat.MaxStatValue));
-							WidgetInstance->SetPadding(FMargin(0.f, 5.f));
 							ShipStatsVB->AddChild(WidgetInstance);
 						}
 					}

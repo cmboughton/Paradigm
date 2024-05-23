@@ -7,6 +7,7 @@
 #include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "MainHUDWidget.generated.h"
 
+struct FUpgradeCommunication;
 class APlayerCharacter;
 class UIconWidget;
 /**
@@ -62,6 +63,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UDeathScreenWidget* WBDeathScreenWidget;
 
+	UPROPERTY(meta = (BindWidget))
+	class UWeaponUpgradeWidget* WBWeaponUpgradeWidget;
+
 	UPROPERTY()
 	float ScoreText = 0.f;
 
@@ -102,6 +106,9 @@ public:
 
 	UFUNCTION()
 	void ActivateDeathWidget() const;
+
+	UFUNCTION()
+	void DisplayUpgrades(const bool& bShouldDisplay, const TArray<FUpgradeCommunication> UpgradesAdded) const;
 
 public:
 

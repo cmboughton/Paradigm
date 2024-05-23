@@ -37,19 +37,19 @@ protected:
 protected:
 
 	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Input", meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
 
 	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
 
 	/** Ultimate Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* UltimateAction;
 
 	/** Touch Interface**/
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Input", meta = (AllowPrivateAccess = "true"))
 	class UTouchInterface* TouchInterface;
 	
 
@@ -125,31 +125,31 @@ protected:
 	UPROPERTY()
 	int MaxPassivesEquipped = 6;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
 	TSoftObjectPtr<UDataTable> ShipDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ultimates."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ultimates."))
 	TSoftObjectPtr<UDataTable> UltimatesDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
 	TSoftObjectPtr<UDataTable> WeaponsDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Passives."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Passives."))
 	TSoftObjectPtr<UDataTable> PassivesDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The highest Score Modifer the player can achieve."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The highest Score Modifer the player can achieve."))
 	int MaxScoringModifier = 10;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The score duration modifer used to determine when the modifer increases."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The score duration modifer used to determine when the modifer increases."))
 	float ScoreDurationModifier = 5.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Varaibles|Stats", meta = (ToolTip = "The growth rate used to determine the how expodential the exp required per level becomes."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The growth rate used to determine the how expodential the exp required per level becomes."))
 	float LevelingGrowthRate = 1.f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Varaibles|Stats", meta = (ToolTip = "The current level."))
+	UPROPERTY(BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The current level."))
 	int CurrentLevel = 1;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Varaibles|Stats", meta = (ToolTip = "The Radius of the sphere check that checks for collectables."))
+	UPROPERTY(BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The Radius of the sphere check that checks for collectables."))
 	float PickUpRadius = 200.f;
 
 	UPROPERTY()
@@ -169,11 +169,11 @@ protected:
 	UPROPERTY()
 	AArcanicEcho* ArcanicEcho;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Reference to the Main Widget BP."))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Variables|References", meta = (ToolTip = "Reference to the Main Widget BP."))
 	TSubclassOf<UUserWidget> MainWidgetUI = nullptr;
 
 	UPROPERTY()
-	class UMainHUDWidget* WidgetInstance;
+	UMainHUDWidget* WidgetInstance;
 
 	UPROPERTY()
 	UHealthBarComponent* HealthBar;
@@ -245,6 +245,7 @@ public:
 	FORCEINLINE TArray<FName>			GetPassivesEquipped()							const { return PassivesEquipped; }
 	FORCEINLINE int						GetMaxPassivesEquipped()						const { return MaxPassivesEquipped; }
 	FORCEINLINE float					GetPickUpRadius()								const { return PickUpRadius; }
+	FORCEINLINE UMainHUDWidget*			GetMainHUDWidget()								const { return WidgetInstance; }
 
 	FORCEINLINE void					SetPickUpRadius(const float PickUpValue)			  { PickUpRadius = PickUpValue; }
 	FORCEINLINE void					SetArcanicEchoRef(AArcanicEcho* AeValue)			  { ArcanicEcho = AeValue; }

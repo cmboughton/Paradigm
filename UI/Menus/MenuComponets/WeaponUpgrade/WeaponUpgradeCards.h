@@ -32,14 +32,10 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CardButton;
 
-	UPROPERTY()
-	UWeaponUpgradeWidget* WeaponUpgradeWidget;
-
 	UFUNCTION()
 	void OnButtonClicked();
 
 public:
 
 	FORCEINLINE void	SetUpgradeStats	(const FUpgradeCommunication& StatsAdded)					{ WeaponUpgradeStats = StatsAdded; }
-	FORCEINLINE void	SetWidgetRef	(UWeaponUpgradeWidget* WidgetAdded)							{ WeaponUpgradeWidget = WidgetAdded; }
 };

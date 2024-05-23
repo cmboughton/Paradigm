@@ -21,22 +21,14 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* WeaponCardsHb;
 
-	UPROPERTY()
-	TArray<FUpgradeCommunication> WeaponUpgrades;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|References", meta = (ToolTip = "Reference to the Weapon Upgrade card widget to create."))
 	TSubclassOf<UUserWidget> WeaponUpgradeCardWidget = nullptr;
-
-	virtual void NativeConstruct() override;
-
-
-public:
 
 	UFUNCTION()
 	void PauseGame(const bool PauseStatus) const;
 
-	UFUNCTION()
-	void AddWidget(const bool WidgetStatus);
+public:
 
-	FORCEINLINE void	SetUpgradesToAdd(const TArray<FUpgradeCommunication>& UpgradesAdded) { WeaponUpgrades = UpgradesAdded; }
+	UFUNCTION()
+	void AddWidget(const bool WidgetStatus, const TArray<FUpgradeCommunication> WeaponUpgrades) const;
 };

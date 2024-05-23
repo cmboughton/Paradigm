@@ -28,5 +28,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnPlayer() const;
 
-	FORCEINLINE void	SetShipRowName(const FName& ShipTextValue) { ShipRowName = ShipTextValue; }
+	FORCEINLINE void			SetShipRowName(const FName& ShipTextValue)			{ ShipRowName = ShipTextValue; }
 };

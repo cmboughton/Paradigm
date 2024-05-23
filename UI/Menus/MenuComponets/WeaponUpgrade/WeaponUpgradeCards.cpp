@@ -41,9 +41,4 @@ void UWeaponUpgradeCards::OnButtonClicked()
 	{
 		UpgradeManagerRef->UpgradeSelected(WeaponUpgradeStats);
 	}
-
-	WeaponUpgradeWidget->AddWidget(false);
-	WeaponUpgradeWidget->PauseGame(false);
-
-	//UE_LOGFMT(LogTemp, Warning, "Card Hit: {0}", this->GetName());
 }
