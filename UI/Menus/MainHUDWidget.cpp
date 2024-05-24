@@ -108,50 +108,109 @@ void UMainHUDWidget::NativeTick(const FGeometry& MyGeometry, const float InDelta
 	RightProgress->GetDynamicMaterial()->SetScalarParameterValue("Percentage", CurrentUltimateXP);
 }
 
-void UMainHUDWidget::AddIcon(UTexture2D* Icon, const EIconType& IconType) const
+void UMainHUDWidget::UpdateIcons() const
 {
-    if (IconWidget)
+    if(IconWidget && PlayerCharacter)
     {
-        UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
-
-        switch (IconType)
+        WeaponIconsHB->ClearChildren();
+        PassiveIconsHB->ClearChildren();
+        if (!PlayerCharacter->GetWeaponUnlockLevels().IsEmpty())
         {
-        case EIconType::WeaponIcon:
-            
-            WeaponIconsHB->RemoveChildAt(0);
-            WidgetInstance->SetIconTexture(Icon);
-            WeaponIconsHB->AddChild(WidgetInstance);
-            break;
+            if (!PlayerCharacter->GetWeaponsEquipped().IsEmpty())
+            {
+                for (int i = PlayerCharacter->GetWeaponUnlockLevels().Num() - 1; i >= PlayerCharacter->GetWeaponsEquipped().Num(); i--)
+                {
+                    UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+                    WidgetInstance->SetIconTexture(DefaultIcon);
+                    WidgetInstance->SetCurrentPlayerLevel(PlayerCharacter->GetCurrentLevel());
+                    if(PlayerCharacter->GetWeaponUnlockLevels().IsValidIndex(i))
+                    {
+						WidgetInstance->SetLevelReqText(PlayerCharacter->GetWeaponUnlockLevels()[i]);
+                    }
+                    WeaponIconsHB->AddChild(WidgetInstance);
+                }
+                for (int i = PlayerCharacter->GetWeaponsEquipped().Num() - 1; i >= 0; i--)
+                {
+                    if (PlayerCharacter->GetWeaponsEquipped().IsValidIndex(i))
+                    {
+                        if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
+                        {
+                            if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(PlayerCharacter->GetWeaponsEquipped()[i], "Weapon Data Table Not set up MainHUDWidget.cpp", true))
+                            {
+                                UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+                                WidgetInstance->SetIconTexture(WeaponsData->WeaponIcon);
+                                WidgetInstance->SetCurrentPlayerLevel(PlayerCharacter->GetCurrentLevel());
+                                WidgetInstance->SetLevelReqText(0);
+                                WeaponIconsHB->AddChild(WidgetInstance);
+                            }
 
-        case EIconType::PassiveIcon:
-
-            PassiveIconsHB->RemoveChildAt(0);
-            WidgetInstance->SetIconTexture(Icon);
-            PassiveIconsHB->AddChild(WidgetInstance);
-            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = PlayerCharacter->GetWeaponUnlockLevels().Num() - 1; i >= 0; i--)
+                {
+                    UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+                    WidgetInstance->SetIconTexture(DefaultIcon);
+                    WidgetInstance->SetCurrentPlayerLevel(PlayerCharacter->GetCurrentLevel());
+                    if (PlayerCharacter->GetWeaponUnlockLevels().IsValidIndex(i))
+                    {
+                        WidgetInstance->SetLevelReqText(PlayerCharacter->GetWeaponUnlockLevels()[i]);
+                    }
+                    WeaponIconsHB->AddChild(WidgetInstance);
+                }
+            }
         }
-    }
-}
 
-void UMainHUDWidget::SetUpDefaultIcons(const EIconType& IconType) const
-{
-    if (IconWidget)
-    {
-        UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
-
-        switch (IconType)
+        if (!PlayerCharacter->GetPassiveUnlockLevels().IsEmpty())
         {
-        case EIconType::WeaponIcon:
-
-            WidgetInstance->SetIconTexture(DefaultIcon);
-            WeaponIconsHB->AddChild(WidgetInstance);
-            break;
-
-        case EIconType::PassiveIcon:
-
-            WidgetInstance->SetIconTexture(DefaultIcon);
-            PassiveIconsHB->AddChild(WidgetInstance);
-            break;
+            if (!PlayerCharacter->GetPassivesEquipped().IsEmpty())
+            {
+                for (int i = PlayerCharacter->GetPassiveUnlockLevels().Num() - 1; i >= PlayerCharacter->GetPassivesEquipped().Num(); i--)
+                {
+                    UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+                    WidgetInstance->SetIconTexture(DefaultIcon);
+                    WidgetInstance->SetCurrentPlayerLevel(PlayerCharacter->GetCurrentLevel());
+                    if (PlayerCharacter->GetPassiveUnlockLevels().IsValidIndex(i))
+                    {
+                        WidgetInstance->SetLevelReqText(PlayerCharacter->GetPassiveUnlockLevels()[i]);
+                    }
+                    PassiveIconsHB->AddChild(WidgetInstance);
+                }
+                for (int i = PlayerCharacter->GetPassivesEquipped().Num() - 1; i >= 0; i--)
+                {
+                    if (PlayerCharacter->GetPassivesEquipped().IsValidIndex(i))
+                    {
+                    	if (const UDataTable* PassivesDataTableHardRef = PassivesDataTable.LoadSynchronous())
+						{
+                            if (const FPassivesDataTable* PassivesData = PassivesDataTableHardRef->FindRow<FPassivesDataTable>(PlayerCharacter->GetPassivesEquipped()[i], "Passive Data Table Not set up MainHUDWidget.cpp", true))
+                            {
+                                UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+                                WidgetInstance->SetIconTexture(PassivesData->PassiveIcon);
+                                WidgetInstance->SetLevelReqText(0);
+                                WidgetInstance->SetCurrentPlayerLevel(PlayerCharacter->GetCurrentLevel());
+                                PassiveIconsHB->AddChild(WidgetInstance);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = PlayerCharacter->GetPassiveUnlockLevels().Num() - 1; i >= 0; i--)
+                {
+                    UIconWidget* WidgetInstance = CreateWidget<UIconWidget>(GetWorld(), IconWidget);
+                    WidgetInstance->SetIconTexture(DefaultIcon);
+                    WidgetInstance->SetCurrentPlayerLevel(PlayerCharacter->GetCurrentLevel());
+                    if (PlayerCharacter->GetPassiveUnlockLevels().IsValidIndex(i))
+                    {
+                        WidgetInstance->SetLevelReqText(PlayerCharacter->GetPassiveUnlockLevels()[i]);
+                    }
+                    PassiveIconsHB->AddChild(WidgetInstance);
+                }
+            }
         }
     }
 }

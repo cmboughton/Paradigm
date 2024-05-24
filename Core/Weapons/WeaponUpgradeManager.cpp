@@ -17,50 +17,23 @@ void AWeaponUpgradeManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
-	{
-		TArray<FName> WeaponRows = WeaponsDataTableHardRef->GetRowNames();
-		for (const FName WeaponRow: WeaponRows)
-		{
-			if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponRow, "Couldn't Add Weapon to Upgrade Pool", true))
-			{
-				if(!WeaponsData->bIsBaseWeapon)
-				{
-					//UE_LOGFMT(LogTemp, Warning, "Weapon not Base");
-					TArray<FWeaponUpgrades> WeaponUnlocks;
-					WeaponUnlocks.Add(FWeaponUpgrades(WeaponRow, WeaponsData->Description, WeaponsData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
-	;				UpgradesAvailable.Add(FUpgradeManager(nullptr, WeaponUnlocks, WeaponsData->SpecialUpgradeLevels, EWeaponType::Mechanical, true, false, false));
-				}
-			}
-		}
-	}
-	if (const UDataTable* PassivesDataTableHardRef = PassivesDataTable.LoadSynchronous())
-	{
-		const TArray<int> EmptyArray;
-		TArray<FName> PassiveRows = PassivesDataTableHardRef->GetRowNames();
-		for (const FName PassiveRow : PassiveRows)
-		{
-			if (const FPassivesDataTable* PassivesData = PassivesDataTableHardRef->FindRow<FPassivesDataTable>(PassiveRow, "Couldn't Add Passives to Upgrade Pool", true))
-			{
-				TArray<FWeaponUpgrades> PassiveUnlocks;
-				PassiveUnlocks.Add(FWeaponUpgrades(PassiveRow, PassivesData->Description, PassivesData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
-				UpgradesAvailable.Add(FUpgradeManager(nullptr, PassiveUnlocks, EmptyArray, EWeaponType::Mechanical, false, true, false));
-				
-			}
-		}
-	}
-
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 void AWeaponUpgradeManager::Tick(float DeltaSeconds)
 {
+	Super::Tick(DeltaSeconds);
 	if(!UpgradeQueManager.IsEmpty())
 	{
 		if(!bUpgradeActive)
 		{
+			UE_LOGFMT(LogTemp, Warning, "Roll Upgrades");
 			RollUpgrades(UpgradeQueManager[0]);
 			UpgradeQueManager.RemoveAt(0);
+		}
+		for(int i = 0; i <UpgradeQueManager.Num(); i++)
+		{
+			UE_LOGFMT(LogTemp, Warning, "Roll #: {0}", UpgradeQueManager[i]);
 		}
 	}
 }
@@ -93,6 +66,8 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 	bUpgradeActive = true;
 	TArray<FUpgradeManager> CurrentUpgrades = UpgradesAvailable;
 	CurrentUpgrades.Append(SetUpSpecialUpgrades());
+	CurrentUpgrades.Append(SetUpWeaponUnlocks());
+	CurrentUpgrades.Append(SetUpPassiveUnlocks());
 	UpgradesSelected.Empty();
 	for(int i = 0; i < RollAmount; i++)
 	{
@@ -256,45 +231,47 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 		{
 			// Adds the weapon selected to the players weapons
 			PlayerCharacter->AddWeapon(Upgrade.WeaponUpgrades.UniqueName);
-			UE_LOGFMT(LogTemp, Warning, "Weapon Name: {0}", Upgrade.WeaponUpgrades.UniqueName);
+			//UE_LOGFMT(LogTemp, Warning, "Weapon Name: {0}", Upgrade.WeaponUpgrades.UniqueName);
 
 			// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
-			if (PlayerCharacter->GetWeaponsEquipped().Num() >= PlayerCharacter->GetMaxWeaponsEquipped())
+			/*if (PlayerCharacter->GetWeaponsEquipped().Num() >= PlayerCharacter->GetWeaponUnlockLevels().Num())
 			{
 				UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsWeaponUnlock; });
 			}
 			else
 			{
 				UpgradeSingleUse(Upgrade);
-			}
+			}*/
 		}
 		else
 		{
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			UpgradeSelected(Upgrade);
+			return;
 		}
 	}
 	else if (Upgrade.bIsPassiveUnlock)
 	{
 		if (PlayerCharacter)
 		{
-			// Adds the weapon selected to the players weapons
+			// Adds the passive selected to the players passives
 			PlayerCharacter->AddPassive(Upgrade.WeaponUpgrades.UniqueName);
 
 			// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
-			if (PlayerCharacter->GetPassivesEquipped().Num() >= PlayerCharacter->GetMaxPassivesEquipped())
+			/*if (PlayerCharacter->GetPassivesEquipped().Num() >= PlayerCharacter->GetPassiveUnlockLevels().Num())
 			{
 				UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsPassiveUnlock; });
 			}
 			else
 			{
 				UpgradeSingleUse(Upgrade);
-			}
+			}*/
 		}
 		else
 		{
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			UpgradeSelected(Upgrade);
+			return;
 		}
 	}
 	else if (Upgrade.bIsSpecialUpgrade)
@@ -365,8 +342,14 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 			}
 		}*/
 	}
-	const TArray<FUpgradeCommunication> EmptyUpgrade;
-	PlayerCharacter->GetMainHUDWidget()->DisplayUpgrades(false, EmptyUpgrade);
+	if (PlayerCharacter)
+	{
+		if (PlayerCharacter->GetMainHUDWidget())
+		{
+			const TArray<FUpgradeCommunication> EmptyUpgrade;
+			PlayerCharacter->GetMainHUDWidget()->DisplayUpgrades(false, EmptyUpgrade);
+		}
+	}
 	bUpgradeActive = false;
 }
 
@@ -441,8 +424,7 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpSpecialUpgrades()
 	{
 		if(const AWeapons* WeaponRef = SpecialWeaponUpgrade.WeaponReference.LoadSynchronous())
 		{
-			int index = 0;
-			for (const auto& WeaponUpgrade : SpecialWeaponUpgrade.WeaponUpgrades)
+			for(int i = 0; i < SpecialWeaponUpgrade.WeaponUpgrades.Num(); i++)
 			{
 				if((!SpecialWeaponUpgrade.WeaponUpgrades.IsEmpty()) && SpecialWeaponUpgrade.SpecialUpgradeLevels.IsValidIndex(WeaponRef->GetSpecialUpgradeTracker()))
 				{
@@ -453,9 +435,109 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpSpecialUpgrades()
 						break;
 					}
 				}
-				index++;
 			}
 		}
 	}
 	return SpecialUpgrades;
+}
+
+TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpWeaponUnlocks() const
+{
+	TArray<FUpgradeManager> AddedWeaponUnlocks;
+	if (const UDataTable* WeaponsDataTableHardRef = WeaponsDataTable.LoadSynchronous())
+	{
+		if (PlayerCharacter)
+		{
+			if (!PlayerCharacter->GetWeaponsEquipped().IsEmpty())
+			{
+				if (PlayerCharacter->GetWeaponUnlockLevels().IsValidIndex(PlayerCharacter->GetWeaponsEquipped().Num()))
+				{
+					if (PlayerCharacter->GetCurrentLevel() >= PlayerCharacter->GetWeaponUnlockLevels()[PlayerCharacter->GetWeaponsEquipped().Num()])
+					{
+
+
+						for (const FName WeaponRow : WeaponsDataTableHardRef->GetRowNames())
+						{
+							if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponRow, "Couldn't Add Weapon to Upgrade Pool", true))
+							{
+								if (!WeaponsData->bIsBaseWeapon)
+								{
+									if (!PlayerCharacter->GetWeaponsEquipped().Contains(WeaponRow))
+									{
+										TArray<FWeaponUpgrades> WeaponUnlocks;
+										WeaponUnlocks.Add(FWeaponUpgrades(WeaponRow, WeaponsData->Description, WeaponsData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
+										AddedWeaponUnlocks.Add(FUpgradeManager(nullptr, WeaponUnlocks, WeaponsData->SpecialUpgradeLevels, EWeaponType::Mechanical, true, false, false));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				for (const FName WeaponRow : WeaponsDataTableHardRef->GetRowNames())
+				{
+					if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponRow, "Couldn't Add Weapon to Upgrade Pool", true))
+					{
+						if (!WeaponsData->bIsBaseWeapon)
+						{
+							TArray<FWeaponUpgrades> WeaponUnlocks;
+							WeaponUnlocks.Add(FWeaponUpgrades(WeaponRow, WeaponsData->Description, WeaponsData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
+							AddedWeaponUnlocks.Add(FUpgradeManager(nullptr, WeaponUnlocks, WeaponsData->SpecialUpgradeLevels, EWeaponType::Mechanical, true, false, false));
+						}
+					}
+				}
+			}
+		}
+	}
+	return AddedWeaponUnlocks;
+}
+
+TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpPassiveUnlocks() const
+{
+	TArray<FUpgradeManager> AddedPassiveUnlocks;
+	if (const UDataTable* PassivesDataTableHardRef = PassivesDataTable.LoadSynchronous())
+	{
+		if (PlayerCharacter)
+		{
+			if (!PlayerCharacter->GetPassivesEquipped().IsEmpty())
+			{
+				if (PlayerCharacter->GetPassiveUnlockLevels().IsValidIndex(PlayerCharacter->GetPassivesEquipped().Num()))
+				{
+					if (PlayerCharacter->GetCurrentLevel() >= PlayerCharacter->GetPassiveUnlockLevels()[PlayerCharacter->GetPassivesEquipped().Num()])
+					{
+						for (const FName PassiveRow : PassivesDataTableHardRef->GetRowNames())
+						{
+							if (const FPassivesDataTable* PassivesData = PassivesDataTableHardRef->FindRow<FPassivesDataTable>(PassiveRow, "Couldn't Add Passives to Upgrade Pool", true))
+							{
+								if (!PlayerCharacter->GetPassivesEquipped().Contains(PassiveRow))
+								{
+									const TArray<int> EmptyArray;
+									TArray<FWeaponUpgrades> PassiveUnlocks;
+									PassiveUnlocks.Add(FWeaponUpgrades(PassiveRow, PassivesData->Description, PassivesData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
+									AddedPassiveUnlocks.Add(FUpgradeManager(nullptr, PassiveUnlocks, EmptyArray, EWeaponType::Mechanical, false, true, false));
+								}
+							}
+						}
+					}
+				}
+			}
+
+			else
+			{
+				for (const FName PassiveRow : PassivesDataTableHardRef->GetRowNames())
+				{
+					if (const FPassivesDataTable* PassivesData = PassivesDataTableHardRef->FindRow<FPassivesDataTable>(PassiveRow, "Couldn't Add Passives to Upgrade Pool", true))
+					{
+						const TArray<int> EmptyArray;
+						TArray<FWeaponUpgrades> PassiveUnlocks;
+						PassiveUnlocks.Add(FWeaponUpgrades(PassiveRow, PassivesData->Description, PassivesData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
+						AddedPassiveUnlocks.Add(FUpgradeManager(nullptr, PassiveUnlocks, EmptyArray, EWeaponType::Mechanical, false, true, false));
+					}
+				}
+			}
+		}
+	}
+	return AddedPassiveUnlocks;
 }

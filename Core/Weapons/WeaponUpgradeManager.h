@@ -34,6 +34,7 @@ public:
 protected:
 
 	AWeaponUpgradeManager();
+
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
@@ -46,6 +47,12 @@ protected:
 
 	UFUNCTION()
 	TArray<FUpgradeManager> SetUpSpecialUpgrades();
+
+	UFUNCTION()
+	TArray<FUpgradeManager> SetUpWeaponUnlocks() const;
+
+	UFUNCTION()
+	TArray<FUpgradeManager> SetUpPassiveUnlocks() const;
 
 #pragma endregion
 

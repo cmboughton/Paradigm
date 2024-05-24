@@ -71,14 +71,14 @@ void APlayerCharacter::BeginPlay()
 			WidgetInstance->SetScoreMultiplier(ScoringModifier);
 			WidgetInstance->SetPlayerCharacter(this);
 
-			for(int i = 0; i < MaxWeaponsEquipped; i++)
+			/*for(int i = 0; i < WeaponUnlockLevels.Num(); i++)
 			{
-				WidgetInstance->SetUpDefaultIcons(EIconType::WeaponIcon);
+				WidgetInstance->SetUpDefaultIcons(EIconType::WeaponIcon, WeaponUnlockLevels[i]);
 			}
-			for (int i = 0; i < MaxPassivesEquipped; i++)
+			for (int i = 0; i < PassiveUnlockLevels.Num(); i++)
 			{
-				WidgetInstance->SetUpDefaultIcons(EIconType::PassiveIcon);
-			}
+				WidgetInstance->SetUpDefaultIcons(EIconType::PassiveIcon, WeaponUnlockLevels[i]);
+			}*/
 		}
 	}
 
@@ -420,39 +420,47 @@ void APlayerCharacter::CollectablePickUp()
 }
 
 /**
- * @brief Adds the experience from a collected orb to the player's experience tracker.
+ * @brief Adds the specified amount of experience to the player's experience tracker.
  * 
- * This function takes an FExperienceOrb object as an argument, which contains the amount of experience gained.
- * The function adds this experience to the player's ExperienceTracker. If the updated ExperienceTracker 
- * exceeds the experience required for the next level, the player's level is incremented, and the experience 
- * required for the next level is recalculated. If an UpgradeManagerRef is available, it adds 3 to the UpgradeQueManager.
- * The function also updates the player's CurrentUltimateTracker with the UltimateExperience from the FExperienceOrb.
+ * This method is used to add experience to the player's experience tracker. If the player's experience tracker exceeds the experience required for the next level, the player's level is increased and the experience tracker is reset. The method also updates the player's ultimate tracker.
  * 
- * @param Experience The FExperienceOrb object containing the experience gained from the collected orb.
+ * @param Experience A struct containing the amount of experience and ultimate experience to be added.
  */
 void APlayerCharacter::AddCollectable(const FExperienceOrb Experience)
 {
-	ExperienceTracker = FMath::RoundToInt(ExperienceTracker + Experience.Experience);
-	WidgetInstance->SetCurrentXP(ExperienceTracker);
-	if(ExperienceTracker >= CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate))
+	if (WidgetInstance)
 	{
-		CurrentLevel++;
-		WidgetInstance->SetCurrentLevel(CurrentLevel);
-
-		NextLevelReq = CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate);
-		WidgetInstance->SetNextLevelReq(NextLevelReq);
-
-		if(UpgradeManagerRef)
+		ExperienceTracker = FMath::RoundToInt(ExperienceTracker + Experience.Experience);
+		WidgetInstance->SetCurrentXP(ExperienceTracker);
+		if (ExperienceTracker >= CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate))
 		{
-			UpgradeManagerRef->SetUpgradeQueManager(3);
+			CurrentLevel++;
+			WidgetInstance->SetCurrentLevel(CurrentLevel);
+			WidgetInstance->UpdateIcons();
+
+			NextLevelReq = CalculateExperienceForLevel(CurrentLevel, 100, LevelingGrowthRate);
+			WidgetInstance->SetNextLevelReq(NextLevelReq);
+
+			if (UpgradeManagerRef)
+			{
+				UpgradeManagerRef->SetUpgradeQueManager(3);
+				UE_LOGFMT(LogTemp, Warning, "Upgrade Que called");
+			}
+			else
+			{
+				UE_LOGFMT(LogTemp, Warning, "Upgrade Manager Ref nullptr");
+			}
+		}
+
+		if (CurrentUltimateTracker < UltimateTracker)
+		{
+			CurrentUltimateTracker = FMath::Clamp(CurrentUltimateTracker + Experience.UltimateExperience, 0, UltimateTracker);
+			WidgetInstance->SetUltimateXP(UKismetMathLibrary::NormalizeToRange(CurrentUltimateTracker, 0, UltimateTracker));
 		}
 	}
-
-	if(CurrentUltimateTracker < UltimateTracker)
+	else
 	{
-		CurrentUltimateTracker = FMath::Clamp(CurrentUltimateTracker + Experience.UltimateExperience, 0, UltimateTracker);
-		WidgetInstance->SetUltimateXP(UKismetMathLibrary::NormalizeToRange(CurrentUltimateTracker, 0, UltimateTracker));
-		UE_LOGFMT(LogTemp, Warning, "Ultimate XP: {0}", CurrentUltimateTracker);
+		UE_LOGFMT(LogTemp, Warning, "Main HUD Widget nullptr");
 	}
 }
 
@@ -517,7 +525,8 @@ void APlayerCharacter::AddWeapon(const FName& WeaponName)
 
 				if(WidgetInstance)
 				{
-					WidgetInstance->AddIcon(WeaponsData->WeaponIcon, EIconType::WeaponIcon);
+					//WidgetInstance->AddIcon(WeaponsData->WeaponIcon, EIconType::WeaponIcon);
+					WidgetInstance->UpdateIcons();
 				}
 			}
 		}
@@ -550,7 +559,8 @@ void APlayerCharacter::AddPassive(const FName& PassiveName)
 
 				if (WidgetInstance)
 				{
-					WidgetInstance->AddIcon(PassivesData->PassiveIcon, EIconType::PassiveIcon);
+					//WidgetInstance->AddIcon(PassivesData->PassiveIcon, EIconType::PassiveIcon);
+					WidgetInstance->UpdateIcons();
 				}
 			}
 		}

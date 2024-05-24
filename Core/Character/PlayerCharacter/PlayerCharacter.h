@@ -116,14 +116,20 @@ protected:
 	UPROPERTY()
 	TArray<FName> WeaponsEquipped;
 
-	UPROPERTY()
-	int MaxWeaponsEquipped = 6;
+	//UPROPERTY()
+	//int MaxWeaponsEquipped = 6;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The levels required to unlock weapon slots."))
+	TArray<int> WeaponUnlockLevels;
 
 	UPROPERTY()
 	TArray<FName> PassivesEquipped;
 
-	UPROPERTY()
-	int MaxPassivesEquipped = 6;
+	//UPROPERTY()
+	//int MaxPassivesEquipped = 6;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The levels required to unlock passive slots."))
+	TArray<int> PassiveUnlockLevels;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
 	TSoftObjectPtr<UDataTable> ShipDataTable;
@@ -149,7 +155,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The current level."))
 	int CurrentLevel = 1;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The Radius of the sphere check that checks for collectables."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The Radius of the sphere check that checks for collectables."))
 	float PickUpRadius = 200.f;
 
 	UPROPERTY()
@@ -240,12 +246,14 @@ public:
 	FORCEINLINE int						GetNextLevelReq()								const { return NextLevelReq; }
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE TArray<FName>			GetWeaponsEquipped()							const { return WeaponsEquipped; }
-	FORCEINLINE int						GetMaxWeaponsEquipped()							const { return MaxWeaponsEquipped; }
+	//FORCEINLINE int						GetMaxWeaponsEquipped()							const { return MaxWeaponsEquipped; }
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE TArray<FName>			GetPassivesEquipped()							const { return PassivesEquipped; }
-	FORCEINLINE int						GetMaxPassivesEquipped()						const { return MaxPassivesEquipped; }
+	//FORCEINLINE int						GetMaxPassivesEquipped()						const { return MaxPassivesEquipped; }
 	FORCEINLINE float					GetPickUpRadius()								const { return PickUpRadius; }
 	FORCEINLINE UMainHUDWidget*			GetMainHUDWidget()								const { return WidgetInstance; }
+	FORCEINLINE TArray<int>				GetWeaponUnlockLevels()							const { return WeaponUnlockLevels; }
+	FORCEINLINE TArray<int>				GetPassiveUnlockLevels()						const { return PassiveUnlockLevels; }
 
 	FORCEINLINE void					SetPickUpRadius(const float PickUpValue)			  { PickUpRadius = PickUpValue; }
 	FORCEINLINE void					SetArcanicEchoRef(AArcanicEcho* AeValue)			  { ArcanicEcho = AeValue; }

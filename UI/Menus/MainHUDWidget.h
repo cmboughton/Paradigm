@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Paradigm_IQ/Core/Data/Enums/Enums.h"
 #include "MainHUDWidget.generated.h"
 
 struct FUpgradeCommunication;
@@ -93,16 +92,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Varaibles|References", meta = (ToolTip = "Refernece to the defualt Icon Texture."))
 	UTexture2D* DefaultIcon = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Weapons."))
+	TSoftObjectPtr<UDataTable> WeaponsDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Passives."))
+	TSoftObjectPtr<UDataTable> PassivesDataTable;
+
 	UPROPERTY()
 	APlayerCharacter* PlayerCharacter = nullptr;
 
 public:
 
 	UFUNCTION()
-	void AddIcon(UTexture2D* Icon, const EIconType& IconType) const;
-
-	UFUNCTION()
-	void SetUpDefaultIcons(const EIconType& IconType) const;
+	void UpdateIcons() const;
 
 	UFUNCTION()
 	void ActivateDeathWidget() const;
