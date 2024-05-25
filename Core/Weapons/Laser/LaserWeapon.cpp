@@ -41,57 +41,36 @@ void ALaserWeapon::WeaponTriggered(const float DeltaTime)
 	{
 		const FVector StartLocation = this->GetActorLocation();
 		const FRotator LaserRot = FRotator(0.f, 360 / TriggerAmount, 0.f);
-		if(SweepTracker.Yaw <= LaserRot.Yaw)
+		for(int i = 0; i < TriggerAmount; i++)
 		{
-			for(int i = 0; i < TriggerAmount; i++)
+			const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)) + 45, 0.f) + SweepTracker;
+			const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
+			SetLaserTransform(i, FTransform(NewLaserRot, EndLocation, FVector(1, 1, 1)));
+
+			TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
+			ActorsHit.Append(ActiveActorsHit);
+
+			if(LaserLengthTracker < AffectRadius && !bIsRetracting)
 			{
-				const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)) + 45, 0.f) + SweepTracker;
-				
-				if(LaserLengthTracker < AffectRadius)
-				{
-					LaserLengthTracker += DeltaTime * (((1 - FireRate) * 300) + 300);
-					const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-					SetLaserTransform(i, FTransform(NewLaserRot, EndLocation, FVector(1, 1, 1)));
-					const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-					ActorsHit.Append(ActiveActorsHit);
-				}
-				else
-				{
-					const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-					SetLaserTransform(i, FTransform(NewLaserRot, EndLocation, FVector(1, 1, 1)));
-					const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-					ActorsHit.Append(ActiveActorsHit);
-					bStartSweep = true;
-				}
+				LaserLengthTracker += (DeltaTime * (((1 - FireRate) * 600) + 600)) / TriggerAmount;
+
 			}
-		}
-		if(bStartSweep)
-		{
-			if(SweepTracker.Yaw <= LaserRot.Yaw)
+			else if(SweepTracker.Yaw <= LaserRot.Yaw)
 			{
-				SweepTracker.Yaw += DeltaTime * (((1 - FireRate) * 50) + 50);
+				SweepTracker.Yaw += (DeltaTime * (((1 - FireRate) * 50) + 50)) / TriggerAmount;
 			}
 			else
 			{
-				if(LaserLengthTracker <= 0)
+				bIsRetracting = true;
+				LaserLengthTracker -= (DeltaTime * (((1 - FireRate) * 600) + 600)) / TriggerAmount;
+				if (LaserLengthTracker <= 0)
 				{
 					FireRateTracker = FireRate;
 					SweepTracker.Yaw = 0.f;
 					LaserLengthTracker = 0.f;
-					bStartSweep = false;
 					bSpawnLasers = true;
-				}
-				else
-				{
-					for (int i = 0; i < TriggerAmount; i++)
-					{
-						LaserLengthTracker -= DeltaTime * (((1 - FireRate) * 300) + 300);
-						const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)) + 45, 0.f) + SweepTracker;
-						const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-						SetLaserTransform(i, FTransform(NewLaserRot, EndLocation, FVector(1, 1, 1)));
-						TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-						ActorsHit.Append(ActiveActorsHit);
-					}
+					bIsRetracting = false;
+					return;
 				}
 			}
 		}

@@ -30,6 +30,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Reference", meta = (ToolTip = "The static mesh that the laser will be."))
 	UStaticMesh* LaserMeshRef;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance that the lasers will detach."))
+	float DetachableChance = 10.f;
+
 	UPROPERTY()
 	bool bStartSweep = false;
 
@@ -41,4 +44,7 @@ protected:
 
 	UPROPERTY()
 	TArray<FHitResult> ActorsHit;
+
+	UPROPERTY()
+	bool bIsRetracting = false;
 };

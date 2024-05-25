@@ -10,7 +10,6 @@
 AWeaponUpgradeManager::AWeaponUpgradeManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 void AWeaponUpgradeManager::Tick(const float DeltaSeconds)
@@ -62,7 +61,6 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 	CurrentUpgrades.Append(SetUpSpecialUpgrades());
 	CurrentUpgrades.Append(SetUpPassiveUnlocks());
 	UpgradesSelected.Empty();
-	UE_LOGFMT(LogTemp, Warning, "Rolls: {0}", RollAmount);
 	for(int i = 0; i < RollAmount; i++)
 	{
 		if(!CurrentUpgrades.IsEmpty())
