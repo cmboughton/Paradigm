@@ -27,12 +27,6 @@ struct FShipsDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Ship Stats"))
 	TArray<FStatsStruct> ShipStats;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Health of the ship."))
-	float Health = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The base movement speed of the ship."))
-	float MovementSpeed = 0.f;*/
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The name of the Row from the Ultimate Ability Data Table."))
 	FName UltimateAbility;
 
@@ -46,7 +40,10 @@ struct FUltimatesDataTable : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The name to the Ultimate Ability."))
-	FName UltimateAbilityName;
+	FName UltimateName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Icon of the Ultimate."))
+	UTexture2D* UltimateIcon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Blueprint Reference to the Ultimate Ability."))
 	TSoftClassPtr<AUltimateAbility> UltimateAbility;

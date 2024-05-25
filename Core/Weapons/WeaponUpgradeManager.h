@@ -35,9 +35,7 @@ protected:
 
 	AWeaponUpgradeManager();
 
-	virtual void BeginPlay() override;
-
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void Tick(const float DeltaSeconds) override;
 
 	UFUNCTION()
 	void UpgradeCategory(const FUpgradeCommunication& Upgrade);

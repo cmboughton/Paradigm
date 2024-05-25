@@ -43,6 +43,7 @@ void AWeapons::BeginPlay()
 				const FUpgradeManager WeaponUpgrades = FUpgradeManager(this, WeaponsData->WeaponUpgrades, WeaponsData->SpecialUpgradeLevels, WeaponsData->WeaponType, false, false, false);
 				const FUpgradeManager SpecialWeaponUpgrades = FUpgradeManager(this, WeaponsData->SpecialWeaponUpgrades, WeaponsData->SpecialUpgradeLevels, WeaponsData->WeaponType,  false, false, true);
 				UpgradeManagerRef->AddUpgrades(WeaponUpgrades, SpecialWeaponUpgrades);
+				UE_LOGFMT(LogTemp, Warning, "Manager Found");
 			}
 		}
 	}
@@ -250,7 +251,7 @@ TArray<FHitResult> AWeapons::LineTrace(const FVector& ActorStartLocation, const 
 											ETraceTypeQuery::TraceTypeQuery1,
 											false, 
 											ActorsToIgnore, 
-											EDrawDebugTrace::None,
+											EDrawDebugTrace::ForOneFrame,
 											AllActorsHit,
 											true, 
 											FLinearColor::Red,
@@ -283,7 +284,7 @@ TArray<FHitResult> AWeapons::SphereTrace(const FVector& ActorStartLocation, cons
 											ETraceTypeQuery::TraceTypeQuery1,
 											false,
 											ActorsToIgnore,
-											EDrawDebugTrace::None,
+											EDrawDebugTrace::ForOneFrame,
 											AllActorsHit,
 											true,
 											FLinearColor::Red,

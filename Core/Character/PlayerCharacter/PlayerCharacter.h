@@ -79,6 +79,9 @@ public:
 
 	virtual float TakeDamage(const float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)override;
 
+	UFUNCTION()
+	void SetInvulnerability(const float& DurationSec);
+
 #pragma endregion
 
 #pragma region Protected Functions
@@ -164,6 +167,12 @@ protected:
 	UPROPERTY()
 	float HealthRegenRate = 0.f;
 
+	UPROPERTY()
+	bool bHasExtraLife = false;
+
+	UPROPERTY()
+	float InvulnerabilityDuration = 0.f;
+
 #pragma endregion
 
 #pragma region References
@@ -232,32 +241,20 @@ protected:
 #pragma region Getters and Setters
 public:
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetScoringModifier()							const { return ScoringModifier; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float					GetCurrentUltimate()							const { return CurrentUltimateTracker; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float					GetMaxUltimate()								const { return UltimateTracker; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetCurrentXP()									const { return ExperienceTracker; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetCurrentLevel()								const { return CurrentLevel; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int						GetNextLevelReq()								const { return NextLevelReq; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE TArray<FName>			GetWeaponsEquipped()							const { return WeaponsEquipped; }
-	//FORCEINLINE int						GetMaxWeaponsEquipped()							const { return MaxWeaponsEquipped; }
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE TArray<FName>			GetPassivesEquipped()							const { return PassivesEquipped; }
-	//FORCEINLINE int						GetMaxPassivesEquipped()						const { return MaxPassivesEquipped; }
-	FORCEINLINE float					GetPickUpRadius()								const { return PickUpRadius; }
-	FORCEINLINE UMainHUDWidget*			GetMainHUDWidget()								const { return WidgetInstance; }
-	FORCEINLINE TArray<int>				GetWeaponUnlockLevels()							const { return WeaponUnlockLevels; }
-	FORCEINLINE TArray<int>				GetPassiveUnlockLevels()						const { return PassiveUnlockLevels; }
+	FORCEINLINE int						GetScoringModifier()									const { return ScoringModifier; }
+	FORCEINLINE float					GetCurrentUltimate()									const { return CurrentUltimateTracker; }
+	FORCEINLINE int						GetCurrentLevel()										const { return CurrentLevel; }
+	FORCEINLINE TArray<FName>			GetWeaponsEquipped()									const { return WeaponsEquipped; }
+	FORCEINLINE TArray<FName>			GetPassivesEquipped()									const { return PassivesEquipped; }
+	FORCEINLINE float					GetPickUpRadius()										const { return PickUpRadius; }
+	FORCEINLINE UMainHUDWidget*			GetMainHUDWidget()										const { return WidgetInstance; }
+	FORCEINLINE TArray<int>				GetWeaponUnlockLevels()									const { return WeaponUnlockLevels; }
+	FORCEINLINE TArray<int>				GetPassiveUnlockLevels()								const { return PassiveUnlockLevels; }
 
-	FORCEINLINE void					SetPickUpRadius(const float PickUpValue)			  { PickUpRadius = PickUpValue; }
-	FORCEINLINE void					SetArcanicEchoRef(AArcanicEcho* AeValue)			  { ArcanicEcho = AeValue; }
-	FORCEINLINE void					SetSelectedShipName(const FName ShipNameValue)		  { SelectedShipName = ShipNameValue; }
+	FORCEINLINE void					SetPickUpRadius(const float& PickUpValue)					  { PickUpRadius = PickUpValue; }
+	FORCEINLINE void					SetArcanicEchoRef(AArcanicEcho* AeValue)					  { ArcanicEcho = AeValue; }
+	FORCEINLINE void					SetSelectedShipName(const FName& ShipNameValue)				  { SelectedShipName = ShipNameValue; }
+	FORCEINLINE void					SetHasExtraLife(const bool& ExtraLifeValue)					  { bHasExtraLife = ExtraLifeValue; }
 
 #pragma endregion
 };

@@ -39,7 +39,7 @@ public:
 
 	FORCEINLINE void	SetDamage			(const float DamageValue)				{ Damage = DamageValue; }
 	FORCEINLINE void	SetAffectRadius		(const float ExplosionRadiusValue)		{ AffectRadius = ExplosionRadiusValue; }
-	FORCEINLINE void	SetStartLocation	(const FVector StartLocationValue)		{ StartLocation = StartLocationValue; }
-	FORCEINLINE void	SetEndLocation		(const FVector EndLocationValue)		{ EndLocation = EndLocationValue; }
+	FORCEINLINE void	SetStartLocation	(const FVector& StartLocationValue)		{ StartLocation = StartLocationValue; }
+	FORCEINLINE void	SetEndLocation		(const FVector& EndLocationValue)		{ EndLocation = EndLocationValue; }
 
 };

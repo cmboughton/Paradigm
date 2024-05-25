@@ -147,6 +147,16 @@ void APlayerCharacter::Tick(const float DeltaTime)
 
 	LerpHealthBar(DeltaTime);
 
+	if(InvulnerabilityDuration > 0)
+	{
+		InvulnerabilityDuration -= DeltaTime;
+	}
+	else if(CurrentState == ECharacterState::Invulnerable && InvulnerabilityDuration <= 0)
+	{
+		InvulnerabilityDuration = 0;
+		CurrentState = ECharacterState::Normal;
+	}
+
 
 	/*EDeviceScreenOrientation Orientation = FAndroidMisc::GetDeviceOrientation();
 	switch (Orientation)
@@ -195,10 +205,19 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Death()
 {
-	Super::Death();
-	BaseModel->SetVisibility(false, true);
-	HealthWidget->SetVisibility(false, true);
-	WidgetInstance->ActivateDeathWidget();
+	if(bHasExtraLife)
+	{
+		bHasExtraLife = false;
+		SetInvulnerability(5.f);
+		UpdateHealth(MaxHealth);
+	}
+	else
+	{
+		Super::Death();
+		BaseModel->SetVisibility(false, true);
+		HealthWidget->SetVisibility(false, true);
+		WidgetInstance->ActivateDeathWidget();
+	}
 }
 
 /**
@@ -223,6 +242,12 @@ float APlayerCharacter::TakeDamage(const float DamageAmount, FDamageEvent const&
 		ArcanicEcho->SetDamage(DamageAmount);
 	}
 	return CurrentHealth;
+}
+
+void APlayerCharacter::SetInvulnerability(const float& DurationSec)
+{
+	InvulnerabilityDuration += DurationSec;
+	CurrentState = ECharacterState::Invulnerable;
 }
 
 /**

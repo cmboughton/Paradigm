@@ -24,4 +24,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The amount to increase the movement speed in %."))
 	float MovementSpeedIncPercent = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The duration of Invulnerability."))
+	float InvulnerabilityDuration = 8.f;
 };

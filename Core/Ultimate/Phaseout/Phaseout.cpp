@@ -11,6 +11,7 @@ void APhaseout::UltimateAbilityStart()
 
 	PreviousMoveSpeed = PlayerCharacter->GetCharacterMovement()->GetMaxSpeed();
 	PlayerCharacter->UpdateMovementSpeed(PlayerCharacter->GetCharacterMovement()->GetMaxSpeed() * (1 + MovementSpeedIncPercent));
+	PlayerCharacter->SetInvulnerability(InvulnerabilityDuration);
 }
 
 void APhaseout::UltimateAbilityFinish()

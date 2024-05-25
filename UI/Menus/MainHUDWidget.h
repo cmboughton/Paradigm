@@ -110,7 +110,7 @@ public:
 	void ActivateDeathWidget() const;
 
 	UFUNCTION()
-	void DisplayUpgrades(const bool& bShouldDisplay, const TArray<FUpgradeCommunication> UpgradesAdded) const;
+	void DisplayUpgrades(const bool& bShouldDisplay, const TArray<FUpgradeCommunication> UpgradesAdded = TArray<FUpgradeCommunication>()) const;
 
 public:
 

@@ -13,28 +13,20 @@ AWeaponUpgradeManager::AWeaponUpgradeManager()
 
 }
 
-void AWeaponUpgradeManager::BeginPlay()
-{
-	Super::BeginPlay();
-
-	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-}
-
-void AWeaponUpgradeManager::Tick(float DeltaSeconds)
+void AWeaponUpgradeManager::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	if(!UpgradeQueManager.IsEmpty())
 	{
 		if(!bUpgradeActive)
 		{
-			UE_LOGFMT(LogTemp, Warning, "Roll Upgrades");
 			RollUpgrades(UpgradeQueManager[0]);
 			UpgradeQueManager.RemoveAt(0);
 		}
-		for(int i = 0; i <UpgradeQueManager.Num(); i++)
-		{
-			UE_LOGFMT(LogTemp, Warning, "Roll #: {0}", UpgradeQueManager[i]);
-		}
+	}
+	if(!PlayerCharacter)
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	}
 }
 
@@ -64,11 +56,13 @@ void AWeaponUpgradeManager::AddUpgrades(const FUpgradeManager& Upgrade, const FU
 void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 {
 	bUpgradeActive = true;
-	TArray<FUpgradeManager> CurrentUpgrades = UpgradesAvailable;
-	CurrentUpgrades.Append(SetUpSpecialUpgrades());
+	TArray<FUpgradeManager> CurrentUpgrades;
+	CurrentUpgrades.Append(UpgradesAvailable);
 	CurrentUpgrades.Append(SetUpWeaponUnlocks());
+	CurrentUpgrades.Append(SetUpSpecialUpgrades());
 	CurrentUpgrades.Append(SetUpPassiveUnlocks());
 	UpgradesSelected.Empty();
+	UE_LOGFMT(LogTemp, Warning, "Rolls: {0}", RollAmount);
 	for(int i = 0; i < RollAmount; i++)
 	{
 		if(!CurrentUpgrades.IsEmpty())
@@ -203,11 +197,6 @@ void AWeaponUpgradeManager::RollUpgrades(const int RollAmount)
 				PlayerCharacter->GetMainHUDWidget()->DisplayUpgrades(true, UpgradesSelected);
 			}
 		}
-		else
-		{
-			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-			RollUpgrades(RollAmount);
-		}
 	}
 }
 
@@ -231,23 +220,6 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 		{
 			// Adds the weapon selected to the players weapons
 			PlayerCharacter->AddWeapon(Upgrade.WeaponUpgrades.UniqueName);
-			//UE_LOGFMT(LogTemp, Warning, "Weapon Name: {0}", Upgrade.WeaponUpgrades.UniqueName);
-
-			// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
-			/*if (PlayerCharacter->GetWeaponsEquipped().Num() >= PlayerCharacter->GetWeaponUnlockLevels().Num())
-			{
-				UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsWeaponUnlock; });
-			}
-			else
-			{
-				UpgradeSingleUse(Upgrade);
-			}*/
-		}
-		else
-		{
-			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-			UpgradeSelected(Upgrade);
-			return;
 		}
 	}
 	else if (Upgrade.bIsPassiveUnlock)
@@ -256,28 +228,11 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 		{
 			// Adds the passive selected to the players passives
 			PlayerCharacter->AddPassive(Upgrade.WeaponUpgrades.UniqueName);
-
-			// Checks if the player is at max weapons. If so all weapon unlock cards will be removed from the pool.
-			/*if (PlayerCharacter->GetPassivesEquipped().Num() >= PlayerCharacter->GetPassiveUnlockLevels().Num())
-			{
-				UpgradesAvailable.RemoveAllSwap([&](const FUpgradeManager& UpgradeAvailable) {return UpgradeAvailable.bIsPassiveUnlock; });
-			}
-			else
-			{
-				UpgradeSingleUse(Upgrade);
-			}*/
-		}
-		else
-		{
-			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-			UpgradeSelected(Upgrade);
-			return;
 		}
 	}
 	else if (Upgrade.bIsSpecialUpgrade)
 	{
 		Upgrade.WeaponReference->UpgradeWeapon(Upgrade.WeaponUpgrades);
-
 		for (int i = 0; i < SpecialWeaponUpgrades.Num(); i++)
 		{
 			if(SpecialWeaponUpgrades.IsValidIndex(i))
@@ -330,24 +285,12 @@ void AWeaponUpgradeManager::UpgradeSelected(const FUpgradeCommunication& Upgrade
 			WeaponRef->SetWeaponLevel(WeaponRef->GetWeaponLevel() + 1);
 			//UE_LOGFMT(LogTemp, Warning, "Weapon Level: {0}", WeaponRef->GetWeaponLevel());
 		}
-		/*for(int i = 0; i < UpgradesAvailable.Num(); i ++)
-		{
-			if(UpgradesAvailable.IsValidIndex(i))
-			{
-				if (UpgradesAvailable[i].WeaponReference == Upgrade.WeaponReference)
-				{
-					UpgradesAvailable[i].CurrentUpgradeLevel++;
-					break;
-				}
-			}
-		}*/
 	}
 	if (PlayerCharacter)
 	{
 		if (PlayerCharacter->GetMainHUDWidget())
 		{
-			const TArray<FUpgradeCommunication> EmptyUpgrade;
-			PlayerCharacter->GetMainHUDWidget()->DisplayUpgrades(false, EmptyUpgrade);
+			PlayerCharacter->GetMainHUDWidget()->DisplayUpgrades(false);
 		}
 	}
 	bUpgradeActive = false;
@@ -441,6 +384,13 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpSpecialUpgrades()
 	return SpecialUpgrades;
 }
 
+/**
+ * @brief Sets up weapon unlocks for the weapon upgrade manager.
+ * 
+ * This function is responsible for setting up the weapon unlocks for the weapon upgrade manager. It checks the player's current level and the weapons equipped by the player. If the player's current level is greater than or equal to the unlock level of the equipped weapon, the weapon is added to the upgrade pool. If the player has no weapons equipped, all non-base weapons are added to the upgrade pool.
+ * 
+ * @return Returns an array of FUpgradeManager objects representing the added weapon unlocks.
+ */
 TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpWeaponUnlocks() const
 {
 	TArray<FUpgradeManager> AddedWeaponUnlocks;
@@ -454,8 +404,6 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpWeaponUnlocks() const
 				{
 					if (PlayerCharacter->GetCurrentLevel() >= PlayerCharacter->GetWeaponUnlockLevels()[PlayerCharacter->GetWeaponsEquipped().Num()])
 					{
-
-
 						for (const FName WeaponRow : WeaponsDataTableHardRef->GetRowNames())
 						{
 							if (const FWeaponsDataTable* WeaponsData = WeaponsDataTableHardRef->FindRow<FWeaponsDataTable>(WeaponRow, "Couldn't Add Weapon to Upgrade Pool", true))
@@ -464,6 +412,7 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpWeaponUnlocks() const
 								{
 									if (!PlayerCharacter->GetWeaponsEquipped().Contains(WeaponRow))
 									{
+										UE_LOGFMT(LogTemp, Warning, "Weapon Added: {0}", WeaponRow);
 										TArray<FWeaponUpgrades> WeaponUnlocks;
 										WeaponUnlocks.Add(FWeaponUpgrades(WeaponRow, WeaponsData->Description, WeaponsData->RollWeight, EUpgradeRarity::Basic, EWeaponUpgradeType::TriggerAmount, 0.f, true, false));
 										AddedWeaponUnlocks.Add(FUpgradeManager(nullptr, WeaponUnlocks, WeaponsData->SpecialUpgradeLevels, EWeaponType::Mechanical, true, false, false));
@@ -494,6 +443,13 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpWeaponUnlocks() const
 	return AddedWeaponUnlocks;
 }
 
+/**
+ * @brief Sets up passive unlocks for the weapon upgrade manager.
+ * 
+ * This function is responsible for setting up the passive unlocks for the weapon upgrade manager. It does this by loading the passives data table and checking the current level of the player character. If the player character's current level is greater than or equal to the passive unlock level, the passive is added to the upgrade pool. If the player character does not have any passives equipped, all passives are added to the upgrade pool.
+ * 
+ * @return Returns an array of FUpgradeManager objects, each representing a passive unlock.
+ */
 TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpPassiveUnlocks() const
 {
 	TArray<FUpgradeManager> AddedPassiveUnlocks;
@@ -523,7 +479,6 @@ TArray<FUpgradeManager> AWeaponUpgradeManager::SetUpPassiveUnlocks() const
 					}
 				}
 			}
-
 			else
 			{
 				for (const FName PassiveRow : PassivesDataTableHardRef->GetRowNames())

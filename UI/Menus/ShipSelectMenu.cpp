@@ -10,9 +10,12 @@
 #include "Components/UniformGridPanel.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "Components/HorizontalBox.h"
+#include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 
 #include "MenuComponets/ShipStatsComponent.h"
+#include "MenuComponets/WeaponStatsComponent.h"
 #include "MenuComponets/ShipRenderer.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -66,7 +69,7 @@ void UShipSelectMenu::NativeConstruct()
 	}
 }
 
-void UShipSelectMenu::DisplayShip(const FName& RowName)
+void UShipSelectMenu::DisplayShip(const FName& RowName) const
 {
 	if(ShipRenderMat)
 	{
@@ -91,7 +94,7 @@ void UShipSelectMenu::OnButtonClicked()
 	UGameplayStatics::OpenLevel(GetWorld(), "BaseLevel");
 }
 
-void UShipSelectMenu::SetShipStats(const FName& DTRowName)
+void UShipSelectMenu::SetShipStats(const FName& DTRowName) const
 {
 	ShipStatsVB->ClearChildren();
 	if (const UDataTable* ShipDataTableHardRef = ShipDataTable.LoadSynchronous())
@@ -112,6 +115,49 @@ void UShipSelectMenu::SetShipStats(const FName& DTRowName)
 							ShipStatsVB->AddChild(WidgetInstance);
 						}
 					}
+				}
+			}
+			WeaponUltimateHB->ClearChildren();
+			SetShipWeapon(*ShipData);
+			SetShipUltimate(*ShipData);
+		}
+	}
+}
+
+void UShipSelectMenu::SetShipWeapon(const FShipsDataTable& ShipData) const
+{
+	if (const UDataTable* WeaponDataTableHardRef = WeaponDataTable.LoadSynchronous())
+	{
+		if (const FWeaponsDataTable* WeaponData = WeaponDataTableHardRef->FindRow<FWeaponsDataTable>(ShipData.BaseWeapon, "Weapons Data Table Not set up", true))
+		{
+			if (WeaponStatsRef)
+			{
+				if (UWeaponStatsComponent* WidgetInstance = CreateWidget<UWeaponStatsComponent>(GetWorld(), WeaponStatsRef))
+				{
+					WidgetInstance->GetIcon()->SetBrushFromTexture(WeaponData->WeaponIcon);
+					WidgetInstance->GetTextName()->SetText(FText::FromName(WeaponData->Name));
+					WidgetInstance->SetPadding(FMargin(10, 0));
+					WeaponUltimateHB->AddChild(WidgetInstance);
+				}
+			}
+		}
+	}
+}
+
+void UShipSelectMenu::SetShipUltimate(const FShipsDataTable& ShipData) const
+{
+	if (const UDataTable* UltimateDataTableHardRef = UltimateDataTable.LoadSynchronous())
+	{
+		if (const FUltimatesDataTable* UltimateData = UltimateDataTableHardRef->FindRow<FUltimatesDataTable>(ShipData.UltimateAbility, "Weapons Data Table Not set up", true))
+		{
+			if (UltimateStatsRef)
+			{
+				if (UWeaponStatsComponent* WidgetInstance = CreateWidget<UWeaponStatsComponent>(GetWorld(), UltimateStatsRef))
+				{
+					WidgetInstance->GetIcon()->SetBrushFromTexture(UltimateData->UltimateIcon);
+					WidgetInstance->GetTextName()->SetText(FText::FromName(UltimateData->UltimateName));
+					WidgetInstance->SetPadding(FMargin(10, 0));
+					WeaponUltimateHB->AddChild(WidgetInstance);
 				}
 			}
 		}
