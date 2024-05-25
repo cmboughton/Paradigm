@@ -6,6 +6,7 @@
 #include "Paradigm_IQ/Core/Weapons/Weapons.h"
 #include "LaserWeapon.generated.h"
 
+class ADettachableLaser;
 /**
  * 
  */
@@ -21,6 +22,9 @@ protected:
 	UFUNCTION()
 	void SetLaserTransform(const int& MeshIndex, const FTransform& LaserTransform);
 
+	UFUNCTION()
+	void SpawnDetachableLasers() const;
+
 	UPROPERTY()
 	bool bSpawnLasers = true;
 
@@ -33,8 +37,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The chance that the lasers will detach."))
 	float DetachableChance = 10.f;
 
-	UPROPERTY()
-	bool bStartSweep = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Reference", meta = (ToolTip = "Reference to the Detachable Laser BP."))
+	TSubclassOf<ADettachableLaser> DetachableLaserRef;
 
 	UPROPERTY()
 	FRotator SweepTracker;
@@ -47,4 +51,10 @@ protected:
 
 	UPROPERTY()
 	bool bIsRetracting = false;
+
+	UPROPERTY()
+	bool bRollDetachable = true;
+
+	UPROPERTY()
+	float DetachableLaserTracker = 0.f;
 };

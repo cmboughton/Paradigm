@@ -3,6 +3,8 @@
 
 #include "LaserWeapon.h"
 
+#include "SpecialUpgrade/DettachableLaser.h"
+
 void ALaserWeapon::WeaponTriggered(const float DeltaTime)
 {
 	Super::WeaponTriggered(DeltaTime);
@@ -57,6 +59,18 @@ void ALaserWeapon::WeaponTriggered(const float DeltaTime)
 			}
 			else if(SweepTracker.Yaw <= LaserRot.Yaw)
 			{
+				if (bSpecialUpgrade2)
+				{
+					if (bRollDetachable)
+					{
+						bRollDetachable = false;
+						if (const float Roll = FMath::RandRange(0, 100) <= DetachableChance)
+						{
+							SpawnDetachableLasers();
+							SweepTracker.Yaw = LaserRot.Yaw;
+						}
+					}
+				}
 				SweepTracker.Yaw += (DeltaTime * (((1 - FireRate) * 50) + 50)) / TriggerAmount;
 			}
 			else
@@ -70,6 +84,7 @@ void ALaserWeapon::WeaponTriggered(const float DeltaTime)
 					LaserLengthTracker = 0.f;
 					bSpawnLasers = true;
 					bIsRetracting = false;
+					bRollDetachable = true;
 					return;
 				}
 			}
@@ -77,6 +92,25 @@ void ALaserWeapon::WeaponTriggered(const float DeltaTime)
 	}
 	else
 	{
+		if (bSpecialUpgrade2)
+		{
+			DetachableLaserTracker -= DeltaTime;
+			if(DetachableLaserTracker <= 0)
+			{
+				DetachableLaserTracker = FireRate * 3;
+				bRollDetachable = true;
+			}
+			if (bRollDetachable)
+			{
+				bRollDetachable = false;
+				const float Roll = FMath::RandRange(0, 100);
+				UE_LOGFMT(LogTemp, Warning, "Roll: {0}", Roll);
+				if (Roll <= DetachableChance)
+				{
+					SpawnDetachableLasers();
+				}
+			}
+		}
 		const FVector StartLocation = this->GetActorLocation();
 		const FRotator LaserRot = FRotator(0.f, 360 / TriggerAmount, 0.f);
 		for (int i = 0; i < TriggerAmount; i++)
@@ -101,4 +135,17 @@ void ALaserWeapon::SetLaserTransform(const int& MeshIndex, const FTransform& Las
 	FVector NewScale = LaserMeshes[MeshIndex]->GetComponentScale();
 	NewScale.X = Distance / 10;
 	LaserMeshes[MeshIndex]->SetRelativeScale3D(NewScale);
+}
+
+void ALaserWeapon::SpawnDetachableLasers() const
+{
+	if (DetachableLaserRef)
+	{
+		ADettachableLaser* DetachLaser = GetWorld()->SpawnActorDeferred<ADettachableLaser>(DetachableLaserRef, this->GetActorTransform());
+		DetachLaser->SetDamage(Damage);
+		DetachLaser->SetFireRate(FireRate);
+		DetachLaser->SetLaserLength(AffectRadius);
+		DetachLaser->SetTriggerAmount(TriggerAmount);
+		DetachLaser->FinishSpawning(this->GetActorTransform());
+	}
 }
