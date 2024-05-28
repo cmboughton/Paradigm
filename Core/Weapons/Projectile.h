@@ -29,8 +29,8 @@ protected:
 #pragma region Protected Stats
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The duration before this Actor gets destroyed."))
-	float DestroyDuration = 4.f;
+	UPROPERTY()
+	float DestroyDuration = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The intial speed of this actor."))
 	float ProjectileSpeed = 5000.f;

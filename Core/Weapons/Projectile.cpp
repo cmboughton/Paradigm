@@ -44,6 +44,8 @@ void AProjectile::BeginPlay()
 	{
 		BulletMesh->SetRelativeScale3D(FVector(AffectRadius / 180, AffectRadius / 180, AffectRadius / 180));
 	}
+
+	DestroyDuration = 6000 / ProjectileSpeed;
 }
 
 /**
