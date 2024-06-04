@@ -26,12 +26,15 @@ protected:
 	static FVector GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance);
 
 	UFUNCTION()
-	void SpawnEnemies(const int AmountToSpawn, const TSubclassOf<AEnemyCharacter> ActorToSpawn, const FTransform& SpawnTransform) const;
+	void SpawnEnemies(const int AmountToSpawn, const FName& RowName, const FTransform& SpawnTransform) const;
 
 #pragma endregion
 
 #pragma region Protected Variables
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|DataTables", meta = (ToolTip = "The Data Table that holds the data of the Ships."))
+	UDataTable* EnemyDataTable = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The Minimum distance that enemies will spawn from the player for scatter spawn."))
 	float ScatterMinDist = 800;

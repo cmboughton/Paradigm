@@ -14,6 +14,8 @@ AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 }
 
 // Called when the game starts or when spawned
@@ -22,6 +24,13 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 	CurrentHealth = MaxHealth;
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	BaseModel->SetRelativeScale3D(FVector(0.1f, 0.1f, 0.1f));
+	BaseModel->SetCollisionObjectType(ECC_WorldDynamic);
+	BaseModel->SetCollisionResponseToAllChannels(ECR_Ignore);
+	BaseModel->SetCollisionResponseToChannel(UEngineTypes::ConvertToCollisionChannel(TraceTypeQuery1), ECR_Block);
+	BaseModel->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	
 }
 
 void AEnemyCharacter::Tick(const float DeltaTime)
@@ -52,7 +61,7 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
         return CurrentHealth;
     }
     CurrentHealth -= DamageAmount;
-	UE_LOGFMT(LogTemp, Warning, "CurrentHealth: {0} DamageAmount: {1}", CurrentHealth, DamageAmount);
+	//UE_LOGFMT(LogTemp, Warning, "CurrentHealth: {0} DamageAmount: {1}", CurrentHealth, DamageAmount);
     if (DamageCauser)
     {
         ApplyBackDamage(DamageAmount, DamageCauser);
@@ -82,6 +91,15 @@ void AEnemyCharacter::ApplyBackDamage(float DamageAmount, AActor* DamageCauser)
     const FVector ActorLocation = this->GetActorLocation();
     const FPointDamageEvent DamageBackEvent(DamageDoneBack, Hit, ActorLocation, nullptr);
     DamageCauser->TakeDamage(DamageDoneBack, DamageBackEvent, GetInstigatorController(), this);
+}
+
+float AEnemyCharacter::CalculateDamage() const
+{
+	if(FMath::RandRange(0, 1) <= CritChance)
+	{
+		return Damage * CritDamage;
+	}
+	return Damage;
 }
 
 /**
@@ -160,11 +178,11 @@ void AEnemyCharacter::Death()
 
 void AEnemyCharacter::UpdateStats(const float& GrowthModifier)
 {
-	CurrentHealth *= (1 + GrowthModifier);
 	MaxHealth *= (1 + GrowthModifier);
 	Score *= (1 + GrowthModifier);
-	//UpdateMovementSpeed(GetCharacterMovement()->MaxWalkSpeed * (1 + GrowthModifier));
 	Damage *= (1 + GrowthModifier);
+	CritChance *= (1 + GrowthModifier);
+	CritDamage *= (1 + GrowthModifier);
 	ExperienceStruct.Experience *= (1 + GrowthModifier);
 	ExperienceStruct.UltimateExperience *= (1 + GrowthModifier);
 	CollectableLootTable.DropChance *= (1 + GrowthModifier);

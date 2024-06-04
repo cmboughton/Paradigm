@@ -210,8 +210,8 @@ struct FEnemySpawnerModifier
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Reference to the blueprint of the enemy that will Spawn."))
-	TSoftClassPtr<AEnemyCharacter> EnemyReference = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The row name from Enemy DT to spawn."))
+	FName EnemyRowName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClamMin = 1), meta = (ToolTip = "The amount of enemies that will spawn."))
 	int SpawnAmount = 1;
@@ -332,7 +332,7 @@ struct FStatsStruct
 	FName StatName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The type of stat that will be calculated."))
-	EStatsType StatType = EStatsType::Health;
+	EPlayerStatsType StatType = EPlayerStatsType::Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The value of the stat that will be calculated."))
 	float StatValue = 0.f;

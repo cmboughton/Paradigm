@@ -129,3 +129,30 @@ struct FPassivesDataTable : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The weight of this Passive to roll when called. The weight is caluculated by adding all upgrades to a pool and rolling."))
 	float RollWeight = 0.f;
 };
+
+USTRUCT(BlueprintType)
+struct FEnemiesDataTable : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The name of the Enemy."))
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The class of the enemy that will be spawned."))
+	TSoftClassPtr<AEnemyCharacter> EnemyClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The static mesh to the enemy ship."))
+	UStaticMesh* ShipMesh = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The score of the Enemy."))
+	float Score = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The stats of the Enemy."))
+	TMap<EEnemyStatsType, float> Stats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The experience of the Enemy drops."))
+	FExperienceOrb Experience;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The collectable drops of the Enemy."))
+	FCollectableStruct DropTable;
+};

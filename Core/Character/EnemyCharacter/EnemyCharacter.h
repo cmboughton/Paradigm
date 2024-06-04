@@ -31,21 +31,30 @@ protected:
 	UFUNCTION()
 	void ApplyBackDamage(float DamageAmount, AActor* DamageCauser);
 
+	UFUNCTION()
+	float CalculateDamage() const;
+
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Damage of this actor."))
+	UPROPERTY()
 	float Damage = 75.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The attack range of this actor."))
+	UPROPERTY()
 	float AttackRange = 100.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Experience and Ultimate experience that is dropped on death."))
+	UPROPERTY()
+	float CritDamage = 0.f;
+
+	UPROPERTY()
+	float CritChance = 0.f;
+
+	UPROPERTY()
 	struct FExperienceOrb ExperienceStruct;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|References", meta = (ToolTip = "Blueprint ref to experience blueprint."))
+	UPROPERTY()
 	TSubclassOf<class AExperience> ExperienceOrb = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Collectables that can drop"))
+	UPROPERTY()
 	FCollectableStruct CollectableLootTable;
 
 	UPROPERTY()
@@ -58,4 +67,12 @@ public:
 
 	UFUNCTION()
 	void UpdateStats(const float& GrowthModifier);
+
+	FORCEINLINE void						SetMaxHealth(const float& NewMaxHealth)											{ MaxHealth = NewMaxHealth; }
+	FORCEINLINE void						SetDamage(const float& NewDamage)												{ Damage = NewDamage; }
+	FORCEINLINE void						SetAttackRange(const float& NewAttackRange)										{ AttackRange = NewAttackRange; }
+	FORCEINLINE void						SetCritChance(const float& NewCritChance)										{ CritChance = NewCritChance; }
+	FORCEINLINE void						SetCritDamage(const float& NewCritDamage)										{ CritDamage = NewCritDamage; }
+	FORCEINLINE void						SetExperienceStruct(const FExperienceOrb& NewExperienceStruct)					{ ExperienceStruct = NewExperienceStruct; }
+	FORCEINLINE void						SetCollectableLootTable(const FCollectableStruct& NewCollectable)				{ CollectableLootTable = NewCollectable; }
 };

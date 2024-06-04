@@ -21,6 +21,8 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BaseModel->SetRelativeRotation(FRotator(0, -90, 0));
 }
 
 void ABaseCharacter::Tick(const float DeltaTime)

@@ -21,8 +21,9 @@ void AEnemyFollower::Tick(const float DeltaTime)
 			if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
 			{
 				FHitResult EmptyResult;
-				const FPointDamageEvent DamageEvent(Damage, EmptyResult, this->GetActorLocation(), nullptr);
-				PlayerCharacter->TakeDamage(Damage, DamageEvent, GetInstigatorController(), this);
+				float CalculatedDamage = CalculateDamage();
+				const FPointDamageEvent DamageEvent(CalculatedDamage, EmptyResult, this->GetActorLocation(), nullptr);
+				PlayerCharacter->TakeDamage(CalculatedDamage, DamageEvent, GetInstigatorController(), this);
 				bHasAttacked = true;
 				Death();
 			}

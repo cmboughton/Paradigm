@@ -50,7 +50,7 @@ protected:
 #pragma region Protected Variables
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Model, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY()
 	class UStaticMeshComponent* BaseModel;
 
 	UPROPERTY()
@@ -62,13 +62,13 @@ protected:
 	UPROPERTY()
 	float CurrentHealth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Max Health of this Character."))
+	UPROPERTY()
 	float MaxHealth;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY()
 	int ScoringModifier = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Score of this actor."))
+	UPROPERTY()
 	float Score = 0.f;
 
 #pragma endregion
@@ -82,6 +82,8 @@ public:
 	FORCEINLINE UStaticMeshComponent*	GetBaseModel()				const { return BaseModel; }
 
 	FORCEINLINE void					SetCharacterState			(const ECharacterState CharacterState)				{ CurrentState = CharacterState; }
+	FORCEINLINE void					SetBaseModel(UStaticMeshComponent* NewMesh) { BaseModel = NewMesh; }
+	FORCEINLINE void					SetScore(const float& NewScore) { Score = NewScore; }
 
 #pragma endregion
 };

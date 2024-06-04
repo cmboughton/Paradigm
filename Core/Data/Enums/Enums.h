@@ -83,12 +83,25 @@ enum class EIconType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EStatsType : uint8
+enum class EPlayerStatsType : uint8
 {
+	Default						UMETA(DisplayName = "Default"),
 	Health						UMETA(DisplayName = "Health"),
 	HealthRegen					UMETA(DisplayName = "Health Regen"),
 	DamageModifier				UMETA(DisplayName = "Damage Modifier"),
 	CritChanceModifier			UMETA(DisplayName = "Crit Chance Modifier"),
 	CritDamageModifier			UMETA(DisplayName = "Crit Damage Modifier"),
+	MovementSpeed				UMETA(DisplayName = "Movement Speed"),
+};
+
+UENUM(BlueprintType)
+enum class EEnemyStatsType : uint8
+{
+	Default						UMETA(DisplayName = "Default"),
+	AttackRange					UMETA(DisplayName = "Attack Range"),
+	Health						UMETA(DisplayName = "Health"),
+	Damage						UMETA(DisplayName = "Damage"),
+	CritChance					UMETA(DisplayName = "Crit Chance"),
+	CritDamage					UMETA(DisplayName = "Crit Damage"),
 	MovementSpeed				UMETA(DisplayName = "Movement Speed"),
 };

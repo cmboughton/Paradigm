@@ -112,6 +112,11 @@ void APlayerCharacter::BeginPlay()
 	{
 		HealthBar = Cast<UHealthBarComponent>(HealthWidget->GetUserWidgetObject());
 	}
+
+	BaseModel->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
+	BaseModel->SetCollisionObjectType(ECC_Pawn);
+	BaseModel->SetCollisionResponseToAllChannels(ECR_Ignore);
+	BaseModel->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 }
 
 void APlayerCharacter::Tick(const float DeltaTime)
@@ -369,33 +374,36 @@ void APlayerCharacter::SetUpShip()
 				{
 					switch (Stats.StatType)
 					{
-					case EStatsType::Health:
+					case EPlayerStatsType::Health:
 
 						CurrentHealth = Stats.StatValue;
 						MaxHealth = Stats.StatValue;
 						UpdateHealth(0);
 						break;
 
-					case EStatsType::HealthRegen:
+					case EPlayerStatsType::HealthRegen:
 
 						HealthRegenRate = Stats.StatValue;
 						break;
 
-					case EStatsType::DamageModifier:
+					case EPlayerStatsType::DamageModifier:
 
 						break;
 
-					case EStatsType::CritChanceModifier:
+					case EPlayerStatsType::CritChanceModifier:
 
 						break;
 
-					case EStatsType::CritDamageModifier:
+					case EPlayerStatsType::CritDamageModifier:
 
 						break;
 
-					case EStatsType::MovementSpeed:
+					case EPlayerStatsType::MovementSpeed:
 
 						GetCharacterMovement()->MaxWalkSpeed = Stats.StatValue;
+						break;
+
+					case EPlayerStatsType::Default:
 						break;
 					}
 				}

@@ -7,8 +7,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Logging/StructuredLog.h"
 #include "Paradigm_IQ/Core/Character/EnemyCharacter/EnemyCharacter.h"
+#include "Paradigm_IQ/Core/Data/DataTables/DataTables.h"
 #include "SpawnPoints/SpawnPoints.h"
 
+
+struct FEnemiesDataTable;
 
 AEnemySpawner::AEnemySpawner()
 {
@@ -121,40 +124,30 @@ void AEnemySpawner::Tick(const float DeltaTime)
 							{
 							case ESpawnerType::Corner:
 
-								if (const TSubclassOf<AEnemyCharacter>& EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
+								for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
 								{
-									for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
-									{
-										SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(CornerSpawnLocation.X + FMath::RandRange(-CornerScatterDist, CornerScatterDist), CornerSpawnLocation.Y + FMath::RandRange(-CornerScatterDist, CornerScatterDist), CornerSpawnLocation.Z), FVector(1.f, 1.f, 1.f));
-										SpawnEnemies(1, EnemyToSpawn, SpawnTransform);
-									}
+									SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(CornerSpawnLocation.X + FMath::RandRange(-CornerScatterDist, CornerScatterDist), CornerSpawnLocation.Y + FMath::RandRange(-CornerScatterDist, CornerScatterDist), CornerSpawnLocation.Z), FVector(1.f, 1.f, 1.f));
+									SpawnEnemies(1, SpawnerModifier.EnemyRowName, SpawnTransform);
 								}
 								break;
 
 							case ESpawnerType::Edge:
 
-								if (const TSubclassOf<AEnemyCharacter>& EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
+								for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
 								{
-									for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
-									{
-										SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).X, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).X), FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).Y, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).Y), SpawnTransform.GetTranslation().Z), FVector(1.f, 1.f, 1.f));
-										SpawnEnemies(1, EnemyToSpawn, SpawnTransform);
-									}
+									SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), FVector(FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).X, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).X), FMath::RandRange((EdgeSpawnZone.BoxOrigin - EdgeSpawnZone.BoxExtent).Y, (EdgeSpawnZone.BoxOrigin + EdgeSpawnZone.BoxExtent).Y), SpawnTransform.GetTranslation().Z), FVector(1.f, 1.f, 1.f));
+									SpawnEnemies(1, SpawnerModifier.EnemyRowName, SpawnTransform);
 								}
-
 								break;
 
 							case ESpawnerType::Scatter:
 
 								if (PlayerCharacter)
 								{
-									if (const TSubclassOf<AEnemyCharacter>& EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
+									for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
 									{
-										for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
-										{
-											SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), ScatterMinDist, ScatterMaxDist), FVector(1.f, 1.f, 1.f));
-											SpawnEnemies(1, EnemyToSpawn, SpawnTransform);
-										}
+										SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), ScatterMinDist, ScatterMaxDist), FVector(1.f, 1.f, 1.f));
+										SpawnEnemies(1, SpawnerModifier.EnemyRowName, SpawnTransform);
 									}
 								}
 								break;
@@ -162,20 +155,14 @@ void AEnemySpawner::Tick(const float DeltaTime)
 							case ESpawnerType::SpecificLocation:
 
 								SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), RandomSpawnLocation, FVector(1.f, 1.f, 1.f));
-								if (const TSubclassOf<AEnemyCharacter>& EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
-								{
-									SpawnEnemies(SpawnerModifier.SpawnAmount, EnemyToSpawn, SpawnTransform);
-								}
+								SpawnEnemies(SpawnerModifier.SpawnAmount, SpawnerModifier.EnemyRowName, SpawnTransform);
 								break;
 
 							default:
 								if (PlayerCharacter)
 								{
 									SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), ScatterMinDist, ScatterMaxDist), FVector(1.f, 1.f, 1.f));
-									if (const TSubclassOf<AEnemyCharacter>& EnemyToSpawn = SpawnerModifier.EnemyReference.LoadSynchronous())
-									{
-										SpawnEnemies(SpawnerModifier.SpawnAmount, EnemyToSpawn, SpawnTransform);
-									}
+									SpawnEnemies(SpawnerModifier.SpawnAmount, SpawnerModifier.EnemyRowName, SpawnTransform);
 								}
 								break;
 							}
@@ -243,14 +230,66 @@ FVector AEnemySpawner::GetRandomPointNearOrigin(const FVector& Origin, const flo
  * @param ActorToSpawn The type of enemy to spawn.
  * @param SpawnTransform The location and orientation at which to spawn the enemies.
  */
-void AEnemySpawner::SpawnEnemies(const int AmountToSpawn, const TSubclassOf<AEnemyCharacter> ActorToSpawn, const FTransform& SpawnTransform) const
+void AEnemySpawner::SpawnEnemies(const int AmountToSpawn, const FName& RowName, const FTransform& SpawnTransform) const
 {
-	for(int i = 0; i < AmountToSpawn; i++)
+	if(EnemyDataTable != nullptr)
 	{
-		if(AEnemyCharacter* EnemySpawned = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(ActorToSpawn, SpawnTransform))
+		if (const FEnemiesDataTable* ShipData = EnemyDataTable->FindRow<FEnemiesDataTable>(RowName, "Enemy DT not set up in EnemySpawner.cpp", true))
 		{
-			EnemySpawned->UpdateStats(GrowthTracker / 400);
-			EnemySpawned->FinishSpawning(SpawnTransform);
+			if(TSubclassOf<AEnemyCharacter> EnemyToSpawn = ShipData->EnemyClass.LoadSynchronous())
+			{
+				for(int i = 0; i < AmountToSpawn; i++)
+				{
+					if(AEnemyCharacter* EnemySpawned = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(EnemyToSpawn, SpawnTransform))
+					{
+						for (auto Stats : ShipData->Stats)
+						{
+							switch (Stats.Key)
+							{
+							case EEnemyStatsType::Damage:
+
+								EnemySpawned->SetDamage(Stats.Value);
+								break;
+
+							case EEnemyStatsType::AttackRange:
+
+								EnemySpawned->SetAttackRange(Stats.Value);
+								break;
+
+							case EEnemyStatsType::CritChance:
+
+								EnemySpawned->SetCritChance(Stats.Value);
+								break;
+
+							case EEnemyStatsType::CritDamage:
+
+								EnemySpawned->SetCritDamage(Stats.Value);
+								break;
+
+							case EEnemyStatsType::Health:
+
+								EnemySpawned->SetMaxHealth(Stats.Value);
+								break;
+
+							case EEnemyStatsType::MovementSpeed:
+
+								EnemySpawned->GetCharacterMovement()->MaxWalkSpeed = Stats.Value;
+								break;
+
+							case EEnemyStatsType::Default:
+								break;
+							}
+						}
+						EnemySpawned->SetCollectableLootTable(ShipData->DropTable);
+						EnemySpawned->SetExperienceStruct(ShipData->Experience);
+						EnemySpawned->SetScore(ShipData->Score);
+						EnemySpawned->GetBaseModel()->SetStaticMesh(ShipData->ShipMesh);
+
+						EnemySpawned->UpdateStats(GrowthTracker / 400);
+						EnemySpawned->FinishSpawning(SpawnTransform);
+					}
+				}
+			}
 		}
 	}
 }
