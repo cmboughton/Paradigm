@@ -96,6 +96,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the modifer that determines the explosion of the drones."))
 	float DroneExplosionModifier = 4.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "If the modifer that determines the length of the lasers of the drones."))
+	float LaserLengthModifier = 3.f;
+
 	UPROPERTY()
 	float DroneDurationTracker = 0.f;
 
@@ -128,9 +131,6 @@ protected:
 
 	UPROPERTY()
 	FRotator LaserSweepTracker;
-
-	UPROPERTY()
-	bool bStartSweep = false;
 
 	UPROPERTY()
 	TArray<bool> bIsDroneAlive;

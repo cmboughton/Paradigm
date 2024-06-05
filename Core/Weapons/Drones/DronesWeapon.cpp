@@ -135,7 +135,7 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 					{
 						for (auto ActorHit : ActiveActorsHit)
 						{
-							if (ActorHit.GetActor())
+							if (ActorHit.GetActor() && SpawnedDrones.IsValidIndex(i))
 							{
 								if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
 								{
@@ -173,7 +173,7 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 							{
 								for (FHitResult ActorHit : ActiveActorsHit)
 								{
-									if (ActorHit.GetActor())
+									if (ActorHit.GetActor() && SpawnedDrones.IsValidIndex(i))
 									{
 										if (ActorHit.GetActor()->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
 										{
@@ -192,7 +192,6 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 				{
 					LaserSweepTracker.Yaw = 0.f;
 					LaserLengthTracker = 0.f;
-					bStartSweep = false;
 				}
 				else
 				{
@@ -252,12 +251,10 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 				{
 					SpecialUpgrade2(DeltaTime);
 				}
-				//UE_LOGFMT(LogTemp, Warning, "LaserRot: {0}", SweepTracker.Yaw);
 			}
 			else
 			{
 				bIsExpanding = false;
-				//UE_LOGFMT(LogTemp, Warning, "Delay: {0}", LaserEndDelayTracker);
 			}
 		}
 	}
@@ -265,7 +262,6 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 	if(LifeStealImmuneTracker > 0)
 	{
 		LifeStealImmuneTracker -= DeltaTime;
-		//UE_LOGFMT(LogTemp, Warning, "LifeStealImmuneTracker: {0}", LifeStealImmuneTracker);
 	}
 }
 
@@ -286,25 +282,31 @@ void ADronesWeapon::SpecialUpgrade1(const float& DeltaTime)
 		DroneFireRateTracker = FireRate;
 		for (int i = 0; i < SpawnedDrones.Num(); i++)
 		{
-			if (bIsDroneAlive[i])
+			if (bIsDroneAlive.IsValidIndex(i))
 			{
-				const FRotator DroneRotation = SpawnedDrones[i]->GetRelativeRotation() + FRotator(0.f, 10.f, 0.f);
-				const FVector SpawnLocation = SpawnedDrones[i]->GetComponentLocation() + DroneRotation.Vector();
-				const FTransform BulletSpawnLocation = FTransform(DroneRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
-				if (Projectile)
+				if (bIsDroneAlive[i])
 				{
-					AProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<AProjectile>(Projectile, BulletSpawnLocation);
-					ProjectileSpawn->SetDamage(Damage);
-					ProjectileSpawn->SetAffectRadius(AffectRadius / 4);
-					ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
-					ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
-					ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
-					ProjectileSpawn->SetSpecialUpgrade4(bSpecialUpgrade4);
-					ProjectileSpawn->SetSpecialUpgrade5(bSpecialUpgrade5);
-					ProjectileSpawn->SetTriggerAmount(TriggerAmount);
-					ProjectileSpawn->SetPlayerCharacter(PlayerCharacter);
-					ProjectileSpawn->FinishSpawning(BulletSpawnLocation);
+					if (SpawnedDrones.IsValidIndex(i))
+					{
+						const FRotator DroneRotation = SpawnedDrones[i]->GetRelativeRotation() + FRotator(0.f, 10.f, 0.f);
+						const FVector SpawnLocation = SpawnedDrones[i]->GetComponentLocation() + DroneRotation.Vector();
+						const FTransform BulletSpawnLocation = FTransform(DroneRotation, SpawnLocation, FVector(1.f, 1.f, 1.f));
+						if (Projectile)
+						{
+							AProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<AProjectile>(Projectile, BulletSpawnLocation);
+							ProjectileSpawn->SetDamage(Damage);
+							ProjectileSpawn->SetAffectRadius(AffectRadius / 4);
+							ProjectileSpawn->SetSpecialUpgrade1(bSpecialUpgrade1);
+							ProjectileSpawn->SetSpecialUpgrade2(bSpecialUpgrade2);
+							ProjectileSpawn->SetSpecialUpgrade3(bSpecialUpgrade3);
+							ProjectileSpawn->SetSpecialUpgrade4(bSpecialUpgrade4);
+							ProjectileSpawn->SetSpecialUpgrade5(bSpecialUpgrade5);
+							ProjectileSpawn->SetTriggerAmount(TriggerAmount);
+							ProjectileSpawn->SetPlayerCharacter(PlayerCharacter);
+							ProjectileSpawn->FinishSpawning(BulletSpawnLocation);
 
+						}
+					}
 				}
 			}
 		}
@@ -335,27 +337,20 @@ void ADronesWeapon::SpecialUpgrade2(const float& DeltaTime)
 			{
 				const FRotator NewLaserRot = FRotator(0.f, (LaserRot.Yaw * (i + 1)), 0.f) + LaserSweepTracker;
 
-				if (LaserLengthTracker < AffectRadius * 2)
+				if (LaserLengthTracker < AffectRadius * LaserLengthModifier)
 				{
 					LaserLengthTracker += DeltaTime * (((1 - FireRate) * 300) + 300);
-					const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-					const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-					ActorsHit.Append(ActiveActorsHit);
 				}
 				else
 				{
-					const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
-					const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
-					ActorsHit.Append(ActiveActorsHit);
-					bStartSweep = true;
+					LaserSweepTracker.Yaw += (DeltaTime * (RotationSpeed)) / TriggerAmount;
+					LaserSweepTracker.Normalize();
 				}
+				const FVector EndLocation = StartLocation + NewLaserRot.Vector() * LaserLengthTracker;
+				const TArray<FHitResult> ActiveActorsHit = LineTrace(StartLocation, EndLocation);
+				ActorsHit.Append(ActiveActorsHit);
 			}
 		}
-	}
-	if (bStartSweep)
-	{
-		LaserSweepTracker.Yaw += DeltaTime * (RotationSpeed * 2);
-		LaserSweepTracker.Normalize();
 	}
 }
 
@@ -371,8 +366,14 @@ void ADronesWeapon::SpecialUpgrade2(const float& DeltaTime)
  */
 void ADronesWeapon::SpecialUpgrade4(const int& Index, const FVector& SpawnLocation)
 {
-	bIsDroneAlive[Index] = false;
-	SpawnedDrones[Index]->SetVisibility(false, true);
+	if (bIsDroneAlive.IsValidIndex(Index))
+	{
+		bIsDroneAlive[Index] = false;
+	}
+	if (SpawnedDrones.IsValidIndex(Index))
+	{
+		SpawnedDrones[Index]->SetVisibility(false, true);
+	}
 	(bSpecialUpgrade5) ? DamageModifier = DroneExplosionDamageModifier * DamageReduction : DamageModifier = DroneExplosionDamageModifier;
 	const TArray<FHitResult> ActiveActorsHit = SphereTrace(SpawnLocation, SpawnLocation, AffectRadius * DroneExplosionModifier);
 	ApplyDamage(ActiveActorsHit);
@@ -531,9 +532,13 @@ float ADronesWeapon::TakeDamage(const float DamageAmount, FDamageEvent const& Da
 	{
 		if (DamageCauser->GetClass()->ImplementsInterface(UEnemyInterface::StaticClass()))
 		{
-			if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+			if (PlayerCharacter)
 			{
-				Player->UpdateHealth(DamageAmount * LifeStealPercent);
+				PlayerCharacter->UpdateHealth(DamageAmount * LifeStealPercent);
+			}
+			else
+			{
+				PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 			}
 		}
 	}
