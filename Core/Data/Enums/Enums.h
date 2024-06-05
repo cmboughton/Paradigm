@@ -69,10 +69,12 @@ enum class EGrowthModifierType : uint8
 UENUM(BlueprintType)
 enum class ESpawnerType : uint8
 {
+	Default						UMETA(DisplayName = "Default"),
 	Corner						UMETA(DisplayName = "Corner"),
 	Edge						UMETA(DisplayName = "Edge"),
 	Scatter						UMETA(DisplayName = "Scatter"),
 	SpecificLocation			UMETA(DisplayName = "Specific Location"),
+	Patrol						UMETA(DisplayName = "Patrol"),
 };
 
 UENUM(BlueprintType)

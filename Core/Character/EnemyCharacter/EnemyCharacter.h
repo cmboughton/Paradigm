@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Paradigm_IQ/Core/Character/BaseCharacter.h"
 #include "Paradigm_IQ/Core/Data/Interfaces/EnemyInterface.h"
+#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/DamageEvents.h"
 #include "EnemyCharacter.generated.h"
 
 class APlayerCharacter;
@@ -51,7 +54,7 @@ protected:
 	UPROPERTY()
 	struct FExperienceOrb ExperienceStruct;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "Experience orb BP Ref."))
 	TSubclassOf<class AExperience> ExperienceOrb = nullptr;
 
 	UPROPERTY()
@@ -62,6 +65,9 @@ protected:
 
 	UPROPERTY()
 	bool bHasAttacked = false;
+
+	UPROPERTY()
+	FPatrolPointStruct PatrolPoints;
 
 public:
 
@@ -75,4 +81,5 @@ public:
 	FORCEINLINE void						SetCritDamage(const float& NewCritDamage)										{ CritDamage = NewCritDamage; }
 	FORCEINLINE void						SetExperienceStruct(const FExperienceOrb& NewExperienceStruct)					{ ExperienceStruct = NewExperienceStruct; }
 	FORCEINLINE void						SetCollectableLootTable(const FCollectableStruct& NewCollectable)				{ CollectableLootTable = NewCollectable; }
+	FORCEINLINE void						SetPatrolPoints(const FPatrolPointStruct& NewPatrolPoints)				{ PatrolPoints = NewPatrolPoints; }
 };

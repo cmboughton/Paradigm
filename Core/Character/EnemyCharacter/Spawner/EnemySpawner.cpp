@@ -35,6 +35,9 @@ void AEnemySpawner::BeginPlay()
 			const FSpawnPointsInfo SpawnCornerInfo = FSpawnPointsInfo(SpawnPoint->GetActorLocation(),FVector(0, 0, 0), FVector(0, 0, 0));
 			switch (SpawnPoint->SpawnType)
 			{
+			case ESpawnerType::Default:
+				break;
+
 			case ESpawnerType::Edge:
 
 				SpawnPointsEdge.Add(SpawnEdgeInfo);
@@ -43,6 +46,14 @@ void AEnemySpawner::BeginPlay()
 			case ESpawnerType::Corner:
 
 				SpawnPointsCorner.Add(SpawnCornerInfo);
+				break;
+
+			case ESpawnerType::Patrol:
+
+				if(SpawnPoint->PatrolPoint != nullptr)
+				{
+					PatrolPoints.Add(FPatrolPointStruct(PointRef->GetActorLocation(), SpawnPoint->PatrolPoint->GetActorLocation()));
+				}
 				break;
 
 			case ESpawnerType::Scatter:
@@ -92,10 +103,20 @@ void AEnemySpawner::Tick(const float DeltaTime)
 							SpawnerModifier.TriggersToStartSpawning.ScoreModifierTrigger <= PlayerCharacter->GetScoringModifier() &&
 							SpawnerModifier.TriggersToStartSpawning.GameTimeDuration <= RealTimeTracker)
 						{
+							if (SpawnerModifier.TriggersToEndSpawning.MaxSpawned > 0)
+							{
+								TArray<AActor*> ActorsFound;
+								UGameplayStatics::GetAllActorsOfClass(GetWorld(), FindEnemyClass(SpawnerModifier.EnemyRowName), ActorsFound);
+								if(ActorsFound.Num() >= SpawnerModifier.TriggersToEndSpawning.MaxSpawned)
+								{
+									continue;
+								}
+							}
 							FTransform SpawnTransform;
 							FVector RandomSpawnLocation;
 							FSpawnPointsInfo EdgeSpawnZone;
 							FVector CornerSpawnLocation;
+							
 							if (!SpawnerModifier.EnemySpawnLocation.IsEmpty())
 							{
 								const int Roll = FMath::RandRange(0, SpawnerModifier.EnemySpawnLocation.Num() - 1);
@@ -120,6 +141,7 @@ void AEnemySpawner::Tick(const float DeltaTime)
 									CornerSpawnLocation = SpawnPointsCorner[Roll].SpawnPointLocation;
 								}
 							}
+
 							switch (SpawnerModifier.SpawnType)
 							{
 							case ESpawnerType::Corner:
@@ -158,7 +180,23 @@ void AEnemySpawner::Tick(const float DeltaTime)
 								SpawnEnemies(SpawnerModifier.SpawnAmount, SpawnerModifier.EnemyRowName, SpawnTransform);
 								break;
 
-							default:
+							case ESpawnerType::Patrol:
+								for (int i = 0; i < SpawnerModifier.SpawnAmount; i++)
+								{
+									if (!PatrolPoints.IsEmpty())
+									{
+										const int Roll = FMath::RandRange(0, PatrolPoints.Num() - 1);
+										if (PatrolPoints.IsValidIndex(Roll))
+										{
+											PatrolPoint = PatrolPoints[Roll];
+										}
+									}
+									SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), PatrolPoint.StartLocation, FVector(1.f, 1.f, 1.f));
+									SpawnEnemies(1, SpawnerModifier.EnemyRowName, SpawnTransform);
+								}
+								break;
+
+							case ESpawnerType::Default:
 								if (PlayerCharacter)
 								{
 									SpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), GetRandomPointNearOrigin(PlayerCharacter->GetActorLocation(), ScatterMinDist, ScatterMaxDist), FVector(1.f, 1.f, 1.f));
@@ -227,7 +265,7 @@ FVector AEnemySpawner::GetRandomPointNearOrigin(const FVector& Origin, const flo
  * This function spawns a specified amount of enemies of a specified type at a specified location and orientation in the game world.
  * 
  * @param AmountToSpawn The number of enemies to spawn.
- * @param ActorToSpawn The type of enemy to spawn.
+ * @param RowName The Name to the row of the enemy database.
  * @param SpawnTransform The location and orientation at which to spawn the enemies.
  */
 void AEnemySpawner::SpawnEnemies(const int AmountToSpawn, const FName& RowName, const FTransform& SpawnTransform) const
@@ -236,60 +274,89 @@ void AEnemySpawner::SpawnEnemies(const int AmountToSpawn, const FName& RowName, 
 	{
 		if (const FEnemiesDataTable* ShipData = EnemyDataTable->FindRow<FEnemiesDataTable>(RowName, "Enemy DT not set up in EnemySpawner.cpp", true))
 		{
-			if(TSubclassOf<AEnemyCharacter> EnemyToSpawn = ShipData->EnemyClass.LoadSynchronous())
+			if (ShipData->EnemyClass != nullptr)
 			{
-				for(int i = 0; i < AmountToSpawn; i++)
+				if (const TSubclassOf<AEnemyCharacter> EnemyToSpawn = ShipData->EnemyClass.LoadSynchronous())
 				{
-					if(AEnemyCharacter* EnemySpawned = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(EnemyToSpawn, SpawnTransform))
+					for (int i = 0; i < AmountToSpawn; i++)
 					{
-						for (auto Stats : ShipData->Stats)
+						if (AEnemyCharacter* EnemySpawned = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(EnemyToSpawn, SpawnTransform))
 						{
-							switch (Stats.Key)
+							for (auto Stats : ShipData->Stats)
 							{
-							case EEnemyStatsType::Damage:
+								switch (Stats.Key)
+								{
+								case EEnemyStatsType::Damage:
 
-								EnemySpawned->SetDamage(Stats.Value);
-								break;
+									EnemySpawned->SetDamage(Stats.Value);
+									break;
 
-							case EEnemyStatsType::AttackRange:
+								case EEnemyStatsType::AttackRange:
 
-								EnemySpawned->SetAttackRange(Stats.Value);
-								break;
+									EnemySpawned->SetAttackRange(Stats.Value);
+									break;
 
-							case EEnemyStatsType::CritChance:
+								case EEnemyStatsType::CritChance:
 
-								EnemySpawned->SetCritChance(Stats.Value);
-								break;
+									EnemySpawned->SetCritChance(Stats.Value);
+									break;
 
-							case EEnemyStatsType::CritDamage:
+								case EEnemyStatsType::CritDamage:
 
-								EnemySpawned->SetCritDamage(Stats.Value);
-								break;
+									EnemySpawned->SetCritDamage(Stats.Value);
+									break;
 
-							case EEnemyStatsType::Health:
+								case EEnemyStatsType::Health:
 
-								EnemySpawned->SetMaxHealth(Stats.Value);
-								break;
+									EnemySpawned->SetMaxHealth(Stats.Value);
+									break;
 
-							case EEnemyStatsType::MovementSpeed:
+								case EEnemyStatsType::MovementSpeed:
 
-								EnemySpawned->GetCharacterMovement()->MaxWalkSpeed = Stats.Value;
-								break;
+									if (EnemySpawned->GetCharacterMovement())
+									{
+										EnemySpawned->GetCharacterMovement()->MaxWalkSpeed = Stats.Value;
+									}
+									break;
 
-							case EEnemyStatsType::Default:
-								break;
+								case EEnemyStatsType::Default:
+									break;
+								}
 							}
-						}
-						EnemySpawned->SetCollectableLootTable(ShipData->DropTable);
-						EnemySpawned->SetExperienceStruct(ShipData->Experience);
-						EnemySpawned->SetScore(ShipData->Score);
-						EnemySpawned->GetBaseModel()->SetStaticMesh(ShipData->ShipMesh);
+							EnemySpawned->SetCollectableLootTable(ShipData->DropTable);
+							EnemySpawned->SetExperienceStruct(ShipData->Experience);
+							EnemySpawned->SetScore(ShipData->Score);
+							if (ShipData->ShipMesh != nullptr && EnemySpawned->GetBaseModel() != nullptr)
+							{
+								EnemySpawned->GetBaseModel()->SetStaticMesh(ShipData->ShipMesh);
+							}
 
-						EnemySpawned->UpdateStats(GrowthTracker / 400);
-						EnemySpawned->FinishSpawning(SpawnTransform);
+							EnemySpawned->SetPatrolPoints(PatrolPoint);
+
+							EnemySpawned->UpdateStats(GrowthTracker / 400);
+							EnemySpawned->FinishSpawning(SpawnTransform);
+						}
 					}
 				}
 			}
 		}
 	}
+}
+
+TSubclassOf<AEnemyCharacter> AEnemySpawner::FindEnemyClass(const FName& RowName) const
+{
+	if (EnemyDataTable != nullptr)
+	{
+		if (const FEnemiesDataTable* ShipData = EnemyDataTable->FindRow<FEnemiesDataTable>(RowName, "Enemy DT not set up in EnemySpawner.cpp", true))
+		{
+			if (ShipData->EnemyClass != nullptr)
+			{
+				if (const TSubclassOf<AEnemyCharacter> EnemyToSpawn = ShipData->EnemyClass.LoadSynchronous())
+				{
+					return EnemyToSpawn;
+				}
+			}
+		}
+	}
+	return nullptr;
 }

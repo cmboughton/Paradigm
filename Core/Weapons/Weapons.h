@@ -123,7 +123,7 @@ public:
 #pragma region Public Functions
 
 	UFUNCTION()
-	void UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades);
+	virtual void UpgradeWeapon(const FWeaponUpgrades& WeaponUpgrades);
 
 
 	UFUNCTION(BlueprintImplementableEvent)

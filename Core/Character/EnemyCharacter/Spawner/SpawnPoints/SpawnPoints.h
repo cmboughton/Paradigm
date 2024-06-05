@@ -17,8 +17,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* EdgeSpawnerZone;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Variables")
 	ESpawnerType SpawnType = ESpawnerType::Edge;
+
+	UPROPERTY(EditAnywhere, Category = "Variables")
+	AActor* PatrolPoint = nullptr;
 
 protected:
 

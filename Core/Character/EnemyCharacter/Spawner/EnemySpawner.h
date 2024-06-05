@@ -28,6 +28,9 @@ protected:
 	UFUNCTION()
 	void SpawnEnemies(const int AmountToSpawn, const FName& RowName, const FTransform& SpawnTransform) const;
 
+	UFUNCTION()
+	TSubclassOf<AEnemyCharacter> FindEnemyClass(const FName& RowName) const;
+
 #pragma endregion
 
 #pragma region Protected Variables
@@ -68,6 +71,12 @@ protected:
 
 	UPROPERTY()
 	TArray<FSpawnPointsInfo> SpawnPointsCorner;
+
+	UPROPERTY()
+	TArray<FPatrolPointStruct> PatrolPoints;
+
+	UPROPERTY()
+	FPatrolPointStruct PatrolPoint = FPatrolPointStruct(FVector(0.f, 0.f, 0.f), FVector(0.f, 0.f, 0.f));
 
 #pragma endregion
 };

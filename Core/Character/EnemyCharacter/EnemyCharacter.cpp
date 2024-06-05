@@ -2,11 +2,8 @@
 
 
 #include "EnemyCharacter.h"
-#include "Engine/DamageEvents.h"
-#include "Kismet/GameplayStatics.h"
 #include "Paradigm_IQ/Core/Collectable/Experience/Experience.h"
 #include "Paradigm_IQ/Core/Collectable/WeaponUpgrade/WeaponUpgradeCollectable.h"
-#include "Paradigm_IQ/Core/Character/PlayerCharacter/PlayerCharacter.h"
 
 
 // Sets default values
@@ -25,11 +22,13 @@ void AEnemyCharacter::BeginPlay()
 	CurrentHealth = MaxHealth;
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
-	BaseModel->SetRelativeScale3D(FVector(0.1f, 0.1f, 0.1f));
-	BaseModel->SetCollisionObjectType(ECC_WorldDynamic);
-	BaseModel->SetCollisionResponseToAllChannels(ECR_Ignore);
-	BaseModel->SetCollisionResponseToChannel(UEngineTypes::ConvertToCollisionChannel(TraceTypeQuery1), ECR_Block);
-	BaseModel->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	if(BaseModel)
+	{
+		BaseModel->SetRelativeScale3D(FVector(0.1f, 0.1f, 0.1f));
+		BaseModel->SetCollisionObjectType(ECC_WorldDynamic);
+		BaseModel->SetCollisionResponseToAllChannels(ECR_Ignore);
+		BaseModel->SetCollisionResponseToChannel(UEngineTypes::ConvertToCollisionChannel(TraceTypeQuery1), ECR_Block);
+	}
 	
 }
 

@@ -195,13 +195,16 @@ struct FEnemySpawnerEndTriggers
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. It will track how many of these type of enemies spawned and will be used to compare to this variable."))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should stop spawning. It will track how many of these type of enemies spawned and will be used to compare to this variable."))
 	int EnemiesSpawned = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should stop spawning. It will compare how many enemies are currently spawned and stop spawning if there is >= to this value."))
+	int MaxSpawned = 0;
 
 	UPROPERTY()
 	int EnemiesSpawnedTracker = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should spawn. (In Seconds)"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0), meta = (ToolTip = "The this variable is modified, this variable will determine when these group of enemeis should stop spawning. (In Seconds)"))
 	float GameTimeDuration = 0.f;
 };
 
@@ -339,4 +342,26 @@ struct FStatsStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "This value is used to calcualte where the Stat Value lies within the progress bar UI. This stat should be the same for all of the same ship stats."))
 	float MaxStatValue = 0.f;
+};
+
+USTRUCT(BlueprintType)
+struct FPatrolPointStruct
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	FVector StartLocation;
+
+	UPROPERTY()
+	FVector EndLocation;
+
+	FPatrolPointStruct() {}
+
+	FPatrolPointStruct(
+		const FVector& InStartLocation,
+		const FVector& InEndLocation)
+		:
+		StartLocation(InStartLocation),
+		EndLocation(InEndLocation)
+	{}
 };

@@ -64,7 +64,7 @@ void ALaserWeapon::WeaponTriggered(const float DeltaTime)
 					if (bRollDetachable)
 					{
 						bRollDetachable = false;
-						if (const float Roll = FMath::RandRange(0, 100) <= DetachableChance)
+						if (FMath::RandRange(0, 100) <= DetachableChance)
 						{
 							SpawnDetachableLasers();
 							SweepTracker.Yaw = LaserRot.Yaw;

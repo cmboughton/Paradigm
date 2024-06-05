@@ -1,11 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyFollower.h"
+#include "EnemyPatrol.h"
 
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
-void AEnemyFollower::Tick(const float DeltaTime)
+void AEnemyPatrol::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CurrentMoveToLoc = PatrolPoints.EndLocation;
+}
+
+void AEnemyPatrol::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -13,8 +20,23 @@ void AEnemyFollower::Tick(const float DeltaTime)
 	{
 		if (PlayerCharacter->GetCharacterState() != ECharacterState::Death)
 		{
-			const FVector TargetLocation = PlayerCharacter->GetActorLocation();
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
+			if (FVector::DistSquared(this->GetActorLocation(), CurrentMoveToLoc) <= 200 * 200)
+			{
+				if (bLocationTracker)
+				{
+					CurrentMoveToLoc = PatrolPoints.StartLocation;
+				}
+				else
+				{
+					CurrentMoveToLoc = PatrolPoints.EndLocation;
+				}
+				bLocationTracker = !bLocationTracker;
+			}
+
+			GetCharacterMovement()->MaxWalkSpeed = FVector::DistSquared(this->GetActorLocation(), CurrentMoveToLoc) * MovementSpeedModifier;
+
+			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), CurrentMoveToLoc);
+
 			if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
 			{
 				FHitResult EmptyResult;

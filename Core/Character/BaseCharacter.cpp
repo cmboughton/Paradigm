@@ -22,7 +22,12 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BaseModel->SetRelativeRotation(FRotator(0, -90, 0));
+	if(BaseModel)
+	{
+		BaseModel->SetRelativeRotation(FRotator(0, -90, 0));
+	}
+	GetCapsuleComponent()->SetCollisionResponseToChannels(ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 }
 
 void ABaseCharacter::Tick(const float DeltaTime)
