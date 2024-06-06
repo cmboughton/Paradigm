@@ -9,6 +9,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BaseCharacter.generated.h"
 
+class UNiagaraComponent;
+class UNiagaraSystem;
+
 UCLASS()
 class PARADIGM_IQ_API ABaseCharacter : public ACharacter
 {
@@ -22,6 +25,9 @@ public:
 
 	UFUNCTION()
 	virtual void UpdateHealth(const float& HealthIn);
+
+	UFUNCTION()
+	void AddThrusters(UNiagaraSystem* ThrusterNiagara);
 
 #pragma endregion
 
@@ -70,6 +76,9 @@ protected:
 
 	UPROPERTY()
 	float Score = 0.f;
+
+	UPROPERTY()
+	TMap<UNiagaraComponent*, float> ActiveThrusters;
 
 #pragma endregion
 

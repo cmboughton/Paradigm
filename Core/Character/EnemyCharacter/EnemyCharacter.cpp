@@ -2,6 +2,10 @@
 
 
 #include "EnemyCharacter.h"
+
+#include "Kismet/KismetMathLibrary.h"
+#include "NiagaraComponent.h"
+
 #include "Paradigm_IQ/Core/Collectable/Experience/Experience.h"
 #include "Paradigm_IQ/Core/Collectable/WeaponUpgrade/WeaponUpgradeCollectable.h"
 
@@ -28,6 +32,17 @@ void AEnemyCharacter::BeginPlay()
 		BaseModel->SetCollisionObjectType(ECC_WorldDynamic);
 		BaseModel->SetCollisionResponseToAllChannels(ECR_Ignore);
 		BaseModel->SetCollisionResponseToChannel(UEngineTypes::ConvertToCollisionChannel(TraceTypeQuery1), ECR_Block);
+		AddThrusters(ThrusterNiagaraSystem);
+	}
+	if (!ActiveThrusters.IsEmpty())
+	{
+		for (const auto& Thruster : ActiveThrusters)
+		{
+			if (Thruster.Key != nullptr)
+			{
+				Thruster.Key->SetVariableFloat("NiagaraScale", Thruster.Value);
+			}
+		}
 	}
 	
 }

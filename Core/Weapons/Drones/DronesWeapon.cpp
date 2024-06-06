@@ -69,6 +69,7 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 									NiagaraComponent->SetAsset(JetNiagara);
 									NiagaraComponent->AttachToComponent(SpawnedDrones[i], FAttachmentTransformRules::KeepRelativeTransform, SocketName);
 									NiagaraComponent->Activate();
+									NiagaraComponent->SetVariableFloat("NiagaraScale", SpawnedDrones[i]->GetSocketTransform(SocketName).GetScale3D().X);
 									SpawnedJets.Add(NiagaraComponent);
 								}
 							}
@@ -406,6 +407,7 @@ void ADronesWeapon::ResetDrones()
 	{
 		if (SpawnedJet)
 		{
+			SpawnedJet->DestroyInstance();
 			SpawnedJet->Deactivate();
 		}
 	}

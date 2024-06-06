@@ -241,20 +241,22 @@ protected:
 #pragma region Getters and Setters
 public:
 
-	FORCEINLINE int						GetScoringModifier()									const { return ScoringModifier; }
-	FORCEINLINE float					GetCurrentUltimate()									const { return CurrentUltimateTracker; }
-	FORCEINLINE int						GetCurrentLevel()										const { return CurrentLevel; }
-	FORCEINLINE TArray<FName>			GetWeaponsEquipped()									const { return WeaponsEquipped; }
-	FORCEINLINE TArray<FName>			GetPassivesEquipped()									const { return PassivesEquipped; }
-	FORCEINLINE float					GetPickUpRadius()										const { return PickUpRadius; }
-	FORCEINLINE UMainHUDWidget*			GetMainHUDWidget()										const { return WidgetInstance; }
-	FORCEINLINE TArray<int>				GetWeaponUnlockLevels()									const { return WeaponUnlockLevels; }
-	FORCEINLINE TArray<int>				GetPassiveUnlockLevels()								const { return PassiveUnlockLevels; }
+	FORCEINLINE int								GetScoringModifier()									const { return ScoringModifier; }
+	FORCEINLINE float							GetCurrentUltimate()									const { return CurrentUltimateTracker; }
+	FORCEINLINE int								GetCurrentLevel()										const { return CurrentLevel; }
+	FORCEINLINE TArray<FName>					GetWeaponsEquipped()									const { return WeaponsEquipped; }
+	FORCEINLINE TArray<FName>					GetPassivesEquipped()									const { return PassivesEquipped; }
+	FORCEINLINE float							GetPickUpRadius()										const { return PickUpRadius; }
+	FORCEINLINE UMainHUDWidget*					GetMainHUDWidget()										const { return WidgetInstance; }
+	FORCEINLINE TArray<int>						GetWeaponUnlockLevels()									const { return WeaponUnlockLevels; }
+	FORCEINLINE TArray<int>						GetPassiveUnlockLevels()								const { return PassiveUnlockLevels; }
+	FORCEINLINE TSoftObjectPtr<UDataTable>		GetShipDataTable()										const { return ShipDataTable; }
+	FORCEINLINE FName							GetSelectedShipName()									const { return SelectedShipName; }
 
-	FORCEINLINE void					SetPickUpRadius(const float& PickUpValue)					  { PickUpRadius = PickUpValue; }
-	FORCEINLINE void					SetArcanicEchoRef(AArcanicEcho* AeValue)					  { ArcanicEcho = AeValue; }
-	FORCEINLINE void					SetSelectedShipName(const FName& ShipNameValue)				  { SelectedShipName = ShipNameValue; }
-	FORCEINLINE void					SetHasExtraLife(const bool& ExtraLifeValue)					  { bHasExtraLife = ExtraLifeValue; }
+	FORCEINLINE void							SetPickUpRadius(const float& PickUpValue)					  { PickUpRadius = PickUpValue; }
+	FORCEINLINE void							SetArcanicEchoRef(AArcanicEcho* AeValue)					  { ArcanicEcho = AeValue; }
+	FORCEINLINE void							SetSelectedShipName(const FName& ShipNameValue)				  { SelectedShipName = ShipNameValue; }
+	FORCEINLINE void							SetHasExtraLife(const bool& ExtraLifeValue)					  { bHasExtraLife = ExtraLifeValue; }
 
 #pragma endregion
 };

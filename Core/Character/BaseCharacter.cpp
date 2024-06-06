@@ -3,6 +3,7 @@
 
 #include "Paradigm_IQ/Core/Character/BaseCharacter.h"
 
+#include "NiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 
@@ -118,6 +119,51 @@ void ABaseCharacter::Death()
 void ABaseCharacter::SpawnActor(const TSubclassOf<AActor> ClassToSpawn, const FTransform& SpawnTransform) const
 {
 	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
+}
+
+/**
+ * @brief Adds thrusters to the base character.
+ *
+ * This function is used to add thrusters to the base character. It first checks if there are any active thrusters and if so, it destroys them.
+ * It then gets all the socket names from the base model and for each socket, it creates a new Niagara component and attaches it to the socket.
+ * The function finally activates the Niagara component and adds it to the active thrusters.
+ *
+ * @param ThrusterNiagara The Niagara system to be used for the thrusters.
+ */
+void ABaseCharacter::AddThrusters(UNiagaraSystem* ThrusterNiagara)
+{
+	if(!ActiveThrusters.IsEmpty())
+	{
+		for(const auto& Thruster: ActiveThrusters)
+		{
+			Thruster.Key->DestroyComponent();
+		}
+		ActiveThrusters.Empty();
+	}
+	if (BaseModel != nullptr)
+	{
+		const TArray<FName>ThrusterSocketNames = BaseModel->GetAllSocketNames();
+		int indexTracker = 0;
+		for (auto& SocketName : ThrusterSocketNames)
+		{
+			if (BaseModel->DoesSocketExist(SocketName))
+			{
+				if (UNiagaraComponent* NiagaraComponent = NewObject<UNiagaraComponent>(this, UNiagaraComponent::StaticClass(), FName(*FString("Thruster ").Append(FString::FromInt(indexTracker)))))
+				{
+					NiagaraComponent->RegisterComponent();
+					NiagaraComponent->CreationMethod = EComponentCreationMethod::Instance;
+					if (NiagaraComponent)
+					{
+						NiagaraComponent->SetAsset(ThrusterNiagara);
+						NiagaraComponent->AttachToComponent(BaseModel, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+						NiagaraComponent->Activate();
+						ActiveThrusters.Add(NiagaraComponent, (BaseModel->GetSocketTransform(SocketName).GetScale3D().X * 10));
+					}
+				}
+			}
+			indexTracker++;
+		}
+	}
 }
 
 /**

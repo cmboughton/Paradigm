@@ -69,6 +69,10 @@ protected:
 	UPROPERTY()
 	FPatrolPointStruct PatrolPoints;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The Niagra that will spawn for each thruster socket."))
+	UNiagaraSystem* ThrusterNiagaraSystem;
+
 public:
 
 	UFUNCTION()

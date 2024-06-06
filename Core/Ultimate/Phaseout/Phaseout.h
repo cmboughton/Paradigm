@@ -27,4 +27,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The duration of Invulnerability."))
 	float InvulnerabilityDuration = 8.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The Niagra for thruster. That changes when player invulnerable."))
+	UNiagaraSystem* ThrusterNiagaraSystem;
 };

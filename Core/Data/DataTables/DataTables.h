@@ -7,6 +7,7 @@
 #include "Paradigm_IQ/Core/Data/Structs/Structs.h"
 #include "DataTables.generated.h"
 
+class UNiagaraSystem;
 class APassives;
 class AUltimateAbility;
 class AEnemyCharacter;
@@ -23,6 +24,9 @@ struct FShipsDataTable : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The static mesh model of the ship."))
 	TSoftObjectPtr<UStaticMesh> ShipMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "The Niagra that will spawn for each thruster socket."))
+	UNiagaraSystem* ThrusterNiagaraSystem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Ship Stats"))
 	TArray<FStatsStruct> ShipStats;

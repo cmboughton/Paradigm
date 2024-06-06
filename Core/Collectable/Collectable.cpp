@@ -27,8 +27,6 @@ void ACollectable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
 	BaseModel->OnComponentHit.AddDynamic(this, &ACollectable::HitMesh);
 
 	BaseModel->SetSimulatePhysics(true);
@@ -41,7 +39,7 @@ void ACollectable::PickUp_Implementation(APlayerCharacter* PlayerCharacterRef)
 {
 	isCollected = true;
 	BaseModel->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	
+	PlayerCharacter = PlayerCharacterRef;
 }
 
 void ACollectable::Collected()
@@ -60,7 +58,7 @@ void ACollectable::Tick(float DeltaTime)
 
 	if(isCollected)
 	{
-		if(PlayerCharacter)
+		if(PlayerCharacter != nullptr)
 		{
 			constexpr float LerpSpeed = 10.0f;
 			// Calculate the target position towards the player character

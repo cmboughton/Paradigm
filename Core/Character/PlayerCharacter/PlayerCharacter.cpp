@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "NiagaraComponent.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -160,6 +161,17 @@ void APlayerCharacter::Tick(const float DeltaTime)
 	{
 		InvulnerabilityDuration = 0;
 		CurrentState = ECharacterState::Normal;
+	}
+
+	if (!ActiveThrusters.IsEmpty())
+	{
+		for (const auto& Thruster : ActiveThrusters)
+		{
+			if (Thruster.Key != nullptr)
+			{
+				Thruster.Key->SetVariableFloat("NiagaraScale",  FMath::Clamp(UKismetMathLibrary::NormalizeToRange(GetMovementComponent()->Velocity.Size(), Thruster.Value * 0.5f, GetMovementComponent()->Velocity.GetMax()),Thruster.Value * 0.75f, Thruster.Value));
+			}
+		}
 	}
 
 
@@ -412,6 +424,7 @@ void APlayerCharacter::SetUpShip()
 			if (UStaticMesh* ShipMeshData = ShipData->ShipMesh.LoadSynchronous())
 			{
 				BaseModel->SetStaticMesh(ShipMeshData);
+				AddThrusters(ShipData->ThrusterNiagaraSystem);
 			}
 
 			if(const UDataTable* UltimateDataTableHardRef = UltimatesDataTable.LoadSynchronous())
