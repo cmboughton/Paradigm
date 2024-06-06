@@ -41,7 +41,7 @@ void ABaseProjectile::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(bSpecialUpgrade1)
+	if(bHasFlameTrailUpgrade)
 	{
 		EndLocation = this->GetActorLocation() - FVector(0.f, 0.f, 90.f);
 		const TArray<FHitResult> TrailActorsHit = SphereTrace(StartLocation, EndLocation, AffectRadius * 2);
@@ -54,6 +54,14 @@ void ABaseProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	StartLocation = this->GetActorLocation() - FVector(0.f, 0.f, 90.f);
+
+	if(bSpecialUpgrade1)
+	{
+		if(FMath::RandRange(0, 100) <= FlameTrailChance)
+		{
+			bHasFlameTrailUpgrade = true;
+		}
+	}
 }
 
 /**
@@ -65,7 +73,7 @@ void ABaseProjectile::BeginPlay()
  */
 void ABaseProjectile::DestroyProjectile()
 {
-	if(bSpecialUpgrade1)
+	if(bHasFlameTrailUpgrade)
 	{
 		if (FlameTrailUpgrade)
 		{

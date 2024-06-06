@@ -39,5 +39,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Reference to the Flame Trail BP to spawn."))
 	const TSubclassOf<AFlameTrailUpgrade> FlameTrailUpgrade;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "Flame Trail chance."))
+	float FlameTrailChance = 10.f;
+
+	UPROPERTY()
+	bool bHasFlameTrailUpgrade = false;
+
 #pragma endregion
 };
