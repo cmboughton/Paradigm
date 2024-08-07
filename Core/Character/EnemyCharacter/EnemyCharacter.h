@@ -39,6 +39,9 @@ protected:
 	UFUNCTION()
 	float CalculateDamage() const;
 
+	UFUNCTION()
+	bool DistanceCheck(const float& Distance) const;
+
 protected:
 
 	UPROPERTY()

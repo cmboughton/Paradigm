@@ -40,7 +40,7 @@ void AEnemyPatrol::Tick(const float DeltaTime)
 
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), CurrentMoveToLoc);
 
-			if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
+			if (DistanceCheck(AttackRange))
 			{
 				ApplyDamage(PlayerCharacter);
 				EnemyDeath(false, EDeathType::Normal);

@@ -11,7 +11,7 @@ void AEnemyDrones::Tick(const float DeltaSeconds)
 
 	if(PlayerCharacter != nullptr && BaseModel != nullptr)
 	{
-		if (FVector::DistSquared(BaseModel->GetComponentLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
+		if (DistanceCheck(AttackRange))
 		{
 			ApplyDamage(PlayerCharacter);
 			EnemyDeath(false, EDeathType::Normal);

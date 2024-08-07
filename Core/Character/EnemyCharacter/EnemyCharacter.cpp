@@ -114,7 +114,7 @@ float AEnemyCharacter::CalculateDamage() const
 {
 	if(FMath::RandRange(0, 1) <= CritChance)
 	{
-		return Damage * CritDamage;
+		return Damage * (CritDamage / 100);
 	}
 	return Damage;
 }
@@ -219,8 +219,8 @@ void AEnemyCharacter::EnemyDeath(const bool AddScore, const EDeathType DeathType
 
 void AEnemyCharacter::ApplyDamage(AActor* ActorToDamage)
 {
-	FHitResult EmptyResult;
-	float CalculatedDamage = CalculateDamage();
+	const FHitResult EmptyResult;
+	const float CalculatedDamage = CalculateDamage();
 	const FPointDamageEvent DamageEvent(CalculatedDamage, EmptyResult, this->GetActorLocation(), nullptr);
 	if(ActorToDamage != nullptr)
 	{
@@ -277,4 +277,13 @@ void AEnemyCharacter::ChangeCharacterState_Implementation(const ECharacterState 
 	CurrentState = CharacterState;
 	UE_LOGFMT(LogTemp, Warning, "Character State");
 	EnemyDeath();
+}
+
+bool AEnemyCharacter::DistanceCheck(const float& Distance) const
+{
+	if (FVector::DistSquared(BaseModel->GetComponentLocation(), PlayerCharacter->GetActorLocation()) <= Distance * Distance)
+	{
+		return true;
+	}
+	return false;
 }
