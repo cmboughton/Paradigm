@@ -76,13 +76,13 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
     }
     CurrentHealth -= DamageAmount;
 	//UE_LOGFMT(LogTemp, Warning, "CurrentHealth: {0} DamageAmount: {1}", CurrentHealth, DamageAmount);
-    if (DamageCauser)
+    if (DamageCauser != nullptr)
     {
         ApplyBackDamage(DamageAmount, DamageCauser);
     }
     if (CurrentHealth <= 0)
     {
-        Death();
+        EnemyDeath(true, EDeathType::Normal);
     }
     DamageImmunity = 0.1f;
     return CurrentHealth;
@@ -104,7 +104,10 @@ void AEnemyCharacter::ApplyBackDamage(float DamageAmount, AActor* DamageCauser)
     const FHitResult Hit;
     const FVector ActorLocation = this->GetActorLocation();
     const FPointDamageEvent DamageBackEvent(DamageDoneBack, Hit, ActorLocation, nullptr);
-    DamageCauser->TakeDamage(DamageDoneBack, DamageBackEvent, GetInstigatorController(), this);
+	if (DamageCauser != nullptr)
+	{
+		DamageCauser->TakeDamage(DamageDoneBack, DamageBackEvent, GetInstigatorController(), this);
+	}
 }
 
 float AEnemyCharacter::CalculateDamage() const
@@ -126,24 +129,20 @@ float AEnemyCharacter::CalculateDamage() const
  * - If the drop chance is met, drops a collectable item based on a weighted random roll.
  * - Destroys the enemy character.
  */
-void AEnemyCharacter::Death()
+void AEnemyCharacter::EnemyDeath(const bool AddScore, const EDeathType DeathType)
 {
-	Super::Death();
+	Death();
 
-	if (bHasAttacked)
+	if (AddScore)
 	{
-		this->Destroy();
-	}
-	else
-	{
-		if(PlayerCharacter)
+		if (PlayerCharacter)
 		{
 			PlayerCharacter->AddScore(Score);
 		}
 		else
 		{
 			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-			Death();
+			EnemyDeath();
 			return;
 		}
 		const int RandExpOrbs = FMath::RandRange(1, 3);
@@ -155,7 +154,7 @@ void AEnemyCharacter::Death()
 		{
 			if (ExperienceOrb)
 			{
-				FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), this->GetActorLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
+				FTransform XPSpawnTransform = FTransform(FRotator(0.f, 0.f, 0.f), BaseModel->GetComponentLocation() + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
 				AExperience* ExperienceOrbSpawn = GetWorld()->SpawnActorDeferred<AExperience>(ExperienceOrb, XPSpawnTransform);
 				ExperienceOrbSpawn->SetUp(ExperienceStruct);
 				ExperienceOrbSpawn->FinishSpawning(XPSpawnTransform);
@@ -186,8 +185,79 @@ void AEnemyCharacter::Death()
 				}
 			}
 		}
-		this->Destroy();
 	}
+
+	switch (DeathType)
+	{
+	case EDeathType::Default:
+		this->Destroy();
+		break;
+
+	case EDeathType::Normal:
+		this->Destroy();
+		break;
+
+	case EDeathType::Explosive:
+		if (BaseModel != nullptr)
+		{
+			TArray<FHitResult> ActorsHit = SphereTrace(BaseModel->GetComponentLocation(), BaseModel->GetComponentLocation(), AttackRange);
+			if (!ActorsHit.IsEmpty())
+			{
+				for (int i = 0; i < ActorsHit.Num(); i++)
+				{
+					if (ActorsHit.IsValidIndex(i))
+					{
+						ApplyDamage(ActorsHit[i].GetActor());
+					}
+				}
+			}
+		}
+		this->Destroy();
+		break;
+	}
+}
+
+void AEnemyCharacter::ApplyDamage(AActor* ActorToDamage)
+{
+	FHitResult EmptyResult;
+	float CalculatedDamage = CalculateDamage();
+	const FPointDamageEvent DamageEvent(CalculatedDamage, EmptyResult, this->GetActorLocation(), nullptr);
+	if(ActorToDamage != nullptr)
+	{
+		ActorToDamage->TakeDamage(CalculatedDamage, DamageEvent, GetInstigatorController(), this);
+		UE_LOGFMT(LogTemp, Warning, "Damage Done: {0}", CalculatedDamage);
+	}
+}
+
+/**
+ * @brief Generates a random point near a given origin within a specified distance range.
+ *
+ * This function generates a random point in the vicinity of a given origin point.
+ * The distance of the generated point from the origin is within a specified minimum and maximum range.
+ *
+ * @param Origin The origin point from which the random point is to be generated.
+ * @param MinDistance The minimum distance from the origin that the generated point can be.
+ * @param MaxDistance The maximum distance from the origin that the generated point can be.
+ * @return Returns the generated random point as an FVector.
+ */
+FVector AEnemyCharacter::GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance)
+{
+	// Create a random stream for generating random values
+	const FRandomStream RandStream(FMath::Rand());
+
+	// Generate a random direction vector with a random magnitude
+	FVector RandomDirection = RandStream.VRand().GetSafeNormal() * RandStream.FRandRange(MinDistance, MaxDistance);
+
+	FVector RandomPoint = FVector(Origin.X + RandomDirection.X, Origin.Y + RandomDirection.Y, Origin.Z);
+
+	while (FVector::DistSquared(Origin, RandomPoint) < MinDistance * MinDistance)
+	{
+		RandomDirection = RandStream.VRand().GetSafeNormal() * RandStream.FRandRange(MinDistance, MaxDistance);
+		RandomPoint = FVector(Origin.X + RandomDirection.X, Origin.Y + RandomDirection.Y, Origin.Z);
+	}
+
+	//UE_LOGFMT(LogTemp, Warning, "Random EnemySpawned at {0}", RandomPoint.Z);
+	return RandomPoint;
 }
 
 void AEnemyCharacter::UpdateStats(const float& GrowthModifier)
@@ -206,5 +276,5 @@ void AEnemyCharacter::ChangeCharacterState_Implementation(const ECharacterState 
 {
 	CurrentState = CharacterState;
 	UE_LOGFMT(LogTemp, Warning, "Character State");
-	Death();
+	EnemyDeath();
 }

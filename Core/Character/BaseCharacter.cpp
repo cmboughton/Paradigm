@@ -6,6 +6,7 @@
 #include "NiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -104,7 +105,8 @@ float ABaseCharacter::TakeDamage(const float DamageAmount, FDamageEvent const& D
 void ABaseCharacter::Death()
 {
 	CurrentState = ECharacterState::Death;
-	UE_LOGFMT(LogTemp, Warning, "{0} has Died.", this->GetName());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), DeathNiagara, BaseModel->GetComponentLocation(), FRotator(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::AutoRelease, false);
+	//UE_LOGFMT(LogTemp, Warning, "{0} has Died.", this->GetName());
 }
 
 /**

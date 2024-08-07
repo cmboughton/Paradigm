@@ -107,3 +107,11 @@ enum class EEnemyStatsType : uint8
 	CritDamage					UMETA(DisplayName = "Crit Damage"),
 	MovementSpeed				UMETA(DisplayName = "Movement Speed"),
 };
+
+UENUM(BlueprintType)
+enum class EDeathType : uint8
+{
+	Default						UMETA(DisplayName = "Default"),
+	Normal						UMETA(DisplayName = "Normal"),
+	Explosive					UMETA(DisplayName = "Explosive"),
+};

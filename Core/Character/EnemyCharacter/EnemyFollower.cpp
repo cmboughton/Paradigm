@@ -17,12 +17,8 @@ void AEnemyFollower::Tick(const float DeltaTime)
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), TargetLocation);
 			if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
 			{
-				FHitResult EmptyResult;
-				float CalculatedDamage = CalculateDamage();
-				const FPointDamageEvent DamageEvent(CalculatedDamage, EmptyResult, this->GetActorLocation(), nullptr);
-				PlayerCharacter->TakeDamage(CalculatedDamage, DamageEvent, GetInstigatorController(), this);
-				bHasAttacked = true;
-				Death();
+				ApplyDamage(PlayerCharacter);
+				EnemyDeath(false, EDeathType::Normal);
 			}
 		}
 	}

@@ -29,6 +29,9 @@ public:
 	UFUNCTION()
 	void AddThrusters(UNiagaraSystem* ThrusterNiagara);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Niagra", meta = (ToolTip = "The Niagara System that will spawn upon death."))
+	UNiagaraSystem* DeathNiagara;
+
 #pragma endregion
 
 #pragma region Protected Functions

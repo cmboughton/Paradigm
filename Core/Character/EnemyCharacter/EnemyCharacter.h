@@ -29,7 +29,9 @@ protected:
 
 	virtual void ChangeCharacterState_Implementation(const ECharacterState CharacterState) override;
 
-	virtual void Death() override;
+	virtual void EnemyDeath(const bool AddScore = false, const EDeathType DeathType = EDeathType::Default);
+
+	void ApplyDamage(AActor* ActorToDamage);
 
 	UFUNCTION()
 	void ApplyBackDamage(float DamageAmount, AActor* DamageCauser);
@@ -64,14 +66,14 @@ protected:
 	APlayerCharacter* PlayerCharacter = nullptr;
 
 	UPROPERTY()
-	bool bHasAttacked = false;
-
-	UPROPERTY()
 	FPatrolPointStruct PatrolPoints;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Varaibles", meta = (ToolTip = "The Niagra that will spawn for each thruster socket."))
 	UNiagaraSystem* ThrusterNiagaraSystem;
+
+	UFUNCTION()
+	static FVector GetRandomPointNearOrigin(const FVector& Origin, const float MinDistance, const float MaxDistance);
 
 public:
 

@@ -33,18 +33,17 @@ void AEnemyPatrol::Tick(const float DeltaTime)
 				bLocationTracker = !bLocationTracker;
 			}
 
-			GetCharacterMovement()->MaxWalkSpeed = FVector::DistSquared(this->GetActorLocation(), CurrentMoveToLoc) * MovementSpeedModifier;
+			if(GetCharacterMovement() != nullptr)
+			{
+				GetCharacterMovement()->MaxWalkSpeed = FVector::DistSquared(this->GetActorLocation(), CurrentMoveToLoc) * MovementSpeedModifier;
+			}
 
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this->GetController(), CurrentMoveToLoc);
 
 			if (FVector::DistSquared(this->GetActorLocation(), PlayerCharacter->GetActorLocation()) <= AttackRange * AttackRange)
 			{
-				FHitResult EmptyResult;
-				float CalculatedDamage = CalculateDamage();
-				const FPointDamageEvent DamageEvent(CalculatedDamage, EmptyResult, this->GetActorLocation(), nullptr);
-				PlayerCharacter->TakeDamage(CalculatedDamage, DamageEvent, GetInstigatorController(), this);
-				bHasAttacked = true;
-				Death();
+				ApplyDamage(PlayerCharacter);
+				EnemyDeath(false, EDeathType::Normal);
 			}
 		}
 	}
