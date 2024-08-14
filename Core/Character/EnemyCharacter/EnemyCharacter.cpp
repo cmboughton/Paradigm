@@ -100,12 +100,12 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
  */
 void AEnemyCharacter::ApplyBackDamage(float DamageAmount, AActor* DamageCauser)
 {
-    float DamageDoneBack = (CurrentHealth > 0) ? DamageAmount : DamageAmount + CurrentHealth;
-    const FHitResult Hit;
-    const FVector ActorLocation = this->GetActorLocation();
-    const FPointDamageEvent DamageBackEvent(DamageDoneBack, Hit, ActorLocation, nullptr);
-	if (DamageCauser != nullptr)
+	if (DamageCauser != nullptr && CurrentState != ECharacterState::Death)
 	{
+		float DamageDoneBack = (CurrentHealth > 0) ? DamageAmount : DamageAmount + CurrentHealth;
+		const FHitResult Hit;
+		const FVector ActorLocation = this->GetActorLocation();
+		const FPointDamageEvent DamageBackEvent(DamageDoneBack, Hit, ActorLocation, nullptr);
 		DamageCauser->TakeDamage(DamageDoneBack, DamageBackEvent, GetInstigatorController(), this);
 	}
 }
