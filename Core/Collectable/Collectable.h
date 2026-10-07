@@ -45,6 +45,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The time until this Collectable gets destroyed."))
 	float DestroyDuration = 15.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Variables|Stats", meta = (ToolTip = "The time between when the player collects collectables nearby."))
+	float PickUpFrequency = 2.f;
+
+	UPROPERTY()
+	float PickUpFrequencyTimer = 0.f;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

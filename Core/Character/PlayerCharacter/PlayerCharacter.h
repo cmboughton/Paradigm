@@ -173,6 +173,7 @@ protected:
 	UPROPERTY()
 	float InvulnerabilityDuration = 0.f;
 
+
 #pragma endregion
 
 #pragma region References

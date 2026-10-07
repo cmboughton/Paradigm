@@ -134,7 +134,7 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 					const TArray<FHitResult> ActiveActorsHit = CheckSphereTrace(i);
 					if (!ActiveActorsHit.IsEmpty())
 					{
-						for (auto ActorHit : ActiveActorsHit)
+						for (const auto& ActorHit : ActiveActorsHit)
 						{
 							if (ActorHit.GetActor() && SpawnedDrones.IsValidIndex(i))
 							{
@@ -172,7 +172,7 @@ void ADronesWeapon::WeaponTriggered(const float DeltaTime)
 							const TArray<FHitResult> ActiveActorsHit = CheckSphereTrace(i);
 							if (!ActiveActorsHit.IsEmpty())
 							{
-								for (FHitResult ActorHit : ActiveActorsHit)
+								for (const FHitResult& ActorHit : ActiveActorsHit)
 								{
 									if (ActorHit.GetActor() && SpawnedDrones.IsValidIndex(i))
 									{
@@ -384,7 +384,7 @@ void ADronesWeapon::SpecialUpgrade4(const int& Index, const FVector& SpawnLocati
  * @brief Resets the state of drones in the weapon system.
  * 
  * This method is responsible for resetting the state of drones in the weapon system. 
- * It sets up the drones, starts their expansion, resets the drone duration tracker, 
+ * It sets up the drones, resets the drone duration tracker, 
  * fire rate tracker, sweep tracker, and radial distance. It also destroys any spawned 
  * drones and deactivates any spawned jets.
  */

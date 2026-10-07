@@ -23,6 +23,9 @@ protected:
 	UPROPERTY()
 	int SpawnLocations = 2;
 
+	UPROPERTY()
+	float TempVarSave = 0.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables|Stats", meta = (ToolTip = "The Side Cannon Spawner that should be spawned."))
 	TSubclassOf<ASideCannonsProjectile> SCProjectile = nullptr;
 };

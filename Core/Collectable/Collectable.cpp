@@ -58,27 +58,31 @@ void ACollectable::Tick(float DeltaTime)
 
 	if(isCollected)
 	{
-		if(PlayerCharacter != nullptr)
+		PickUpFrequencyTimer += DeltaTime;
+		if (PickUpFrequencyTimer >= PickUpFrequency)
 		{
-			constexpr float LerpSpeed = 10.0f;
-			// Calculate the target position towards the player character
-			const FVector TargetPosition = PlayerCharacter->GetActorLocation();
-
-			// Calculate the new position of the pickup using linear interpolation
-			const FVector NewPosition = FMath::Lerp(GetActorLocation(), TargetPosition, DeltaTime * LerpSpeed);
-
-			// Set the new position of the pickup
-			SetActorLocation(NewPosition);
-
-			if (FMath::Sqrt(FVector::DistSquared(PlayerCharacter->GetActorLocation(), this->GetActorLocation())) <= 100)
+			if (PlayerCharacter != nullptr)
 			{
-				Collected();
-				this->Destroy();
+				constexpr float LerpSpeed = 5.0f;
+				// Calculate the target position towards the player character
+				const FVector TargetPosition = PlayerCharacter->GetActorLocation();
+
+				// Calculate the new position of the pickup using linear interpolation
+				const FVector NewPosition = FMath::Lerp(GetActorLocation(), TargetPosition, DeltaTime * LerpSpeed);
+
+				// Set the new position of the pickup
+				SetActorLocation(NewPosition);
+
+				if (FMath::Sqrt(FVector::DistSquared(PlayerCharacter->GetActorLocation(), this->GetActorLocation())) <= 100)
+				{
+					Collected();
+					this->Destroy();
+				}
 			}
-		}
-		else
-		{
-			PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			else
+			{
+				PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			}
 		}
 	}
 

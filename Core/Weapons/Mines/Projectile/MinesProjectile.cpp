@@ -2,6 +2,7 @@
 
 
 #include "MinesProjectile.h"
+#include "../../../Data/Interfaces/EnemyInterface.h"
 
 /**
  * @brief Performs a trace check for the projectile.
@@ -27,7 +28,7 @@ void AMinesProjectile::TraceCheck(const float& DeltaTime)
 	{
 		if(!ActorsHit.IsEmpty())
 		{
-			for (FHitResult ActorHit : ActorsHit)
+			for (const FHitResult ActorHit : ActorsHit)
 			{
 				if (ActorHit.GetActor())
 				{

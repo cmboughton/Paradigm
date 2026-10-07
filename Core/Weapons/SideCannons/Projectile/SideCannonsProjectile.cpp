@@ -18,11 +18,14 @@ void ASideCannonsProjectile::BeginPlay()
 	Super::BeginPlay();
 	if(bIsSpawner)
 	{
-		int SpawnLocationTracker = 0;
+		float SpawnLocationTracker = 0;
 		for (int i = 0; i < TriggerAmount - 1; i++)
 		{
 			SpawnLocationTracker = (FMath::Pow(-1.f, i + 1) * (AffectRadius * 2) * ((i + 2) / 2 ));
-			const FTransform BulletSpawnLocation = FTransform(this->GetActorRotation(), FVector(this->GetActorLocation().X + SpawnLocationTracker, this->GetActorLocation().Y, this->GetActorLocation().Z), FVector(1.f, 1.f, 1.f));
+			FVector SpawnOffSet = SpawnLocationTracker * GetActorRightVector();
+			FVector FinalSpawnLocation = GetActorLocation() + SpawnOffSet;
+
+			const FTransform BulletSpawnLocation = FTransform(GetActorRotation(), FinalSpawnLocation, FVector(1.f, 1.f, 1.f));
 			if (BaseProjectile)
 			{
 				ASideCannonsProjectile* ProjectileSpawn = GetWorld()->SpawnActorDeferred<ASideCannonsProjectile>(BaseProjectile, BulletSpawnLocation);

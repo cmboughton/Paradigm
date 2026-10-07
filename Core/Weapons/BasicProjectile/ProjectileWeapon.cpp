@@ -2,7 +2,7 @@
 
 
 #include "ProjectileWeapon.h"
-
+#include "Paradigm_IQ/Core/Character/BaseCharacter.h"
 
 void AProjectileWeapon::WeaponTriggered(const float DeltaTime)
 {
@@ -18,6 +18,8 @@ void AProjectileWeapon::WeaponTriggered(const float DeltaTime)
 			const int randRoll = FMath::RandRange(0, SelectedEnemy.Num() - 1);
 			if(SelectedEnemy.IsValidIndex(randRoll))
 			{
+				//ABaseCharacter* EnemyClass = SelectedEnemy[randRoll]->SetClass()
+				//const ABaseCharacter* EnemyClass = ABaseCharacter::StaticClass()->GetDefaultObject<ABaseCharacter::StaticClass()>();
 				const FRotator RotationalDirection = FRotationMatrix::MakeFromX(SelectedEnemy[randRoll]->GetActorLocation() - this->GetActorLocation()).Rotator();
 				const FTransform BulletSpawnLocation = FTransform(FRotator(0, RotationalDirection.Yaw, 0), FVector(this->GetActorLocation()), FVector(1.f, 1.f, 1.f));
 				SpawnProjectile(BulletSpawnLocation);
